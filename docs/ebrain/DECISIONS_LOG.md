@@ -18,11 +18,13 @@
 - The existing backend is a clean README-only checkout; `origin/staging` and
   `main` both start at `67234807075b93ed024005d0da29ad6deaea0c46`.
   Work uses `feat/ebrain-m0`, based on `origin/staging`.
-- GitHub reports `OFA-Labs/one-for-all-api` as public, contrary to the owner's
-  hard requirement to keep repos private. Do not push implementation code until
-  this is resolved. The GitHub connector authenticates as `jvsing`; the CLI
-  authenticates as `OFA-Labs`. The PR must be authored by `jvsing` and target
-  `OFA-Labs/one-for-all-api:staging`.
+- GitHub reports `OFA-Labs/one-for-all-api` as public. Publishing was initially
+  paused because the original instruction required private repos. On 2026-11-24
+  the owner explicitly overrode that requirement: keep this repo public and
+  publish the contribution PR as `jvsing` to `OFA-Labs`. The GitHub connector
+  authenticates as `jvsing`; the CLI authenticates as `OFA-Labs`. Push the feature
+  branch using the authorized CLI credentials, create the PR as `jvsing` against
+  `OFA-Labs/one-for-all-api:staging`, and leave it unmerged for the owner.
 - The web checkout is clean on `feat/icon-navigation-native-engine`; M0 changes
   no web source. Run the requested existing web checks as a baseline using the
   production Playwright server on port 3100. Do not start a development server.
