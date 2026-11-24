@@ -37,7 +37,7 @@ def _digest(value: str) -> str:
 def _versioned(text: str, identity: str) -> str:
     """EXPERIMENTAL: make ordinary durable notes usable by the reference retriever."""
     # UNTESTED: real-note slot quality and value-code collisions are unmeasured
-    # | settle: T-083 extended with a labelled real-note import/query corpus.
+    # | settle: T-083 real-note corpus; docs/ebrain/LIVE_VALIDATION.md LV-03.
     text = " ".join(text.splitlines()).strip()
     if not text:
         raise BridgeError("text must not be empty")
@@ -119,7 +119,7 @@ def _accepted(result: dict[str, Any]) -> bool:
 def _markdown_entries(source: Path) -> Iterator[tuple[int, str]]:
     """EXPERIMENTAL: import explicit Markdown headings and durable bullets."""
     # UNTESTED: line relocation can create new chains; no automatic deletion or
-    # merge is safe | settle: T-083 extended with reordered real documents.
+    # merge is safe | settle: T-083; docs/ebrain/LIVE_VALIDATION.md LV-03.
     fence: str | None = None
     # LIMIT: stream the input; each entry still obeys the store's max_text_chars.
     with source.open(encoding="utf-8-sig") as handle:
@@ -178,7 +178,7 @@ def _capture(
 ) -> int:
     """EXPERIMENTAL: capture marked assistant text from Claude JSONL and Stop input."""
     # UNTESTED: live Claude streaming layouts and fallback-vs-flushed duplication
-    # need an audit | settle: T-080 on recorded real Claude sessions.
+    # need an audit | settle: T-080; docs/ebrain/LIVE_VALIDATION.md LV-01/LV-04.
     if event.get("stop_hook_active") is True:
         return 0
     transcript = args.transcript or event.get("transcript_path")
@@ -279,7 +279,7 @@ def main(argv: list[str] | None = None) -> int:
         ) as client:
             if is_pack:
                 # UNTESTED: the broad SessionStart query is not exhaustive
-                # | settle: T-080 extended with labelled real-session tasks.
+                # | settle: T-080; docs/ebrain/LIVE_VALIDATION.md LV-04.
                 text = args.text or event.get("prompt") or SESSION_QUERY
                 if args.budget <= 0:
                     raise BridgeError("budget must be positive")

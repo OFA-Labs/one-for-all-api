@@ -111,3 +111,8 @@ different lines can create new chains; automatic reconciliation is not enabled.
 Environment files, keys and non-Markdown inputs are refused. Synthetic bootstrap
 and hook tests use an isolated temporary API/database; they do not initialize or
 modify the owner's real database or credentials.
+
+Developer handoff: follow the [live validation checklist](docs/ebrain/LIVE_VALIDATION.md)
+for the remaining real-session/bootstrap tests, pass criteria, evidence to
+record and the comments/logs to update afterward. Its live checks are NOT RUN;
+passing the isolated integration suite does not change that status.

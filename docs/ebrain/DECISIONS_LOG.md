@@ -279,3 +279,15 @@ fallback-flush audits, real-use accuracy and power-loss durability. The CLI and
 hook commands themselves are integration-tested; this does not claim the
 owner's personal service or agent credentials have been configured. M3–M6
 remain future milestones. Approval-required healing and join OFF are preserved.
+
+### M2 developer handoff clarification
+
+The owner asked whether the untested work tells the next developer what to do
+and what to update after testing. The source already named the unproven
+mechanisms and settling tests, but the handoff lacked a consolidated procedure.
+Add `docs/ebrain/LIVE_VALIDATION.md` with NOT RUN live checks, pass/fail criteria,
+sanitized evidence requirements and instructions for updating comments, logs
+and PR descriptions. Link each CLI UNTESTED comment and the README to its
+relevant case. This follow-up changes documentation/comments only; no live
+session, credential configuration, personal bootstrap or reliability claim is
+newly marked tested.
