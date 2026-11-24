@@ -17,6 +17,7 @@ from typing import Iterator
 
 from fastapi import Depends, FastAPI, Header, HTTPException
 from pydantic import BaseModel
+from starlette.middleware.cors import CORSMiddleware
 
 from .models import Query, Trace, Write
 from .store import DEFAULTS, Store, UnknownTarget
@@ -115,6 +116,13 @@ def create_app(config: dict | None = None) -> FastAPI:
     with open(FACTS_PATH, encoding="utf-8") as f:
         facts = json.load(f)
     app = FastAPI(title="E-Brain", version="1.0.0")
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://127.0.0.1:3000", "http://127.0.0.1:3100"],
+        allow_methods=["GET", "POST", "DELETE"],
+        allow_headers=["Authorization", "Content-Type"],
+        allow_credentials=False,
+    )
 
     def principal(authorization: str | None = Header(default=None)) -> dict:
         tok = (authorization or "").removeprefix("Bearer ").strip()
@@ -174,7 +182,7 @@ def create_app(config: dict | None = None) -> FastAPI:
         rows = s.chains(project, p["agent"], ts, cursor, limit)
         return {"chains": rows, "next_cursor": str(cursor + limit) if len(rows) == limit else None}
 
-    @app.get("/v1/ebrain/chains/{chain}")
+    @app.get("/v1/ebrain/chains/{chain:path}")
     def chain(chain: str, project: str = DEFAULT_PROJECT, as_of: int = FAR_FUTURE,
               p: dict = Depends(principal), s: Store = Depends(open_store)):
         try:

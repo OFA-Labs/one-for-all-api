@@ -67,3 +67,108 @@ screenshots and `next-env.d.ts` before committing. M0 has no working store:
 memory writes, queries, isolation, persistence, healing and joins remain
 unverified in this port until M1. Frontend memory UI, agent hooks, voice bridge
 and the real-port ablation remain future milestones.
+
+## 2026-11-24 — M1 store, API and capacity view
+
+- Start `feat/ebrain-m1` from updated `origin/staging` after the owner merged
+  M0 (merge `4bef3f9`). The web branch starts at its latest `origin/staging`
+  (`1cd9e73`); its navigation changes are already merged. Both working trees
+  were clean before branching. Contributions use `jvsing` forks and target
+  OFA-Labs `staging`; the owner performs all merges.
+- Port the real reference `store.py` byte-for-byte. Preserve the seven original
+  test files, generated facts, dependency pins and safety defaults: self-heal
+  `propose`, subject join `off`, capacity soft/hard 800/1000. Add only
+  `test_spec_amended` to `tests/test_bridges.py` in M1.
+- **Necessary API correction, reproduced before editing:** the reference has
+  no CORS middleware. An OPTIONS preflight from `http://127.0.0.1:3100` for
+  GET `/v1/ebrain/limits` with Authorization and Content-Type returned HTTP 405
+  and no CORS headers. This prevents the spec's browser HTTP client from using
+  the separate API port. Add the already-pinned Starlette CORSMiddleware with
+  exactly `http://127.0.0.1:3000` and `http://127.0.0.1:3100` allowed, methods
+  GET/POST/DELETE and headers Authorization/Content-Type, without cookies or
+  wildcard origins. Preflight carries no memory data; actual API operations
+  still require a valid bearer token. No other reference API behavior changes.
+- Add two CORS regression tests: both local origins and relevant preflight
+  methods, authenticated limits, missing-token 401, and rejection of four
+  unlisted origins. The full suite therefore has **54 passing tests, 1 skipped**
+  rather than the spec's 52 passing tests, 1 skipped. Original tests are neither
+  edited nor weakened.
+- Web existing-path checks matched the spec: B4.3 is at L283, the existing
+  artwork is L11–23, README's placeholder is L72, and the integrations array
+  ends at L1249. Read installed Next.js server/client and Playwright guides
+  before web edits. Apply the owner-approved B4.3 sentence exactly.
+- The web preview imports an additional `src/lib/ebrain/limits-facts.json`,
+  copied byte-for-byte from the generated backend facts, instead of retyping
+  measured copy and numbers into TypeScript. Preview counts are the spec's
+  explicit fixtures; live data comes from `/v1/ebrain/limits`. No measurements
+  are changed or invented.
+- Keep one client per mounted EBrain using lazy `useState(getEBrainClient)`;
+  the limits effect depends on that client. This avoids recreating the client
+  on every render and satisfies React's dependency checks without suppressions.
+  Requests occur once per mount; cleanup ignores late results.
+- Keep the M1 composition and five capacity tests separate from future M3/M4
+  UI. Future mock review actions return explicit not-implemented errors; M1
+  never claims those controls work. The HTTP seam includes the specified full
+  interface; three additional transport tests check bearer identity/project
+  selection, HTTP/network failures and human-action request handling.
+- Append only blank E-Brain variable names to `.env.example`. Do not inspect
+  local environment files or store tokens. README explains that the spec's
+  NEXT_PUBLIC token is browser-visible and is for the owner's local setup.
+- The owner's requested `j-clone` avatar/name/bio is a separate GitHub identity
+  request. The second commit icon is the original One For All co-author, not an
+  agent-owned account. Ask for the dedicated account username; do not rename
+  the owner's personal `jvsing` profile or rewrite existing commit history.
+
+### M1 backend validation
+
+`.venv\Scripts\python.exe -m pytest tests -q` returned **54 passed, 1 skipped,
+1 warning in 3.05s**, exit 0. The skip is the unchanged CSV comparison and the
+warning is the known Starlette/httpx deprecation. Thirteen reference-derived
+files (including the real store, all seven original tests, facts and pins)
+remain byte-for-byte identical; `api.py` differs only for the CORS correction.
+
+The first web capacity run returned 4 passed, 1 failed: Next.js 16's built-in
+route announcer also has `role="alert"`, so the supplied unscoped error locator
+matches two elements. Scope that assertion to `main` and retain the exact
+message check. This is a selector correction, not a behavior change, skip or
+weakened assertion.
+
+### Path-chain history correction and final validation
+
+An authenticated write with `path="docs/specs/auth.md"` was accepted and listed
+as chain `p:docs/specs/auth.md`, but GET of its percent-encoded history URL
+returned HTTP 404 (`Not Found`). Starlette decodes the encoded slash before
+matching the original `{chain}` route. Use `{chain:path}` at the same endpoint
+and add one regression verifying both version statuses and another tenant's
+404. No store, tenancy or replay code changes. This is the second documented
+`api.py` deviation from the reference.
+
+The final `.venv\Scripts\python.exe -m pytest tests -q` returned **55 passed,
+1 skipped, 1 warning in 4.30s**, exit 0. The three added regression tests explain
+the difference from the spec's 52 passes; T-090 is included. The existing CSV
+skip and Starlette warning remain unchanged.
+
+Web verification, run from `one-for-all-web`:
+
+| Command | Final observed result |
+| --- | --- |
+| `npm run build` | Passed; 22 static pages generated. |
+| `npx tsc --noEmit` | Passed; exit 0. |
+| `npm run lint` | 0 errors, 2 existing cache warnings; exit 0. |
+| `npm run check:arch` | 0 violations; 95 modules, 193 dependencies. |
+| `npx playwright test tests/e-brain.spec.ts` | **5 passed** in 8.2s after the documented selector correction. |
+| `npx playwright test tests/e-brain-client.spec.ts` | **3 passed** in 3.5s. |
+| `npx playwright test tests/journeys.spec.ts tests/quality.spec.ts` | **17 passed** in 44.5s, including accessibility and responsive checks. |
+
+An independent integrity check confirms web preview facts, the backend store
+and all seven original tests still match the reference byte-for-byte. Restore
+generated screenshots and `next-env.d.ts` before each commit. No development
+server was started, no local-voice-assistant files were touched, and the known
+dictation-hotkey failure was neither run nor changed.
+
+Honest remaining gaps: no real-user accuracy or power-loss measurement; the
+configured browser-to-live-API deployment has component/transport/CORS tests
+but was not exercised using the owner's real tokens. M2 agent hooks/import,
+M3 honesty panels/history UI, M4 approval/pair UI, M5 voice client and M6 real-port
+ablation remain future milestones. Subject join stays OFF and healing remains
+approval-required.
