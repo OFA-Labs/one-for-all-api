@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OFA · Local execution</title><link rel="stylesheet" href="/control.css"></head>
+<body><header><h1>ONE FOR ALL <small>Local execution</small></h1><button id="stop" class="danger">Emergency stop</button></header>
+<p>This session executes deterministic commands and structured plans. Live reasoning and voice are future integrations. State is kept in memory.</p>
+<p id="connection">Connecting to local executor…</p><pre id="capabilities"></pre>
+<section><h2>Typed command</h2><form id="command"><input id="text" placeholder="open OFA Test Pad" required><button>Run</button></form><p>Commands: open &lt;allowed app&gt; · browse &lt;allowed URL&gt; · read file &lt;allowed path&gt;</p></section>
+<section><h2>Structured plan</h2><textarea id="plan" rows="8" spellcheck="false" aria-label="Structured plan JSON"></textarea><button id="run-plan">Run plan</button></section>
+<p id="error" role="alert"></p><section><h2>Tasks and progress</h2><div id="tasks"></div></section>
+<script src="/control.js"></script></body></html>
