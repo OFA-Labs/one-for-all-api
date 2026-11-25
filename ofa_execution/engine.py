@@ -198,7 +198,8 @@ class Engine:
                 if t.state not in TERMINAL and not t.held:
                     t.held = True
                     t.epoch += 1
-                    self._event(t, "user_takeover", epoch=t.epoch)
+                    self._event(t, "user_takeover", epoch=t.epoch,
+                                held_at_monotonic=time.monotonic())
 
     def _checkpoint(self, t):
         with self._cv:

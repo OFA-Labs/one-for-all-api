@@ -61,7 +61,10 @@ def test_real_native_multistep_approval_input_and_readback():
         while engine.snapshot(follow)['state']!='paused' and time.monotonic()<deadline:time.sleep(.005)
         paused=engine.snapshot(follow)
         assert paused['state']=='paused',paused['state']
-        assert time.monotonic()-start<.25
+        takeover=next(e for e in paused['events'] if e['type']=='user_takeover')
+        # Measure when input was actually suppressed, not when this polling
+        # thread was next scheduled after a UIA read/state update.
+        assert takeover['payload']['held_at_monotonic']-start<.25
         assert paused['effects']=={}
         assert any(e['type']=='user_takeover' for e in paused['events'])
         engine.control(follow,Control(action='cancel'))
