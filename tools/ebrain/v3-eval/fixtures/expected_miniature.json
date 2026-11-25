@@ -1,0 +1,63 @@
+{
+  "reviewed": true,
+  "review_note": "Reviewed by hand against miniature_history.json: ALPHA v2 then agent v3 with explicit base is current at cut 100; the late human v9 is noncurrent; CONFLICT has two equal-authority agents at ts=40 with the same empty base, so neither is current; BETA is out of scope; GAMMA is erased; EPSILON is future. Only ALPHA is authorized current. Hidden labels are oracle-private and never appear in public event fixtures.",
+  "expected": {
+    "all_keys": [
+      "K/ALPHA",
+      "K/BETA",
+      "K/CONFLICT",
+      "K/EPSILON",
+      "K/GAMMA"
+    ],
+    "as_of": 100,
+    "current_set": {
+      "K/ALPHA": {
+        "facets": {
+          "branch": "main",
+          "environment": "prod",
+          "namespace": "config",
+          "repo": "core-api",
+          "scope": "s1"
+        },
+        "hidden_label": "H-3aca7b4543c3",
+        "key": "K/ALPHA",
+        "provenance": [
+          "ev-06"
+        ],
+        "state": "current",
+        "valid_from": 50,
+        "valid_to": null,
+        "value": "a3"
+      }
+    },
+    "cuts": {
+      "K/ALPHA": 50,
+      "K/BETA": 30,
+      "K/CONFLICT": 40,
+      "K/EPSILON": 200,
+      "K/GAMMA": 65
+    },
+    "decisions": {
+      "ev-01": "applied",
+      "ev-02": "applied",
+      "ev-03": "applied",
+      "ev-04": "conflict",
+      "ev-05": "conflict",
+      "ev-06": "applied",
+      "ev-07": "accepted_noncurrent",
+      "ev-08": "applied",
+      "ev-09": "applied",
+      "ev-10": "accepted_pending"
+    },
+    "knowledge_seq": 9,
+    "oracle_hash": "1b5ea65fd19ceb0eeb3b701c74c04b90dfebd1ae030a88cecb676bb6747a2ddc",
+    "scope": "s1",
+    "states": {
+      "K/ALPHA": "current",
+      "K/BETA": "absent",
+      "K/CONFLICT": "conflict",
+      "K/EPSILON": "future",
+      "K/GAMMA": "withdrawn"
+    }
+  }
+}
