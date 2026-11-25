@@ -1,0 +1,17 @@
+{
+  "schema": 3,
+  "query_id": "q-0001",
+  "scope": "org-1/team-platform/repo-core-api",
+  "selector": {
+    "mode": "structured",
+    "key": "config/auth-token-ttl/value",
+    "text": null
+  },
+  "time_mode": "as_of",
+  "as_of": "2026-11-25T00:00:00Z",
+  "min_seq": 0,
+  "response_mode": "accurate",
+  "history": false,
+  "budget_bytes": 8192,
+  "facets": ["repo", "branch", "environment", "state"]
+}

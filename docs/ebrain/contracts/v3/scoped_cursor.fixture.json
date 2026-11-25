@@ -1,0 +1,9 @@
+{
+  "schema": 3,
+  "scope": "org-1/team-platform/repo-core-api",
+  "opaque": "cur-eyJrIjoiY3VyLTAwMDEifQ",
+  "signature": "1f2e3d4c5b6a79888776655443322110ffeeddccbbaa99887766554433221100",
+  "issued_at": "2026-11-25T00:00:00Z",
+  "snapshot_seq": 44,
+  "expires_at": "2026-11-25T01:00:00Z"
+}

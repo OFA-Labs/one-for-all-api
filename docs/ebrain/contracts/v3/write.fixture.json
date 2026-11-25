@@ -1,0 +1,25 @@
+{
+  "schema": 3,
+  "op_id": "op-0001",
+  "scope": "org-1/team-platform/repo-core-api",
+  "assertion": {
+    "namespace": "config",
+    "stable_id": "auth-token-ttl",
+    "predicate": "value",
+    "claim_kind": "direct",
+    "value_type": "scalar",
+    "value": "15 minutes"
+  },
+  "idempotency_key": "idem-0001",
+  "source": {
+    "source_id": "src-spec-auth",
+    "contract": "spec-snapshot-v3",
+    "principal": "user-1",
+    "grant": "grant-write-config"
+  },
+  "valid_interval": {
+    "valid_from": "2026-11-25T00:00:00Z",
+    "valid_to": null
+  },
+  "expected_head": "op-0000"
+}

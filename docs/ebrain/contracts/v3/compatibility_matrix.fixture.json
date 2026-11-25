@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "server_schema": 3,
+  "entries": [
+    {
+      "client_schema": 3,
+      "outcome": "supported",
+      "wire_behavior": "full answer_status, per-fact state, provenance, freshness, snapshot and degradation",
+      "notes": "joint exact scored on delivered facets"
+    },
+    {
+      "client_schema": 1,
+      "outcome": "legacy",
+      "wire_behavior": "schema-1 shape only; conflict/pending returned as explicit unavailable, never flattened to current",
+      "notes": "legacy event count is named separately from distinct-fact count"
+    },
+    {
+      "client_schema": 99,
+      "outcome": "rejected",
+      "wire_behavior": "400 with machine-readable error body; no silent schema inference",
+      "notes": "unknown header value never activates V3"
+    }
+  ]
+}
