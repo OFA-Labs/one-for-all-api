@@ -1,0 +1,43 @@
+{
+  "run_id": "20261125T024900Z-v3integrated",
+  "utc": "2026-11-25T02:49:32.911053+00:00",
+  "cwd": "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "git_commit": "d3797e62bb1d4666fd4ff301d687733d366737ab",
+  "dirty_source_digest": "d12a9083c1e56dfef904b71953277182681704a7f4ed8c19470ed74fd6ad01ec",
+  "commands": [
+    {
+      "command": "python -m pytest tests -q (EBRAIN_FACTS_SOURCES set to retained CSVs)",
+      "cwd": "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api",
+      "exit": 0,
+      "result": "154 passed, 17 skipped, 1 warning"
+    },
+    {
+      "command": "python -m pytest tests/v3 -q",
+      "cwd": "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api",
+      "exit": 0,
+      "result": "82 passed, 17 skipped, 1 warning"
+    },
+    {
+      "command": "python tools/ebrain/scripts/validate_v3_gate.py --discover-only",
+      "cwd": "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api",
+      "exit": 0,
+      "result": "29 mandatory pytest IDs discovered; missing=[]; M07 Playwright alias passed"
+    }
+  ],
+  "blocked_environment": {
+    "reason": "EBRAIN_V3_TEST_PG_DSN unset; no running Postgres/Docker daemon; psycopg not installed",
+    "skipped_integration_tests": 17,
+    "classification": "NOT_RUN / BLOCKED_ENVIRONMENT, never PASS"
+  },
+  "evidence_files": [
+    "backend-full.txt",
+    "v3-suite.txt",
+    "gate-discovery.json"
+  ],
+  "limitations": [
+    "No real Postgres/RLS/concurrency proof",
+    "No live model/provider, sealed evaluator, pilot or production deployment",
+    "Web evidence is in evidence/M14-web-v3/"
+  ]
+}

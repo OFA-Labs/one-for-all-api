@@ -1,0 +1,11 @@
+{
+  "utc": "2026-11-25T05:46:27.602739+00:00",
+  "cwd": "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api",
+  "named_tests": 29,
+  "discovered": 29,
+  "missing": [],
+  "discover_exit": 0,
+  "execution": "PASS",
+  "execution_exit": 0,
+  "skipped_present": false
+}
