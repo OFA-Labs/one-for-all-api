@@ -1,0 +1,176 @@
+  P8 inputs (4.0, (0.962, 0.866, 11.4, 127.83))
+  Final without ARGUED = 38.21
+
+## Control  Final=38.21  MC=41.83
+  P1    6.80
+  P2    5.52
+  P3    7.33
+  P4    0.00
+  P5    1.27
+  P6    5.25
+  P7    0.50
+  P8    4.00
+  P9    5.20
+  P10   2.80
+  P11   6.67
+    P1.A  share=0.50 s= 7.87
+    P1.B  share=0.25 s= 3.19
+    P1.C  share=0.25 s= 8.27
+    P2.A  share=0.40 s= 5.82
+    P2.B  share=0.30 s= 3.53
+    P2.C  share=0.20 s= 5.69
+    P2.D  share=0.10 s=10.00
+    P3.A  share=0.45 s= 5.86
+    P3.B  share=0.20 s= 5.95
+    P3.C  share=0.20 s=10.00
+    P3.D  share=0.15 s=10.00
+    P4.F  share=0.40 s= 0.00
+    P4.V  share=0.60 s= 0.00
+    P5.A  share=0.40 s= 0.00
+    P5.B  share=0.35 s= 0.76
+    P5.C  share=0.15 s= 0.00
+    P5.D  share=0.10 s=10.00
+    P6.A  share=0.25 s= 0.00
+    P6.B  share=0.25 s= 5.39
+    P6.C  share=0.15 s=10.00
+    P6.D  share=0.20 s= 5.24
+    P6.E  share=0.15 s= 9.00
+    P7.A  share=0.50 s= 0.00
+    P7.B  share=0.20 s= 2.50
+    P7.C  share=0.30 s= 0.00
+    P8    share=1.00 s= 4.00
+    P9    share=1.00 s= 5.20
+    P10   share=1.00 s= 2.80
+    P11   share=1.00 s= 6.67
+  P8 inputs 0
+  Final without ARGUED = 10.03
+
+## Spec-X  Final=18.53  MC=1.88
+  P1    0.00
+  P2    0.00
+  P3    0.00
+  P4    3.00
+  P5    0.00
+  P6    1.35
+  P7    2.04
+  P8    0.00
+  P9    5.00
+  P10   6.30
+  P11   8.00
+    P1.A  share=0.50 s= 0.00
+    P1.B  share=0.25 s= 0.00
+    P1.C  share=0.25 s= 0.00
+    P2.A  share=0.40 s= 0.00
+    P2.B  share=0.30 s= 0.00
+    P2.C  share=0.20 s= 0.00
+    P2.D  share=0.10 s= 0.00
+    P3.A  share=0.45 s= 0.00
+    P3.B  share=0.20 s= 0.00
+    P3.C  share=0.20 s= 0.00
+    P3.D  share=0.15 s= 0.00
+    P4.F  share=0.40 s= 0.00
+    P4.V  share=0.60 s= 5.00
+    P5.A  share=0.40 s= 0.00
+    P5.B  share=0.35 s= 0.00
+    P5.C  share=0.15 s= 0.00
+    P5.D  share=0.10 s= 0.00
+    P6.A  share=0.25 s= 0.00
+    P6.B  share=0.25 s= 0.00
+    P6.C  share=0.15 s= 0.00
+    P6.D  share=0.20 s= 0.00
+    P6.E  share=0.15 s= 9.00
+    P7.A  share=0.50 s= 0.00
+    P7.B  share=0.20 s= 0.00
+    P7.C  share=0.30 s= 6.80
+    P8    share=1.00 s= 0.00
+    P9    share=1.00 s= 5.00
+    P10   share=1.00 s= 6.30
+    P11   share=1.00 s= 8.00
+  P8 inputs (3.0, (0.904, 0.637, 19.1, 71.75))
+  Final without ARGUED = 51.14
+
+## Spec-Y  Final=59.64  MC=59.14
+  P1    4.72
+  P2    8.20
+  P3    8.78
+  P4    3.00
+  P5    5.00
+  P6    5.06
+  P7    9.04
+  P8    3.00
+  P9    5.00
+  P10   6.30
+  P11   8.00
+    P1.A  share=0.50 s= 5.46
+    P1.B  share=0.25 s= 3.56
+    P1.C  share=0.25 s= 4.40
+    P2.A  share=0.40 s= 6.68
+    P2.B  share=0.30 s= 8.44
+    P2.C  share=0.20 s=10.00
+    P2.D  share=0.10 s=10.00
+    P3.A  share=0.45 s= 8.88
+    P3.B  share=0.20 s= 8.28
+    P3.C  share=0.20 s= 8.13
+    P3.D  share=0.15 s=10.00
+    P4.F  share=0.40 s= 0.00
+    P4.V  share=0.60 s= 5.00
+    P5.A  share=0.40 s=10.00
+    P5.B  share=0.35 s= 0.00
+    P5.C  share=0.15 s= 0.00
+    P5.D  share=0.10 s=10.00
+    P6.A  share=0.25 s= 1.00
+    P6.B  share=0.25 s= 3.52
+    P6.C  share=0.15 s=10.00
+    P6.D  share=0.20 s= 5.40
+    P6.E  share=0.15 s= 9.00
+    P7.A  share=0.50 s=10.00
+    P7.B  share=0.20 s=10.00
+    P7.C  share=0.30 s= 6.80
+    P8    share=1.00 s= 3.00
+    P9    share=1.00 s= 5.00
+    P10   share=1.00 s= 6.30
+    P11   share=1.00 s= 8.00
+  P8 inputs (3.0, (0.903, 0.567, 10.0, 73.78))
+  Final without ARGUED = 48.09
+
+## Spec-Z  Final=56.23  MC=54.90
+  P1    3.55
+  P2    7.54
+  P3    9.54
+  P4    2.75
+  P5    5.11
+  P6    4.53
+  P7    8.11
+  P8    3.00
+  P9    5.00
+  P10   6.30
+  P11   8.00
+    P1.A  share=0.50 s= 4.23
+    P1.B  share=0.25 s= 1.89
+    P1.C  share=0.25 s= 3.84
+    P2.A  share=0.40 s= 5.36
+    P2.B  share=0.30 s= 7.98
+    P2.C  share=0.20 s=10.00
+    P2.D  share=0.10 s=10.00
+    P3.A  share=0.45 s= 9.64
+    P3.B  share=0.20 s= 9.52
+    P3.C  share=0.20 s= 9.00
+    P3.D  share=0.15 s=10.00
+    P4.F  share=0.40 s= 0.12
+    P4.V  share=0.60 s= 4.50
+    P5.A  share=0.40 s=10.00
+    P5.B  share=0.35 s= 0.00
+    P5.C  share=0.15 s= 0.76
+    P5.D  share=0.10 s=10.00
+    P6.A  share=0.25 s= 1.35
+    P6.B  share=0.25 s= 2.22
+    P6.C  share=0.15 s=10.00
+    P6.D  share=0.20 s= 3.92
+    P6.E  share=0.15 s= 9.00
+    P7.A  share=0.50 s= 8.33
+    P7.B  share=0.20 s= 9.50
+    P7.C  share=0.30 s= 6.80
+    P8    share=1.00 s= 3.00
+    P9    share=1.00 s= 5.00
+    P10   share=1.00 s= 6.30
+    P11   share=1.00 s= 8.00

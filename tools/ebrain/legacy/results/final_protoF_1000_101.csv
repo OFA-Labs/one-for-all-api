@@ -1,0 +1,57 @@
+run_id,contender,code_hash,harness_version,size,seed,scenario,metric,value,n,unit,note
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,correct_version_acc,1.0,58,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,zombie_rate,0.1897,58,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,zombie_rate_target_chain,0.0862,58,share,diagnostic: only codes of the queried chain
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S1,correct_version_acc,1.0,38,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S1,zombie_rate,0.1842,38,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S2,correct_version_acc,1.0,2,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S2,zombie_rate,0.0,2,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S3,correct_version_acc,1.0,6,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S3,zombie_rate,0.1667,6,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S6,correct_version_acc,1.0,8,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S6,zombie_rate,0.125,8,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S10,correct_version_acc,1.0,4,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S10,zombie_rate,0.5,4,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S9,correct_version_acc_b64,1.0,8,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S9,zombie_rate_b64,0.375,8,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S9,correct_version_acc_b256,1.0,8,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S9,zombie_rate_b256,0.375,8,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S9,correct_version_acc_b1024,1.0,8,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S9,zombie_rate_b1024,0.375,8,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,tokens_mean,60.92,111,proxy_tokens,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,tokens_p95,148.0,111,proxy_tokens,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,budget_violations,0,212,count,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,query_p50_ms,0.995,111,ms,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,query_p95_ms,2.186,111,ms,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,conflict_acc,0.6667,6,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S2,conflict_acc_t4,1.0,3,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S2,conflict_acc_t5,0.3333,3,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S4,tombstone_zombie_rate,0.0,3,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,injection_success_rate,0.0,6,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S6,injection_success_poison,0.0,2,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S6,injection_success_hijack,0.0,2,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S6,injection_success_spoof,0.0,2,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,leak_count,0,212,items,any value > 0 disqualifies
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S6,leak_count_probes,0,6,items,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,ambiguous_recall,1.0,2,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S10,summary_zombie_rate,0.0,4,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,asof_acc,1.0,12,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,stale_demotion_recall,0.0,3,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,heal_harm_rate,0.1667,6,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,dup_item_rate,0.0,240,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S3,dup_item_rate,0.0,12,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,provenance_valid,1.0,433,share,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,render_mismatch,0,212,items,items whose codes are absent from rendered
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,rendered_extra_codes,0,212,codes,codes in rendered but in no item
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,rejected_malformed_rate,1.0,16,share,"bad_kind: 4/4 rejected, 0 crash; empty_text: 4/4 rejected, 0 crash; oversize_text: 4/4 rejected, 0 crash; reused_op_id: 4/4 rejected, 0 crash"
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,rejected_valid_writes,0,1000,count,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S5,store_reopen_ok,1,1,bool,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S5,acked_lost_reopen,0,91,writes,probes found before close: 91/100
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S11,rollback_exact,1,15,bool,15/15 probes equal; periodic maintain() ran after t_r
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S11,rollback_exact_maintain,1,15,bool,15/15 probes equal; rollback after an extra maintain() on the rolled-back store
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,S2,acked_lost_concurrent,0,120,writes,two instances alternating; 0 writes not acked; baseline retrieves 120/120
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,acked_lost,0,1,writes,reopen + two-instance
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,write_p95_ms,0.648,1000,ms,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,maintain_p95_ms,0.438,6,ms,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,crashes,0,1,count,
+proto-F-anchor-tuned-1000-101-20261124T072947Z,proto-F-anchor-tuned,3637d6073f0b3c16,1.0.0,1000,101,ALL,runtime_s,2.36,1,s,

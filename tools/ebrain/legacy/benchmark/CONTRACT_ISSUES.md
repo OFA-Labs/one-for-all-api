@@ -1,0 +1,10 @@
+# Contract issues (benchmark engineer → Orchestrator)
+
+The public types in `harness/api.py` are unchanged. These are ambiguities in the contract. For each one I implemented the least surprising reading.
+
+1. **"Shown as current" when an item is flagged `conflict`.** T4 says "marks neither as current", but it also accepts the flag `conflict`. *Implemented:* an item asserts current only when `status == "current"` and `"conflict"` is not in `flags`. This applies to every metric, so an item flagged as a conflict can never count as a correct current answer or as a zombie. *Proposed fix:* state it in §2.
+2. **Items absent from `rendered`.** Nothing requires every item to appear in `rendered`. *Implemented:* an item whose value codes are not all in `rendered` is not scored. It is counted in `render_mismatch`. *Proposed fix:* add "every item's codes appear in rendered" to the Bundle contract.
+3. **Zombie scope.** §4 says "any superseded or invalid code". *Implemented:* any code in the bundle that is invalid at the query time counts, from any chain, including near-miss distractor chains. A diagnostic `zombie_rate_target_chain` restricts this to the queried chain.
+4. **S7 vs the kind mix.** §3 gives logs a 20% share, but S7 says "40% logs" for the 10k dataset. *Implemented:* at size ≥ 10000, logs are 40% and the other kinds are scaled to fill the remaining 60%.
+5. **Physical S2 and S5 kill (dropped by the Orchestrator).** These were descoped. They are replaced by (a) a close and reopen check (`acked_lost_reopen`) and (b) two Adapter instances on one workdir writing alternately in one process (`acked_lost_concurrent`). Neither replacement exercises OS-level concurrency or a kill partway through a batch, so those remain UNMEASURED.
+6. **acked_lost needs a contender-agnostic probe.** *Implemented:* an exact-text query with `as_of = w.ts` and a budget of 1024. A write counts as lost only if the probe found it before the close (or in a single-instance baseline) and did not find it afterwards. This separates retrieval misses from losses.

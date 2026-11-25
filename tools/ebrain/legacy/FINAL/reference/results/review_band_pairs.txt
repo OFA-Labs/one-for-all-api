@@ -1,0 +1,8 @@
+size=1000 seed=101 auto=0.7 review=0.45 pairs=0 true_same=0 precision=0.000
+size=1000 seed=101 auto=0.5 review=0.35 pairs=5 true_same=3 precision=0.600
+size=1000 seed=102 auto=0.7 review=0.45 pairs=1 true_same=1 precision=1.000
+size=1000 seed=102 auto=0.5 review=0.35 pairs=14 true_same=10 precision=0.714
+size=1000 seed=103 auto=0.7 review=0.45 pairs=4 true_same=2 precision=0.500
+size=1000 seed=103 auto=0.5 review=0.35 pairs=9 true_same=5 precision=0.556
+size=10000 seed=101 auto=0.7 review=0.45 pairs=39 true_same=14 precision=0.359
+size=10000 seed=101 auto=0.5 review=0.35 pairs=126 true_same=40 precision=0.317
