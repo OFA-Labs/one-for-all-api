@@ -1,0 +1,28 @@
+{
+  "title": "ebrain-v3-query",
+  "type": "object",
+  "required": ["schema", "query_id", "scope", "selector", "time_mode", "as_of", "min_seq", "response_mode", "history", "budget_bytes", "facets"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": 3},
+    "query_id": {"type": "string", "minLength": 1},
+    "scope": {"type": "string", "minLength": 1},
+    "selector": {
+      "type": "object",
+      "required": ["mode"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": {"enum": ["structured", "text"]},
+        "key": {"type": ["string", "null"], "minLength": 1},
+        "text": {"type": ["string", "null"]}
+      }
+    },
+    "time_mode": {"enum": ["current", "as_of"]},
+    "as_of": {"type": ["string", "null"], "minLength": 1},
+    "min_seq": {"type": "integer", "minimum": 0},
+    "response_mode": {"enum": ["accurate", "compact"]},
+    "history": {"type": "boolean"},
+    "budget_bytes": {"type": "integer", "minimum": 0},
+    "facets": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  }
+}

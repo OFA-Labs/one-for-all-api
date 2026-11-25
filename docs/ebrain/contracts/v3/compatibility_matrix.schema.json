@@ -1,0 +1,24 @@
+{
+  "title": "ebrain-v3-compatibility-matrix",
+  "type": "object",
+  "required": ["schema_version", "server_schema", "entries"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"type": "integer", "minimum": 1},
+    "server_schema": {"const": 3},
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["client_schema", "outcome", "wire_behavior", "notes"],
+        "additionalProperties": false,
+        "properties": {
+          "client_schema": {"type": "integer", "minimum": 1},
+          "outcome": {"enum": ["supported", "legacy", "rejected"]},
+          "wire_behavior": {"type": "string", "minLength": 1},
+          "notes": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

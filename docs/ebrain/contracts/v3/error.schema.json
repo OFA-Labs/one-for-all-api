@@ -1,0 +1,12 @@
+{
+  "title": "ebrain-v3-error",
+  "type": "object",
+  "required": ["code", "message", "request_id", "retryable"],
+  "additionalProperties": false,
+  "properties": {
+    "code": {"enum": ["malformed", "unauthenticated", "forbidden", "not_found", "conflict", "too_large", "semantic_error", "rate_limited", "unavailable"]},
+    "message": {"type": "string", "minLength": 1},
+    "request_id": {"type": "string", "minLength": 1},
+    "retryable": {"type": "boolean"}
+  }
+}

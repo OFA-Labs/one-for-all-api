@@ -1,0 +1,16 @@
+{
+  "title": "ebrain-v3-receipt",
+  "type": "object",
+  "required": ["schema", "op_id", "status", "committed_seq", "request_digest", "replay_marker"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": 3},
+    "op_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["applied", "accepted_pending", "accepted_noncurrent", "conflict", "rejected"]},
+    "committed_seq": {"type": ["integer", "null"], "minimum": 0},
+    "processing_url": {"type": ["string", "null"], "minLength": 1},
+    "request_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "replay_marker": {"type": "string", "minLength": 1},
+    "reason": {"type": ["string", "null"]}
+  }
+}

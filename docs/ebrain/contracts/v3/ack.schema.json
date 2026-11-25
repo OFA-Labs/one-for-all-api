@@ -1,0 +1,12 @@
+{
+  "title": "ebrain-v3-ack",
+  "type": "object",
+  "required": ["schema", "op_id", "status", "request_digest"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": 3},
+    "op_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["applied", "accepted_pending", "accepted_noncurrent", "conflict", "rejected"]},
+    "request_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
