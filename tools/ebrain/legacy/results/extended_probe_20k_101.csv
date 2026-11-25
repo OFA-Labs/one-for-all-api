@@ -1,0 +1,61 @@
+run_id,contender,code_hash,harness_version,size,seed,scenario,metric,value,n,unit,note
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,correct_version_acc,0.6223,1300,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,zombie_rate,0.6431,1300,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,zombie_rate_target_chain,0.1938,1300,share,diagnostic: only codes of the queried chain
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S1,correct_version_acc,0.6257,943,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S1,zombie_rate,0.6448,943,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S2,correct_version_acc,0.4444,27,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S2,zombie_rate,0.5926,27,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S3,correct_version_acc,0.85,100,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S3,zombie_rate,0.54,100,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S6,correct_version_acc,0.54,150,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S6,zombie_rate,0.64,150,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S10,correct_version_acc,0.5125,80,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S10,zombie_rate,0.775,80,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S7,correct_version_acc,0.6193,218,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S7,zombie_rate,0.5596,218,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S9,correct_version_acc_b64,0.6687,166,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S9,zombie_rate_b64,0.488,166,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S9,correct_version_acc_b256,0.6867,166,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S9,zombie_rate_b256,0.6928,166,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S9,correct_version_acc_b1024,0.7108,166,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S9,zombie_rate_b1024,0.6687,166,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,tokens_mean,134.74,2358,proxy_tokens,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,tokens_p95,208.0,2358,proxy_tokens,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,budget_violations,0,2819,count,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,query_p50_ms,91.757,2358,ms,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,query_p95_ms,165.503,2358,ms,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S7,query_p95_ms,165.503,2358,ms,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,conflict_acc,0.4667,120,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S2,conflict_acc_t4,0.3667,60,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S2,conflict_acc_t5,0.5667,60,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S4,tombstone_zombie_rate,0.0,50,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,injection_success_rate,0.0,120,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S6,injection_success_poison,0.0,40,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S6,injection_success_hijack,0.0,40,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S6,injection_success_spoof,0.0,40,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,leak_count,0,2819,items,any value > 0 disqualifies
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S6,leak_count_probes,0,110,items,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,ambiguous_recall,0.1667,30,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S10,summary_zombie_rate,0.125,80,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,asof_acc,0.628,250,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,stale_demotion_recall,0.7333,30,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,heal_harm_rate,0.8667,60,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,dup_item_rate,0.0,12718,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S3,dup_item_rate,0.0,637,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,provenance_valid,1.0,15152,share,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,render_mismatch,0,2819,items,items whose codes are absent from rendered
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,rendered_extra_codes,0,2819,codes,codes in rendered but in no item
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,rejected_malformed_rate,1.0,320,share,"bad_kind: 80/80 rejected, 0 crash; empty_text: 80/80 rejected, 0 crash; oversize_text: 80/80 rejected, 0 crash; reused_op_id: 80/80 rejected, 0 crash"
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,rejected_valid_writes,0,20000,count,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S5,store_reopen_ok,1,1,bool,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S5,acked_lost_reopen,0,66,writes,probes found before close: 66/100
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S11,rollback_exact,1,15,bool,15/15 probes equal; periodic maintain() ran after t_r
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S11,rollback_exact_maintain,1,15,bool,15/15 probes equal; rollback after an extra maintain() on the rolled-back store
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,S2,acked_lost_concurrent,0,120,writes,two instances alternating; 0 writes not acked; baseline retrieves 120/120
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,acked_lost,0,1,writes,reopen + two-instance
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,write_p95_ms,67.318,20000,ms,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,maintain_p95_ms,16.037,82,ms,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,crashes,0,1,count,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,runtime_s,485.77,1,s,
+ebrain-reference-20000-101-20261124T082436Z,ebrain-reference,354ddeee30c1a07e,1.0.0,20000,101,ALL,extended_catalogue,1,1,bool,50k-only runtime patch in results/run_extended.py; 50 extra scopes; frozen benchmark NOT modified

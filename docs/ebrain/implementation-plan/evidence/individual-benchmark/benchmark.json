@@ -1,0 +1,130 @@
+{
+  "utc": "2026-11-25T07:08:01.007548+00:00",
+  "hardware": "AMD Ryzen AI 5 340, 6 physical/12 logical cores, Windows 11 build 26300",
+  "workload": "80/20 read/write profile approximated by write-then-read; synthetic local service",
+  "targets": {
+    "joint_exact": 0.95,
+    "p95_ms": 200,
+    "recall": 0.99,
+    "filing": 0.98
+  },
+  "runs": [
+    {
+      "memories": 1000,
+      "distinct_qualified_facts": 1000,
+      "sessions": 1,
+      "queries_executed": 40,
+      "joint_exact_correct": 40,
+      "joint_exact": 1.0,
+      "latency_ms_p50": 0.049,
+      "latency_ms_p95": 0.199,
+      "latency_ms_p99": 0.272,
+      "context_tokens_median": 3.0,
+      "context_tokens_max": 3
+    },
+    {
+      "memories": 1000,
+      "distinct_qualified_facts": 1000,
+      "sessions": 3,
+      "queries_executed": 120,
+      "joint_exact_correct": 120,
+      "joint_exact": 1.0,
+      "latency_ms_p50": 0.048,
+      "latency_ms_p95": 0.105,
+      "latency_ms_p99": 0.202,
+      "context_tokens_median": 3.0,
+      "context_tokens_max": 3
+    },
+    {
+      "memories": 1000,
+      "distinct_qualified_facts": 1000,
+      "sessions": 5,
+      "queries_executed": 200,
+      "joint_exact_correct": 200,
+      "joint_exact": 1.0,
+      "latency_ms_p50": 0.057,
+      "latency_ms_p95": 0.136,
+      "latency_ms_p99": 0.355,
+      "context_tokens_median": 3.0,
+      "context_tokens_max": 3
+    },
+    {
+      "memories": 10000,
+      "distinct_qualified_facts": 10000,
+      "sessions": 1,
+      "queries_executed": 40,
+      "joint_exact_correct": 40,
+      "joint_exact": 1.0,
+      "latency_ms_p50": 0.046,
+      "latency_ms_p95": 0.081,
+      "latency_ms_p99": 0.243,
+      "context_tokens_median": 3.0,
+      "context_tokens_max": 3
+    },
+    {
+      "memories": 10000,
+      "distinct_qualified_facts": 10000,
+      "sessions": 3,
+      "queries_executed": 120,
+      "joint_exact_correct": 120,
+      "joint_exact": 1.0,
+      "latency_ms_p50": 0.049,
+      "latency_ms_p95": 0.079,
+      "latency_ms_p99": 0.154,
+      "context_tokens_median": 3.0,
+      "context_tokens_max": 3
+    },
+    {
+      "memories": 10000,
+      "distinct_qualified_facts": 10000,
+      "sessions": 5,
+      "queries_executed": 200,
+      "joint_exact_correct": 200,
+      "joint_exact": 1.0,
+      "latency_ms_p50": 0.092,
+      "latency_ms_p95": 0.173,
+      "latency_ms_p99": 0.308,
+      "context_tokens_median": 3.0,
+      "context_tokens_max": 3
+    },
+    {
+      "memories": 50000,
+      "distinct_qualified_facts": 50000,
+      "sessions": 1,
+      "queries_executed": 40,
+      "joint_exact_correct": 40,
+      "joint_exact": 1.0,
+      "latency_ms_p50": 0.089,
+      "latency_ms_p95": 0.229,
+      "latency_ms_p99": 0.438,
+      "context_tokens_median": 3.0,
+      "context_tokens_max": 3
+    },
+    {
+      "memories": 50000,
+      "distinct_qualified_facts": 50000,
+      "sessions": 3,
+      "queries_executed": 120,
+      "joint_exact_correct": 120,
+      "joint_exact": 1.0,
+      "latency_ms_p50": 0.069,
+      "latency_ms_p95": 0.215,
+      "latency_ms_p99": 0.385,
+      "context_tokens_median": 3.0,
+      "context_tokens_max": 3
+    },
+    {
+      "memories": 50000,
+      "distinct_qualified_facts": 50000,
+      "sessions": 5,
+      "queries_executed": 200,
+      "joint_exact_correct": 200,
+      "joint_exact": 1.0,
+      "latency_ms_p50": 0.083,
+      "latency_ms_p95": 0.278,
+      "latency_ms_p99": 0.376,
+      "context_tokens_median": 3.0,
+      "context_tokens_max": 3
+    }
+  ]
+}

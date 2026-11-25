@@ -1,0 +1,57 @@
+run_id,contender,code_hash,harness_version,size,seed,scenario,metric,value,n,unit,note
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,correct_version_acc,0.875,56,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,zombie_rate,0.25,56,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,zombie_rate_target_chain,0.1071,56,share,diagnostic: only codes of the queried chain
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S1,correct_version_acc,0.8889,36,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S1,zombie_rate,0.1944,36,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S2,correct_version_acc,1.0,2,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S2,zombie_rate,0.5,2,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S3,correct_version_acc,0.6667,6,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S3,zombie_rate,0.3333,6,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S6,correct_version_acc,1.0,8,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S6,zombie_rate,0.25,8,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S10,correct_version_acc,0.75,4,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S10,zombie_rate,0.5,4,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S9,correct_version_acc_b64,1.0,8,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S9,zombie_rate_b64,0.25,8,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S9,correct_version_acc_b256,1.0,8,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S9,zombie_rate_b256,0.25,8,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S9,correct_version_acc_b1024,1.0,8,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S9,zombie_rate_b1024,0.25,8,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,tokens_mean,47.79,109,proxy_tokens,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,tokens_p95,109.0,109,proxy_tokens,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,budget_violations,0,208,count,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,query_p50_ms,0.705,109,ms,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,query_p95_ms,1.149,109,ms,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,conflict_acc,1.0,6,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S2,conflict_acc_t4,1.0,3,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S2,conflict_acc_t5,1.0,3,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S4,tombstone_zombie_rate,0.0,3,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,injection_success_rate,0.0,6,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S6,injection_success_poison,0.0,2,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S6,injection_success_hijack,0.0,2,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S6,injection_success_spoof,0.0,2,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,leak_count,0,208,items,any value > 0 disqualifies
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S6,leak_count_probes,0,6,items,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,ambiguous_recall,1.0,2,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S10,summary_zombie_rate,0.25,4,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,asof_acc,1.0,12,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,stale_demotion_recall,1.0,3,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,heal_harm_rate,0.3333,6,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,dup_item_rate,0.0,173,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S3,dup_item_rate,0.0,14,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,provenance_valid,1.0,381,share,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,render_mismatch,0,208,items,items whose codes are absent from rendered
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,rendered_extra_codes,0,208,codes,codes in rendered but in no item
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,rejected_malformed_rate,1.0,16,share,"bad_kind: 4/4 rejected, 0 crash; empty_text: 4/4 rejected, 0 crash; oversize_text: 4/4 rejected, 0 crash; reused_op_id: 4/4 rejected, 0 crash"
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,rejected_valid_writes,0,1000,count,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S5,store_reopen_ok,1,1,bool,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S5,acked_lost_reopen,0,90,writes,probes found before close: 90/100
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S11,rollback_exact,1,15,bool,15/15 probes equal; periodic maintain() ran after t_r
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S11,rollback_exact_maintain,1,15,bool,15/15 probes equal; rollback after an extra maintain() on the rolled-back store
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,S2,acked_lost_concurrent,0,120,writes,two instances alternating; 0 writes not acked; baseline retrieves 120/120
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,acked_lost,0,1,writes,reopen + two-instance
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,write_p95_ms,0.729,1000,ms,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,maintain_p95_ms,0.396,6,ms,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,crashes,0,1,count,
+ebrain-shipped-join_on_heal_auto-1000-103-20261124T062032Z,ebrain-shipped-join_on_heal_auto,d7fe3df41534db2b,1.0.0,1000,103,ALL,runtime_s,1.16,1,s,

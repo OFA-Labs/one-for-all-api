@@ -1,0 +1,34 @@
+$ python -m ebrain.v3.cli --enable-v3-local --persistent remember --op-id live-20261125T0 --resource-id live-demo --value postgresql-16
+exit=0
+{"auth_epoch": 1, "claim_id": "cl_e675b111474e54a15c34", "fact_id": "fk_f3c761c6ff7163cc3fcabab0", "knowledge_seq": 2, "op_id": "live-20261125T0", "processing_url": "", "reason": "applied", "request_digest": "3cbe12cc25e90584378740244ecc92efacac352845b3925a863d49e2eae57622", "scope": "one-for-all", "status": "applied"}
+
+
+$ python -m ebrain.v3.cli --enable-v3-local --persistent pack --text live-demo
+exit=1
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\jaiva\OneDrive\Desktop\voice-agents\one-for-all-api\ebrain\v3\cli.py", line 114, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "C:\Users\jaiva\OneDrive\Desktop\voice-agents\one-for-all-api\ebrain\v3\cli.py", line 82, in main
+    delivery = CliAdapter(service).pack(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jaiva\OneDrive\Desktop\voice-agents\one-for-all-api\ebrain\v3\clients\adapters.py", line 20, in pack
+    answer = self.service.query(ctx, selector)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jaiva\OneDrive\Desktop\voice-agents\one-for-all-api\ebrain\v3\service.py", line 83, in query
+    else self.ledger.load_slice(ctx, (), snapshot.knowledge_seq))
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jaiva\OneDrive\Desktop\voice-agents\one-for-all-api\ebrain\v3\db\postgres.py", line 325, in load_slice
+    else json.loads(r[5]) if r[5] else None),
+         ^^^^^^^^^^^^^^^^
+  File "C:\Users\jaiva\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jaiva\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jaiva\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

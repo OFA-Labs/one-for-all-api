@@ -1,0 +1,26 @@
+# M10 — Scoped retrieval with explicit completeness
+
+**State: PARTIAL — 3 PASS / 2 IN_PROGRESS / 1 BLOCKED_DECISION (2026-11-25).** Qualified/protected candidates, lexical arm, RRF fusion, failure contract and authoritative answer integration (CP10.6) are implemented and tested; scoped FTS+delta overlay and adaptive widening are incomplete; vector/graph activation awaits D02/D07. Depends on M9 registry/sources and M8 snapshot/delta interface. Full authoritative integration CP10.6 waits for M11. D02/D07 authorize specific local model use. V3 §§7,10–13,18,21; findings H01/H03/H10 and cross-layer C03/C04.
+
+## Files and responsibility
+
+Create `ebrain/v3/retrieval/{selectors,exact,lexical,vector,graph,fusion,shortlist,query}.py`, compatible model/index manifests and shadow backfill tooling, plus `tests/v3/test_retrieval.py`, `test_model_generations.py`, integration tests for query snapshots/delta/ANN filters. Add only retrieval arms with measured benefit or required invariant. Existing legacy `_rank/_items/_render` remain comparison targets and schema-1 behavior.
+
+## Ordered implementation
+
+1. **CP10.1 — structured selectors and protected candidates.** Exact fact/full qualified key/approved alias first; qualified code/path searches may yield multiple scoped facts and historical claims. Missing qualifiers create ambiguity. Authorize before fetching candidates, evidence or graph. Keep protected exact and deterministic qualifying matches outside reranker truncation. Unqualified path/code never acts as universal identity.
+2. **CP10.2 — lexical and delta arms.** Scoped sanitized PostgreSQL FTS, stable ranking/provenance and per-arm budgets. Do not call `ts_rank` BM25. Exact registry and committed delta overlay include newly admitted unindexed facts and pending evidence at query snapshot. Return search coverage watermark; unassigned evidence is pending, never a current result.
+3. **CP10.3 — semantic/graph arms.** Approved local encoder/reranker from pinned manifest; scoped graph edges for family/dependency/near-miss, no equality/authority from edge. Do not mix incompatible vector spaces even if dimensions match. Evaluate filtered ANN against exact authorized scan; use increased effort/exact fallback or separate security-domain index if isolation/recall inadequate. No broadening permissions to improve recall; test hidden statistics, timing/count metadata and candidate existence.
+4. **CP10.4 — fusion and adaptive widening.** RRF with approved fixed positive weights/k0 and 1-based ranks, absent contributes zero. Keep per-arm provenance and protected union. Calibrated reranker cannot remove protected identities. Widen for missing facets, close/uncertain scores, near-misses, disagreement, incomplete watermark or unresolved candidate; at max measured budget return partial/needs clarification. One successful candidate does not prove a multi-fact question complete.
+5. **CP10.5 — model/index generations and failure.** Immutable input/preprocess/model/tokenizer/weights/schema/runtime manifest. Shadow build, catch-up to watermark, held-out recall/security/latency comparison, atomic approved pointer activation and compatible rollback. Pin generation for in-flight query. Model/vector/reranker down -> eligible exact+lexical/graph with explicit degraded coverage; stale replica -> primary/pending; DB unavailable -> unavailable, not stale cache current. Cancellation/deadlines bounded.
+6. **CP10.6 — authoritative query integration.** Load authorized source/identity/claims at one snapshot, call M11 resolver, enforce pending impacts/freshness, preserve state/scope/provenance during clipping, final current auth check and scoped receipt. Exact current remains usable if independent accelerators fail and identity/state proven; natural-language coverage may be partial. Record both internal candidate/current state and actual delivered payload for evaluation. This checkpoint stays NOT_RUN until M11 is integrated.
+
+## Checkpoint gate
+
+CP10.1 qualified selector tests and protected union; CP10.2 unindexed-write discovery; CP10.3 scoped ANN recall/security; CP10.4 adversarial rank/multifacet coverage; CP10.5 interrupted backfill/mixed generation/failure; CP10.6 full state/snapshot/min_seq and clipping all pass. Relevant authorized final candidate recall **>=.99** on answerable suite, before/after rerank and each arm reported. Accuracy is measured with V3 joint metric; rankings cannot certify authority.
+
+Future commands: `.venv\Scripts\python.exe -m pytest tests/v3/test_retrieval.py tests/v3/test_model_generations.py tests/v3/integration/test_query_snapshot.py tests/v3/security/test_search_isolation.py -q`, then versioned eval CLI built in M7, public seeds/strata and mandatory legacy compatibility suite. Record latency including model, auth/snapshot and declared network boundary; no invented <200ms result.
+
+## Rollback / exit
+
+Disable a new arm or restore a compatible active index pointer with its manifest; exact state still resolves from authoritative ledger. Never restore an old index as current without delta/suppression/auth coverage. Full M10 PASS requires CP10.6; M11 may proceed while candidate-only CP10.1–5 are complete. Hand over retrieval manifests, recall losses/strata and failure contract to M12/M13.

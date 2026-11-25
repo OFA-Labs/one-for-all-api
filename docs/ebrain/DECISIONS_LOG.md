@@ -280,6 +280,46 @@ hook commands themselves are integration-tested; this does not claim the
 owner's personal service or agent credentials have been configured. M3–M6
 remain future milestones. Approval-required healing and join OFF are preserved.
 
+### M5 voice bridge and M6 T-042 re-run
+
+- `ebrain/voice_client.py` is a client library only. `refresh()` schedules a
+  daemon thread and returns immediately; all HTTP work, client construction and
+  failures happen on that thread. `pack == ""` until a successful response and
+  when no token is configured, so the voice agent runs without memory. The
+  real voice agent is not in this repo and `local-voice-assistant` was not
+  touched. UNTESTED tags cover real-session freshness and overlapping turns;
+  the default 1024 token budget carries a LIMIT note from 08-config.md.
+- M6 re-ran T-042 on the **shipped** store (temporary harness adapters outside
+  the repo, CSVs in `FINAL/reference/results/t042_shipped_*.csv`). Baseline
+  `heal_mode=auto`/join-off vs join-on: 1k seeds 101/102/103 were identical
+  (zombie 0.1034 / 0.2167 / 0.250; acc 0.931 / 0.9167 / 0.875). At 10k seed 101
+  join-on gave zombie 0.5955 vs 0.5923 and acc 0.6742 vs 0.6758 — no ≥ 0.02
+  zombie improvement, and slightly worse. T-042 therefore still fails and
+  `subject_join` stays `off`. No measured number in `limits_facts.json` was
+  changed; the result is recorded in `FINAL/11-decisions.md` ADR-9.
+
+### M3 UI and spec-test selector correction
+
+- The feature imports `MemoryList` with an explicit `capacityState` prop in
+  addition to `client`. 07-ui.md §2.3 shows `<MemoryList client={client} />`,
+  but §4c names `capacity_state` as the source of the "beyond tested range"
+  per-item badge and `ChainSummary` from `/chains` does not carry it. Passing
+  the already-loaded `Limits.capacity_state` avoids a second request and keeps
+  every badge sourced from the endpoint; no number is hard-coded.
+- The mock client adds synthetic chain/version/pair fixtures and a `heal`
+  fixture with one proposal for previewing the M3 drawer and M4 approval UI.
+  All copy and measured numbers still come from the copied
+  `limits_facts.json`; the new values are preview provenance only, never
+  presented as measured.
+- **Spec test corrected (selector only):** the supplied M3 test
+  `getByText("EXPERIMENTAL")` failed in strict mode because it matched both the
+  badge and the endpoint's known-flaw sentence "The experimental same-fact
+  detector did not reduce stale values in tests and is OFF." Evidence: the
+  Playwright failure listed two matching elements. Changed the locator to
+  `getByText("EXPERIMENTAL", { exact: true })`; the assertion is unchanged and
+  no test is skipped, removed or made lenient. This follows the M1
+  `role="alert"` scoping precedent.
+
 ### M2 developer handoff clarification
 
 The owner asked whether the untested work tells the next developer what to do
@@ -291,3 +331,149 @@ and PR descriptions. Link each CLI UNTESTED comment and the README to its
 relevant case. This follow-up changes documentation/comments only; no live
 session, credential configuration, personal bootstrap or reliability claim is
 newly marked tested.
+
+
+### Planner handoff and recoverable workspace consolidation — 2026-11-24
+
+- Owner requested an end-to-end implementation folder and retirement of the
+  tournament/offline voice prototype, then explicitly selected V3 as the main
+  plan with a crosswalk from the older research handoff milestones.
+- `docs/ebrain/implementation-plan/README.md` is the new coding-agent entry
+  point: M7–M14, 52 checkpoints, all 30 V3 regression IDs, actual baseline,
+  API/architecture/decision contracts, test and migration/recovery procedures.
+  V3 product implementation remains NOT STARTED. No architecture/safety/model
+  activation or production migration is claimed approved by this log entry.
+- The misnamed SPEC_DEV_BRAIN_V2.md contained V3 text and matched the owner's
+  Downloads V3 file byte-for-byte. Preserve it as SPEC_DEV_BRAIN_V3.md and
+  archive the old filename. Do not invent/reconstruct a true V2 document.
+- Preserve 150 frozen spec/reference/harness/research/result files under
+  tools/ebrain/legacy with per-file SHA-256. Original competition scaffolding,
+  third-party clones, offline app and four loose images are recoverably moved
+  to sibling voice-agents-cleanup-backup-20261124 after verified source ZIP.
+  Existing application-data DB, API/web product logic and owner work remain.
+- Active backend check supplies EBRAIN_FACTS_SOURCES to the unmodified T-024
+  test: 72 passed, no skips, one existing Starlette/httpx warning (29.12s).
+  Before configuration: 71 passed/1 skipped. Frozen harness: 12 passed (0.55s).
+  Separate reference/current-product 1k seed-101 subprocesses reproduce .9310
+  presence accuracy and .1207 zombie, zero measured leak/injection/budget/
+  crash/ack-loss counts; Python 3.12 runtime and source hashes are recorded.
+- Web typecheck, architecture, lint and build passed; 33 selected browser
+  tests passed before cleanup and again afterward (41.3s). These are synthetic
+  preview checks, not a live owner-authenticated browser/agent validation.
+- New wrappers resolve relocated paths and distinguish current product code
+  hashes from frozen reference. Frozen evidence and generated limits JSONs
+  stay unchanged; no model calls, dependency upgrades, pricing, commits,
+  deployments, real-data imports or long-running 50k reruns were performed.
+- Exact evidence, owner-file preservation and cleanup manifests live under
+  docs/ebrain/implementation-plan/evidence. Live sessions, V3 Postgres/RLS,
+  100k distinct facts, 200-session load and V3 quality targets remain NOT RUN.
+
+## 2026-11-25 — V3 implementation decisions (PROPOSED, not owner-approved)
+
+The main-plan selection authorized deterministic implementation and isolated
+testing only. The following decisions record choices actually made in code;
+they are **PROPOSED** and do not activate production routing, models, pricing,
+migration or company deployment. Frozen reference decisions above remain active.
+
+- **D01 (PROPOSED) — isolated V3 backend and schema negotiation.** Added
+  `ebrain/v3/` with disabled-by-default flags, strict schema-3 contracts,
+  ordered migrations in `migrations/ebrain_v3/0001_init.sql`, and an optional
+  psycopg 3 adapter. Legacy SQLite/schema-1 service and tests are untouched.
+  No driver/version was added to production pins; psycopg is test-only.
+  Evidence: `implementation-plan/evidence/20261125T024900Z-v3integrated/`.
+- **D02/D07 (PROPOSED) — model-free resolver, model boundary disabled.** All
+  authority, identity and currency decisions use deterministic pure code.
+  `models/manifest.py` and `models/classifier.py` validate strict outputs and
+  cache by sanitized input; no external/paid model, network call or provider
+  was selected. Semantic filing, vector, rerank and NLI flags remain off.
+- **D03 (PROPOSED) — authority from admitted grants only.** Admission derives
+  authority from server grants; text/lineage cannot raise it. Intended decisions
+  and observed states are distinct claim kinds; external/derived evidence never
+  establishes current. Conflicts from a shared observed base never use a
+  timestamp/UUID tie-break. Legacy lower-authority override stays schema-1 only.
+- **D04 (PROPOSED) — typed registry with unknown qualifiers pending.** Required
+  qualifiers are never defaulted; units normalize exactly; unsupported
+  multi-valued predicates are rejected. Source revisions are immutable and
+  deduplicated; partial scans never imply deletion.
+- **D05/D08 (PROPOSED) — append-only erasure and separation of duties.** Physical
+  history deletion is not used by V3; suppression tombstones and reviewed
+  compensating events are appended. Review requires version/digest CAS and an
+  independent approver for high-risk changes; absent stewards stay blocked.
+- **D06 (PROPOSED) — config-driven fact quotas, separate budgets, price unset.**
+  Plan labels are explicitly `unmeasured`; legacy event-count warnings stay in
+  schema 1. No currency, price or checkout was invented.
+- **D09 (PROPOSED) — independent oracle, joint-exact metric and negative controls.**
+  `tools/ebrain/v3-eval/` is test-only, imports no product code, and includes
+  protocol/generator/oracle/metrics/runner/manifest plus seven negative controls.
+  Sealed suite is NOT_CONFIGURED pending an independent evaluator.
+- **D10/D11/D12 (NOT SELECTED / UNSET).** No SSO provider, SCIM delivery,
+  production cutover window or price was chosen. Web preview and migration
+  tools are rehearsal-only; no live session, deployment or data migration was
+  performed.
+
+Full draft ADRs with alternatives, impact, activation and rollback are in
+`implementation-plan/evidence/M7/adr-drafts.md`. None of these entries approves
+an activation gate; owner approval must be appended as a separate dated record.
+
+## 2026-11-25 — Owner handover approvals (approved policy, local scope only)
+
+Source: owner-approved `OFA E-Brain V3 — Owner Approval & Master Implementation
+Handover` (13/13 dispositions). Draft reconciliation: the four M7 drafts in
+`implementation-plan/evidence/M7/adr-drafts.md` are consistent with the approved
+D01/D03/D09 principles; no material conflict was found. Approval of policy is
+not approval of production activation.
+
+- **ADR-D01 (APPROVED).** One atomic PostgreSQL transaction for accepted evidence,
+  revision/base state, pending fences, durable outbox, receipt and watermark;
+  accepted is not applied. Explicit `X-EBrain-Schema: 3` negotiation with safe
+  schema-1 compatibility; unsupported or unsafe representations are rejected,
+  never mislabelled current. One authoritative writer during migration; cutover
+  requires separate authority. Verified by 22 real-Postgres integration cases
+  (`implementation-plan/evidence/20261125T054620Z-pg-integration/manifest.json`).
+- **ADR-D03 (APPROVED).** Scoped authority hierarchy: organizational/domain
+  decisions > permitted developer assertions > agent suggestions/external
+  evidence, within predicate/domain/source contract. Lineage is never permission;
+  delegation is explicit and bounded; incomparable authorized branches conflict
+  with no scalar current; intended decisions and observed state stay separate.
+  T1-T7 are normative. Deliberate divergence from legacy T2/T3 (lower-authority
+  override, external current, physical rollback) is retained and versioned:
+  legacy tests remain unchanged and V3 cases are separate. Automated routine
+  automation is approved for storage/evidence extraction/index refresh/duplicate
+  and conflict detection; detection is not approval to merge.
+- **ADR-D02/D07 (APPROVED CANDIDATE POLICY, ACTIVATION GATED).** Local AI-assisted
+  hybrid retrieval is approved; no paid API, hosted fallback or model authority
+  over truth. Approved candidates: `intfloat/multilingual-e5-small` (384) and
+  `BAAI/bge-small-en-v1.5` (384) embeddings, `cross-encoder/ms-marco-MiniLM-L6-v2`
+  reranker, typed-rules classifier first, optional local Qwen3 4B for hard
+  suggestions/summaries, pgvector HNSW only after measured filtered recall.
+  Artifact/tokenizer/runtime hashes, calibration and offline proof remain
+  pending; no component is active. If none passes, safe exact/lexical with
+  explicit degraded status is used.
+- **ADR-D08 (APPROVED, LOCAL SINGLE-USER EXCEPTION).** Owner is primary steward;
+  backup unassigned. SLAs 4h/24h/72h/7d by priority; timeout escalates and never
+  auto-approves. Narrow audited single-user exception is allowed only for
+  isolated local development/synthetic tests, never production. High-risk real
+  pilot or production operations requiring two distinct humans remain BLOCKED.
+- **ADR-D05 (APPROVED LOCAL POLICY).** Retention classes: accepted events for
+  project lifetime, cards/embeddings only with eligible facts, receipts 90d,
+  debug logs 30d, audit 365d, encrypted backups 30d. Tombstone by default,
+  immediate suppression across all paths, controlled hard erasure with
+  authorized procedure. Daily encrypted local backups with AES-256 AEAD
+  candidate and keys outside the backup; exact key custody/path still owner
+  action. Production residency/legal review remains pending.
+- **ADR-D06 (APPROVED).** Price is NULL, not zero; billing/paywalls/outbound
+  commercial integrations deferred. Usage/resource accounting is allowed;
+  monetary cost remains unknown/unmeasured.
+- **ADR-D09 (APPROVED PROTOCOL).** Retain all V3 thresholds and per-seed/stratum
+  denominators; public 101/102/103 are development only. An isolated OpenCode
+  evaluator owns a new sealed suite and commitment; builder cannot read hidden
+  labels, seeds or salt. Tuning on a sealed failure retires that suite.
+  Isolation, commitment and sealed results remain NOT_CONFIGURED/NOT_RUN.
+- **ADR-D10 (DEFERRED).** No live OAuth/OIDC/SCIM, no provider configuration and
+  no authenticated production session in this scope. Local server-controlled
+  principals + RLS only; preview is never authentication evidence.
+- **ADR-D11 (APPROVED FOR REHEARSAL ONLY).** Local migration, backup, restore,
+  freeze/fence/delta and rollback rehearsals authorized; real production
+  cutover, production DB edits and legacy deletion explicitly deferred.
+- **ADR-D12/NOT SELECTED.** No price, provider, hardware target or production
+  model artifact is selected by these approvals.

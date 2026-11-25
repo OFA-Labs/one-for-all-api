@@ -1,0 +1,85 @@
+{
+    "note":  "Frozen legacy synthetic protocol. Runtime may differ from original Python 3.11 research. Product source hashes supplement harness adapter hash. Not V3 evidence.",
+    "git_head":  "d3797e62bb1d4666fd4ff301d687733d366737ab",
+    "python":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\.venv\\Scripts\\python.exe",
+    "args":  [
+                 "-m",
+                 "harness.runner",
+                 "--contender",
+                 "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\tools\\ebrain\\legacy\\FINAL\\reference\\impl",
+                 "--size",
+                 "10000",
+                 "--seed",
+                 "103",
+                 "--out",
+                 "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\docs\\ebrain\\implementation-plan\\evidence\\legacy-reference-10000-103-20261125T025449532Z-a1dfc00e\\results.csv",
+                 "--timeout-s",
+                 "900"
+             ],
+    "seed":  103,
+    "csv_sha256":  "98a30e8919f1105009e117eff6dd45f1bb89a684419ce217afd66562c7dc4960",
+    "size_events":  10000,
+    "contender":  "reference",
+    "completed_at_utc":  "2026-11-25T02:55:52.3144825Z",
+    "run_id":  "20261125T025449532Z-a1dfc00e",
+    "cwd":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\tools\\ebrain\\legacy\\benchmark",
+    "exit_code":  0,
+    "runtime":  [
+                    "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                    "3.49.1"
+                ],
+    "source_hashes":  [
+                          {
+                              "sha256":  "c3fa1d4e18a61559981895e989508fc1171d6f6e037063153b95342f321a8acc",
+                              "path":  "tools/ebrain/legacy/FINAL/reference/impl/adapter.py"
+                          },
+                          {
+                              "sha256":  "da0b7bed4ac9b1f0b115ce834bb7584208567fa697972e8274629fd6a4ef6b7b",
+                              "path":  "tools/ebrain/legacy/FINAL/reference/impl/ebrain/__init__.py"
+                          },
+                          {
+                              "sha256":  "31b251f558d9997907d333c3ac6a1a36e1895e407529c6f55dda549ab25489e0",
+                              "path":  "tools/ebrain/legacy/FINAL/reference/impl/ebrain/api.py"
+                          },
+                          {
+                              "sha256":  "ab8b8c87befbebfedfa80c10208c14a0aac98a0f306d2d8ccf745df98955141e",
+                              "path":  "tools/ebrain/legacy/FINAL/reference/impl/ebrain/facts.py"
+                          },
+                          {
+                              "sha256":  "421fce866ad3f252824ec1fc6523d6fc2eef14b7c5b82a2e6478dd8a20f4be20",
+                              "path":  "tools/ebrain/legacy/FINAL/reference/impl/ebrain/models.py"
+                          },
+                          {
+                              "sha256":  "26402fb7189ee9d38bb029cc20b44150d19313d55a4fa5a285dd434263aacfa4",
+                              "path":  "tools/ebrain/legacy/FINAL/reference/impl/ebrain/store.py"
+                          },
+                          {
+                              "sha256":  "fac4f992d8b0c48f8f146101a77522ecc880ecd81eb71314ca0f4e79b82ce139",
+                              "path":  "tools/ebrain/legacy/FINAL/reference/impl/tests/conftest.py"
+                          },
+                          {
+                              "sha256":  "c90591a7d6a62af5a6d2218710e46e69cbd0271a73436cd6d751c13cf642fe9e",
+                              "path":  "tools/ebrain/legacy/FINAL/reference/impl/tests/test_api.py"
+                          },
+                          {
+                              "sha256":  "4d865da8ad65214ae1133ffd003e438f511d31ac959c1c88c20e44b53aa28d2e",
+                              "path":  "tools/ebrain/legacy/FINAL/reference/impl/tests/test_facts.py"
+                          },
+                          {
+                              "sha256":  "b7952d577b8f1af94486bcd1441ab11cb1a281072af2ba9b892afbceef588abf",
+                              "path":  "tools/ebrain/legacy/FINAL/reference/impl/tests/test_final.py"
+                          },
+                          {
+                              "sha256":  "e219989ecbc288320f457e7ef918ad0b6999045d5f8d39e396242b80c6d5e132",
+                              "path":  "tools/ebrain/legacy/FINAL/reference/impl/tests/test_store.py"
+                          },
+                          {
+                              "sha256":  "a7abf2e256de56ac4bad29c22857405579094ff4c417a90901fff6cba7a26e34",
+                              "path":  "tools/ebrain/legacy/FINAL/reference/impl/tests/test_tags.py"
+                          },
+                          {
+                              "sha256":  "2a0f1b44d96f70b8a1db6e40125e03a2be903d96e0b42419dfcf93f36b1b8b78",
+                              "path":  "tools/ebrain/legacy/FINAL/reference/impl/tests/test_tenancy.py"
+                          }
+                      ]
+}

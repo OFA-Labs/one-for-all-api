@@ -1,0 +1,46 @@
+{
+  "title": "ebrain-v3-write",
+  "type": "object",
+  "required": ["schema", "op_id", "scope", "assertion", "idempotency_key", "source", "valid_interval", "expected_head"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": 3},
+    "op_id": {"type": "string", "minLength": 1},
+    "scope": {"type": "string", "minLength": 1},
+    "idempotency_key": {"type": "string", "minLength": 1},
+    "assertion": {
+      "type": "object",
+      "required": ["namespace", "stable_id", "predicate", "claim_kind", "value_type", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {"type": "string", "minLength": 1},
+        "stable_id": {"type": "string", "minLength": 1},
+        "predicate": {"type": "string", "minLength": 1},
+        "claim_kind": {"enum": ["direct", "observed", "derived", "recommendation"]},
+        "value_type": {"enum": ["scalar", "multi_valued_unsupported"]},
+        "value": {"type": ["string", "null"]}
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["source_id", "contract", "principal", "grant"],
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "contract": {"type": "string", "minLength": 1},
+        "principal": {"type": "string", "minLength": 1},
+        "grant": {"type": "string", "minLength": 1}
+      }
+    },
+    "valid_interval": {
+      "type": "object",
+      "required": ["valid_from", "valid_to"],
+      "additionalProperties": false,
+      "properties": {
+        "valid_from": {"type": "string", "minLength": 1},
+        "valid_to": {"type": ["string", "null"]}
+      }
+    },
+    "expected_head": {"type": ["string", "null"]}
+  }
+}

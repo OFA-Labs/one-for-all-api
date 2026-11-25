@@ -1,0 +1,126 @@
+{
+  "all_preserved": true,
+  "decision_log_original_bytes": 21844,
+  "files": [
+    {
+      "repo": "one-for-all-api",
+      "original": "docs/ebrain/DECISIONS_LOG.md",
+      "current": "one-for-all-api\\docs\\ebrain\\DECISIONS_LOG.md",
+      "sha256": "667176cde92e7f03c31894db54b2e506457997343ccd835cb0c4dd524421bd14",
+      "result": "PASS",
+      "method": "original bytes preserved as prefix; planning entry appended"
+    },
+    {
+      "repo": "one-for-all-api",
+      "original": "docs/ebrain/HANDOFF_TO_PLANNER.md",
+      "current": "one-for-all-api\\docs\\ebrain\\HANDOFF_TO_PLANNER.md",
+      "sha256": "5a03663c109ee7fb21c3f5c9ad50400f2d41ddc043c307c2d43a7eaf4b47fbc8",
+      "result": "PASS",
+      "method": "unchanged bytes"
+    },
+    {
+      "repo": "one-for-all-api",
+      "original": "docs/ebrain/SPEC_DEV_BRAIN_V2.md",
+      "current": "one-for-all-api\\docs\\ebrain\\SPEC_DEV_BRAIN_V3.md",
+      "sha256": "18539a28a852a2e658308fedc1830f7fffd1e995c8608b423bbee6438cd1e3f8",
+      "result": "PASS",
+      "method": "byte-identical corrected filename"
+    },
+    {
+      "repo": "one-for-all-api",
+      "original": "ebrain/voice_client.py",
+      "current": "one-for-all-api\\ebrain\\voice_client.py",
+      "sha256": "aac62691133c3439fb0d682c78e54524c5010ce9954ba301e348bd6d443a0800",
+      "result": "PASS",
+      "method": "unchanged bytes"
+    },
+    {
+      "repo": "one-for-all-api",
+      "original": "tests/test_voice_client.py",
+      "current": "one-for-all-api\\tests\\test_voice_client.py",
+      "sha256": "842021758a20d779f4c4e2c11b546d693fd890689c4f0116ee5d24a4f5facbaf",
+      "result": "PASS",
+      "method": "unchanged bytes"
+    },
+    {
+      "repo": "one-for-all-web",
+      "original": "src/features/e-brain/components/e-brain.tsx",
+      "current": "one-for-all-web\\src\\features\\e-brain\\components\\e-brain.tsx",
+      "sha256": "8005afef1fd7be83e5007d3794ef46fbc3014addaa8ae730596ec780b67058ec",
+      "result": "PASS",
+      "method": "unchanged bytes"
+    },
+    {
+      "repo": "one-for-all-web",
+      "original": "src/features/e-brain/components/use-ebrain-limits.ts",
+      "current": "one-for-all-web\\src\\features\\e-brain\\components\\use-ebrain-limits.ts",
+      "sha256": "c5eea9312a6fbe9b743115a5453f8ad903f1d799a2b706f74c96e0ba794a467c",
+      "result": "PASS",
+      "method": "unchanged bytes"
+    },
+    {
+      "repo": "one-for-all-web",
+      "original": "src/features/e-brain/e-brain.css",
+      "current": "one-for-all-web\\src\\features\\e-brain\\e-brain.css",
+      "sha256": "48ccfb0a50e127b47aa7b673649715f820727cf14e4e032c7e46600b460b7357",
+      "result": "PASS",
+      "method": "unchanged bytes"
+    },
+    {
+      "repo": "one-for-all-web",
+      "original": "src/lib/ebrain/mock-client.ts",
+      "current": "one-for-all-web\\src\\lib\\ebrain\\mock-client.ts",
+      "sha256": "ed1c4d21d414ebf63b9aabdc37e93e7f8379fc1b4971ebb0907a5cafcfa04bc2",
+      "result": "PASS",
+      "method": "unchanged bytes"
+    },
+    {
+      "repo": "one-for-all-web",
+      "original": "tests/e-brain.spec.ts",
+      "current": "one-for-all-web\\tests\\e-brain.spec.ts",
+      "sha256": "8db03deacf94b540de919a90b9a63e45d5678744a3f5117ea74898835be9830b",
+      "result": "PASS",
+      "method": "unchanged bytes"
+    },
+    {
+      "repo": "one-for-all-web",
+      "original": "src/features/e-brain/components/ebrain-states.tsx",
+      "current": "one-for-all-web\\src\\features\\e-brain\\components\\ebrain-states.tsx",
+      "sha256": "a69a1f1e910aca1ff9ef87caa1ddc59c4b4ace75975bf28e9de1be2d8c3e7446",
+      "result": "PASS",
+      "method": "unchanged bytes"
+    },
+    {
+      "repo": "one-for-all-web",
+      "original": "src/features/e-brain/components/heal-state.tsx",
+      "current": "one-for-all-web\\src\\features\\e-brain\\components\\heal-state.tsx",
+      "sha256": "5b85f1f8a23c7b842c8cdfd3d5c78f6591278a509096d88d55fce0db422521fc",
+      "result": "PASS",
+      "method": "unchanged bytes"
+    },
+    {
+      "repo": "one-for-all-web",
+      "original": "src/features/e-brain/components/honesty-panel.tsx",
+      "current": "one-for-all-web\\src\\features\\e-brain\\components\\honesty-panel.tsx",
+      "sha256": "19867f9a76056b9ca8dfa875605fc86f6eea9f1cd6f16c918d46304df5c762d8",
+      "result": "PASS",
+      "method": "unchanged bytes"
+    },
+    {
+      "repo": "one-for-all-web",
+      "original": "src/features/e-brain/components/memory-list.tsx",
+      "current": "one-for-all-web\\src\\features\\e-brain\\components\\memory-list.tsx",
+      "sha256": "ec9a0f6f639365d6bc95b698500ed062615a76789861cc6361d345a2f26eac71",
+      "result": "PASS",
+      "method": "unchanged bytes"
+    },
+    {
+      "repo": "one-for-all-web",
+      "original": "src/features/e-brain/components/pairs-review.tsx",
+      "current": "one-for-all-web\\src\\features\\e-brain\\components\\pairs-review.tsx",
+      "sha256": "ea4e14b62c7aa7ac031424005158863c516a8334a89169824509c6123292750e",
+      "result": "PASS",
+      "method": "unchanged bytes"
+    }
+  ]
+}

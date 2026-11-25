@@ -1,0 +1,262 @@
+{
+    "args":  [
+                 "-m",
+                 "harness.runner",
+                 "--contender",
+                 "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\tools\\ebrain\\product-adapter",
+                 "--size",
+                 "10000",
+                 "--seed",
+                 "103",
+                 "--out",
+                 "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\docs\\ebrain\\implementation-plan\\evidence\\legacy-product-10000-103-20261125T025552800Z-db8886f1\\results.csv",
+                 "--timeout-s",
+                 "900"
+             ],
+    "size_events":  10000,
+    "runtime":  [
+                    "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                    "3.49.1"
+                ],
+    "cwd":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\tools\\ebrain\\legacy\\benchmark",
+    "note":  "Frozen legacy synthetic protocol. Runtime may differ from original Python 3.11 research. Product source hashes supplement harness adapter hash. Not V3 evidence.",
+    "python":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\.venv\\Scripts\\python.exe",
+    "seed":  103,
+    "git_head":  "d3797e62bb1d4666fd4ff301d687733d366737ab",
+    "run_id":  "20261125T025552800Z-db8886f1",
+    "source_hashes":  [
+                          {
+                              "sha256":  "da0b7bed4ac9b1f0b115ce834bb7584208567fa697972e8274629fd6a4ef6b7b",
+                              "path":  "ebrain/__init__.py"
+                          },
+                          {
+                              "sha256":  "3cf554d5c663bbf40dfc735c6e55f25f8dbf340e46583dd8582062010ae21a7c",
+                              "path":  "ebrain/__main__.py"
+                          },
+                          {
+                              "sha256":  "7d4a49ade93d6b0a4fec7fc2e640a3a5c5f637760d3127d0826cdb9ee7cc1705",
+                              "path":  "ebrain/api.py"
+                          },
+                          {
+                              "sha256":  "91a12e93bc48181a0bd026b7f8201e588f77e078b3a99836c278425a0de95a39",
+                              "path":  "ebrain/cli.py"
+                          },
+                          {
+                              "sha256":  "ab8b8c87befbebfedfa80c10208c14a0aac98a0f306d2d8ccf745df98955141e",
+                              "path":  "ebrain/facts.py"
+                          },
+                          {
+                              "sha256":  "421fce866ad3f252824ec1fc6523d6fc2eef14b7c5b82a2e6478dd8a20f4be20",
+                              "path":  "ebrain/models.py"
+                          },
+                          {
+                              "sha256":  "26402fb7189ee9d38bb029cc20b44150d19313d55a4fa5a285dd434263aacfa4",
+                              "path":  "ebrain/store.py"
+                          },
+                          {
+                              "sha256":  "ff692de8e3448628f5236d5f95a67cfcd83ae485d74f6b1d34fb140040f49efb",
+                              "path":  "ebrain/v3/__init__.py"
+                          },
+                          {
+                              "sha256":  "50fa8cb3120a5e3478358ac646f0b546512e9053b930a0127919874467795fcc",
+                              "path":  "ebrain/v3/api.py"
+                          },
+                          {
+                              "sha256":  "b74563ef883476f17e7f9c6a9865807b26dfe084cf66cd52af2a856638d21b1d",
+                              "path":  "ebrain/v3/auth/__init__.py"
+                          },
+                          {
+                              "sha256":  "be2f006a954b62642fdf6f687b2913d2317b259c87932c9f7408c4323f31a238",
+                              "path":  "ebrain/v3/auth/context.py"
+                          },
+                          {
+                              "sha256":  "e49e2e65a89e672ec3fe7e8fb9028bd4f0b00aeed7112329f398437199602d7f",
+                              "path":  "ebrain/v3/auth/identity.py"
+                          },
+                          {
+                              "sha256":  "99f39eaa8e4accca37b739f39c25667c920cfb41f58eb3c67e153ebe465f66f3",
+                              "path":  "ebrain/v3/clients/__init__.py"
+                          },
+                          {
+                              "sha256":  "836ffed2bff4bd7806d681fcdd44ef62ef0a8e73b1a520ae12f7757ae21da26e",
+                              "path":  "ebrain/v3/clients/adapters.py"
+                          },
+                          {
+                              "sha256":  "e545f88747a36ab740ae43500f936dce2893d3762130b34957a4168afcdc51f1",
+                              "path":  "ebrain/v3/clients/negotiation.py"
+                          },
+                          {
+                              "sha256":  "e6cb245ecce36e58bdc3c9524b1c5e5bbe70baa644cecc53d8e879e36c5216dc",
+                              "path":  "ebrain/v3/clocks.py"
+                          },
+                          {
+                              "sha256":  "0ecd3a941b872784c48fb9590662bbe55af8d50398bd55cff02a2ce7a38e956a",
+                              "path":  "ebrain/v3/config.py"
+                          },
+                          {
+                              "sha256":  "f9ef2cb72ddeaff8ed7128ce539b4e94f0331590ddb2dc2797edd4d3e000d5c6",
+                              "path":  "ebrain/v3/contracts.py"
+                          },
+                          {
+                              "sha256":  "a6dd2b3bf1cbff1d41977396df28157fb52b6db89b0ecd7239777793317e2330",
+                              "path":  "ebrain/v3/db/__init__.py"
+                          },
+                          {
+                              "sha256":  "b9640bca864c1990dd7a97900bc2fab801bee3636de0dc7482baf6c094a34912",
+                              "path":  "ebrain/v3/db/memory.py"
+                          },
+                          {
+                              "sha256":  "2355381a9ea07d90c5c47555f7cf1807161356549360a247d3063e3b3b64d9cb",
+                              "path":  "ebrain/v3/db/postgres.py"
+                          },
+                          {
+                              "sha256":  "66f9c5d8e14f4f93be2f643db3b6a6e5436af12059ba380812d25efdb306796f",
+                              "path":  "ebrain/v3/errors.py"
+                          },
+                          {
+                              "sha256":  "a6fef9cfc9f1a51ed53206f253b5a449a71f270d32b46478d7d6572e3ac888b9",
+                              "path":  "ebrain/v3/identity/__init__.py"
+                          },
+                          {
+                              "sha256":  "ae942d2b88ec148462e65c4ce16d39fee5cce2a0dbfd03dd306fa4fc198bc57e",
+                              "path":  "ebrain/v3/identity/filing.py"
+                          },
+                          {
+                              "sha256":  "0982de345ff019a35c3bdd920dfe48dcf24f94015005ca2e7ed2ee2915d48959",
+                              "path":  "ebrain/v3/identity/keys.py"
+                          },
+                          {
+                              "sha256":  "f12a4dc8a71709dcff4671d02187901bbbbdfe828e3c5924ba8d2d02f8cdf4cb",
+                              "path":  "ebrain/v3/identity/ledger.py"
+                          },
+                          {
+                              "sha256":  "5a83d598d78901d858665767fee3a27d5684ed5d145a499c40a76fec00e18444",
+                              "path":  "ebrain/v3/ingest/__init__.py"
+                          },
+                          {
+                              "sha256":  "05a0bbd3cede3c63b5187b5ecb9ee63acb86d07df867f34feed528047951f1d1",
+                              "path":  "ebrain/v3/ingest/gate.py"
+                          },
+                          {
+                              "sha256":  "89108e81e780f52f0e9f3389d827b9d1539373df4c6d8554df7bd7e4c4b66078",
+                              "path":  "ebrain/v3/models/__init__.py"
+                          },
+                          {
+                              "sha256":  "7b5b835319d7d95ea833f153d6330afb667fde90da4802ceefaeb5f07edffc7d",
+                              "path":  "ebrain/v3/models/classifier.py"
+                          },
+                          {
+                              "sha256":  "26018ad0285a7d5c24a20e41c6679518aa8dee0b37834b8340ad49a86ee45540",
+                              "path":  "ebrain/v3/models/manifest.py"
+                          },
+                          {
+                              "sha256":  "8e16a3ab91d03ed41af2d2623bc14093860116a5eaee616afe91c3b9a9a918c4",
+                              "path":  "ebrain/v3/projections/__init__.py"
+                          },
+                          {
+                              "sha256":  "b661ae082ba21048514e11b5e696850fe2cc37b61d560d30f51de3a4f7924bf7",
+                              "path":  "ebrain/v3/projections/answers.py"
+                          },
+                          {
+                              "sha256":  "a76856bfa57435db40fd99f8d72b351f4f0decab10d59911a481fd692e07f661",
+                              "path":  "ebrain/v3/projections/derived.py"
+                          },
+                          {
+                              "sha256":  "ec5994a2d5384ea0d5dda05f1e895c0916f7bb0363e0e948bb4045d8039ed48a",
+                              "path":  "ebrain/v3/projections/evidence.py"
+                          },
+                          {
+                              "sha256":  "41e163f9538d175bf9bd5038448d47dbbdf817cfcfa15b1cad4f2585231e3e23",
+                              "path":  "ebrain/v3/projections/materialize.py"
+                          },
+                          {
+                              "sha256":  "ca6fa4daf942ff0b69de11ea19d998b3bbc96a837d0a80b71e08d100a3e4970e",
+                              "path":  "ebrain/v3/projections/rebuild.py"
+                          },
+                          {
+                              "sha256":  "715d49d1058cbbd9c4357bbb20a428b5f6eb7eada0714866c94cd24951e57d4f",
+                              "path":  "ebrain/v3/quotas/__init__.py"
+                          },
+                          {
+                              "sha256":  "fd08e8426ebcce991186dbdc9320cabbd6b366f2a2dd33a185c91f80e6403235",
+                              "path":  "ebrain/v3/quotas/plans.py"
+                          },
+                          {
+                              "sha256":  "9799ff36f93efa35c1361353d413da19117774ee21cab1aeb2d74d6dec904300",
+                              "path":  "ebrain/v3/resolver/__init__.py"
+                          },
+                          {
+                              "sha256":  "c571019133c1c9d2192d57f5c0395650b9b21c4912ed145256d6eccac046c2be",
+                              "path":  "ebrain/v3/resolver/eligibility.py"
+                          },
+                          {
+                              "sha256":  "10460ee13d6ef2dcacf13564f69c8194bb15ada4e279be54f587a94e5b3c21aa",
+                              "path":  "ebrain/v3/resolver/intervals.py"
+                          },
+                          {
+                              "sha256":  "ff26d087b894aa226614dade040660e4063c2ecd14b42abeca06d8b92fd2118f",
+                              "path":  "ebrain/v3/resolver/policy.py"
+                          },
+                          {
+                              "sha256":  "2da3b354a342714ce086a43591bc5f597822ab5ba74dfa996e4de9b42b696c3c",
+                              "path":  "ebrain/v3/resolver/reducer.py"
+                          },
+                          {
+                              "sha256":  "299db87d3cb277a5bf44a740bd01e90119dd5b295d9c7112663eac1ac6d22e32",
+                              "path":  "ebrain/v3/resolver/types.py"
+                          },
+                          {
+                              "sha256":  "2d0585e4951ce8e5dd18921f93484eecd3b3c301224e79d0cd2ea674f6fa3ba3",
+                              "path":  "ebrain/v3/retrieval/__init__.py"
+                          },
+                          {
+                              "sha256":  "bebf15f121243668643f855bf4fbad74087a99e04c9786bce71cd2f1506fcc33",
+                              "path":  "ebrain/v3/retrieval/arms.py"
+                          },
+                          {
+                              "sha256":  "5ad2ce3e7ebc13b9db51d74028b99edf1c81eda46c6bd2a52da680b0a97a811e",
+                              "path":  "ebrain/v3/retrieval/query.py"
+                          },
+                          {
+                              "sha256":  "ae2894609f16bb77befe436f5d897d48de54f2dbaff042d1a21f68b0021791ae",
+                              "path":  "ebrain/v3/retrieval/selectors.py"
+                          },
+                          {
+                              "sha256":  "c9ffadca73624bd9a7252f278d00fc43959a48431aeb0ad7e7b949daaf970016",
+                              "path":  "ebrain/v3/review/__init__.py"
+                          },
+                          {
+                              "sha256":  "9c684d62d288c7fa0f77672551324dcc186ffab3c6359be9ee2697d10ba40eed",
+                              "path":  "ebrain/v3/review/workflow.py"
+                          },
+                          {
+                              "sha256":  "cbf7731547b6a0796a5f3afaacaa4684cf61861702af695f9ccc272af25cc5c7",
+                              "path":  "ebrain/v3/service.py"
+                          },
+                          {
+                              "sha256":  "a33a3eaf100d8101287a0a680c77bb96ee89ab7cbf191f0ebdd09f12e739bf6b",
+                              "path":  "ebrain/v3/sources/__init__.py"
+                          },
+                          {
+                              "sha256":  "31c27e6d42abc796a806c1261d96ef2d95857f161fe02dba4937c203f5745b5b",
+                              "path":  "ebrain/v3/sources/snapshots.py"
+                          },
+                          {
+                              "sha256":  "88c9d75e995a70f6209956c6cafcfee53f52b457424857d365f244e78452f319",
+                              "path":  "ebrain/v3/workers/__init__.py"
+                          },
+                          {
+                              "sha256":  "5f165d5a6b0062aaff025be13478aeb5025b449eca27616d1a356b65859f422c",
+                              "path":  "ebrain/v3/workers/outbox.py"
+                          },
+                          {
+                              "sha256":  "aac62691133c3439fb0d682c78e54524c5010ce9954ba301e348bd6d443a0800",
+                              "path":  "ebrain/voice_client.py"
+                          },
+                          {
+                              "sha256":  "11bd8a17dbaab30b35dbee64e0104675b62d56d4a3f275b559159446cbc20d39",
+                              "path":  "tools/ebrain/product-adapter/adapter.py"
+                          }
+                      ],
+    "contender":  "product"
+}

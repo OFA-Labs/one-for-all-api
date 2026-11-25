@@ -1,0 +1,78 @@
+{
+  "title": "ebrain-v3-answer",
+  "type": "object",
+  "required": ["schema", "query_id", "request_id", "answer_status", "facts", "snapshot", "degradation"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": 3},
+    "query_id": {"type": "string", "minLength": 1},
+    "request_id": {"type": "string", "minLength": 1},
+    "answer_status": {"enum": ["complete", "partial", "ambiguous", "pending", "not_found", "unavailable"]},
+    "facts": {"type": "array", "items": {"$ref": "#/definitions/fact"}},
+    "snapshot": {"$ref": "#/definitions/snapshot"},
+    "degradation": {"$ref": "#/definitions/degradation"},
+    "receipt": {"type": ["object", "null"]}
+  },
+  "definitions": {
+    "fact": {
+      "type": "object",
+      "required": ["key", "state", "value", "provenance", "freshness", "facets"],
+      "additionalProperties": false,
+      "properties": {
+        "key": {"type": "string", "minLength": 1},
+        "state": {"enum": ["absent", "current", "conflict", "withdrawn", "pending_verification", "unknown"]},
+        "value": {"type": ["string", "null"]},
+        "provenance": {"type": "array", "items": {"$ref": "#/definitions/source"}},
+        "freshness": {"$ref": "#/definitions/freshness"},
+        "facets": {"type": "object", "additionalProperties": {"type": "string"}},
+        "valid_from": {"type": ["integer", "null"]},
+        "valid_to": {"type": ["integer", "null"]}
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["source_id", "kind", "granted_scope"],
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "kind": {"enum": ["first_party", "external", "derived", "recommendation"]},
+        "granted_scope": {"type": "string", "minLength": 1}
+      }
+    },
+    "freshness": {
+      "type": "object",
+      "required": ["observed_seq", "observed_at", "confidence"],
+      "additionalProperties": false,
+      "properties": {
+        "observed_seq": {"type": "integer", "minimum": 0},
+        "observed_at": {"type": "string", "minLength": 1},
+        "confidence": {"type": "number", "minimum": 0}
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "required": ["org_id", "knowledge_seq", "valid_at", "identity_generation", "policy_version", "auth_epoch"],
+      "additionalProperties": false,
+      "properties": {
+        "org_id": {"type": "string", "minLength": 1},
+        "knowledge_seq": {"type": "integer", "minimum": 0},
+        "valid_at": {"type": "string", "minLength": 1},
+        "identity_generation": {"type": "integer", "minimum": 0},
+        "policy_version": {"type": "string", "minLength": 1},
+        "auth_epoch": {"type": "integer", "minimum": 0},
+        "retrieval_generation": {"type": ["string", "null"]},
+        "model_generation": {"type": ["string", "null"]}
+      }
+    },
+    "degradation": {
+      "type": "object",
+      "required": ["clipped", "omitted_facets", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "clipped": {"type": "boolean"},
+        "omitted_facets": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "reason": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

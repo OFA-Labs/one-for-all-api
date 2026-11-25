@@ -1,0 +1,52 @@
+[
+  {
+    "schema": 3,
+    "op_id": "op-0001",
+    "status": "applied",
+    "committed_seq": 41,
+    "processing_url": null,
+    "request_digest": "1f2e3d4c5b6a79888776655443322110ffeeddccbbaa99887766554433221100",
+    "replay_marker": "replay-0001",
+    "reason": null
+  },
+  {
+    "schema": 3,
+    "op_id": "op-0002",
+    "status": "accepted_pending",
+    "committed_seq": 42,
+    "processing_url": "/v1/ebrain/operations/op-0002",
+    "request_digest": "1f2e3d4c5b6a79888776655443322110ffeeddccbbaa99887766554433221100",
+    "replay_marker": "replay-0002",
+    "reason": "authorization review pending"
+  },
+  {
+    "schema": 3,
+    "op_id": "op-0003",
+    "status": "accepted_noncurrent",
+    "committed_seq": 43,
+    "processing_url": null,
+    "request_digest": "1f2e3d4c5b6a79888776655443322110ffeeddccbbaa99887766554433221100",
+    "replay_marker": "replay-0003",
+    "reason": "superseded at commit"
+  },
+  {
+    "schema": 3,
+    "op_id": "op-0004",
+    "status": "conflict",
+    "committed_seq": 44,
+    "processing_url": null,
+    "request_digest": "1f2e3d4c5b6a79888776655443322110ffeeddccbbaa99887766554433221100",
+    "replay_marker": "replay-0004",
+    "reason": "concurrent equal-authority assertion"
+  },
+  {
+    "schema": 3,
+    "op_id": "op-0005",
+    "status": "rejected",
+    "committed_seq": null,
+    "processing_url": null,
+    "request_digest": "1f2e3d4c5b6a79888776655443322110ffeeddccbbaa99887766554433221100",
+    "replay_marker": "replay-0005",
+    "reason": "grant does not cover scope"
+  }
+]

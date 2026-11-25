@@ -1,0 +1,11 @@
+$ python -m ebrain.v3.cli --enable-v3-local --persistent remember --op-id live-20261125T0 --resource-id live-demo --value postgresql-16
+exit=0
+{"auth_epoch": 1, "claim_id": "cl_e675b111474e54a15c34", "fact_id": "fk_f3c761c6ff7163cc3fcabab0", "knowledge_seq": 2, "op_id": "live-20261125T0", "processing_url": "", "reason": "applied", "request_digest": "3cbe12cc25e90584378740244ecc92efacac352845b3925a863d49e2eae57622", "scope": "one-for-all", "status": "applied"}
+
+
+$ python -m ebrain.v3.cli --enable-v3-local --persistent pack --text live-demo --resource-id live-demo --predicate decision.status
+exit=0
+{"answer_status": "not_found", "degradation": [], "delivered_bytes": 389, "items": []}
+
+
+diagnostic: claims=1 grant_authorities=['human'] authorities=['agent'] valid_from=['2026-11-25T06:34:35.708615+00:00'] answer=not_found items=[]

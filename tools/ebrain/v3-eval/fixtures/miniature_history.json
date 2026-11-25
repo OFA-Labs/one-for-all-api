@@ -1,0 +1,80 @@
+{
+  "review_note": "Human-reviewable miniature: sequential (ev-01/02/06), conflict (ev-04/05), late (ev-07), future (ev-10), erased (ev-08/09), scoped (ev-03). Cut is end of ts=100, scope=s1.",
+  "query": {
+    "query_id": "q-mini",
+    "scope": "s1",
+    "as_of": 100
+  },
+  "events": [
+    {
+      "seq": 1, "op_id": "ev-01", "ts": 10, "action": "create",
+      "key": "K/ALPHA", "scope": "s1", "source": "src-human",
+      "authority": "human", "value": "v1", "revision": 1,
+      "supersedes": [], "history": [], "scenario": "sequential",
+      "facets": {"repo": "core-api", "branch": "main", "namespace": "config", "environment": "prod", "scope": "s1"}
+    },
+    {
+      "seq": 2, "op_id": "ev-02", "ts": 20, "action": "revise",
+      "key": "K/ALPHA", "scope": "s1", "source": "src-human",
+      "authority": "human", "value": "v2", "revision": 2,
+      "supersedes": ["ev-01"], "history": [], "scenario": "sequential",
+      "facets": {"repo": "core-api", "branch": "main", "namespace": "config", "environment": "prod", "scope": "s1"}
+    },
+    {
+      "seq": 3, "op_id": "ev-03", "ts": 30, "action": "create",
+      "key": "K/BETA", "scope": "s2", "source": "src-verified",
+      "authority": "verified", "value": "b1", "revision": 1,
+      "supersedes": [], "history": [], "scenario": "scoped",
+      "facets": {"repo": "core-api", "branch": "main", "namespace": "spec", "environment": "prod", "scope": "s2"}
+    },
+    {
+      "seq": 4, "op_id": "ev-04", "ts": 40, "action": "create",
+      "key": "K/CONFLICT", "scope": "s1", "source": "src-agent-a",
+      "authority": "agent", "value": "x1", "revision": 1,
+      "supersedes": [], "history": [], "scenario": "conflict",
+      "facets": {"repo": "voice-worker", "branch": "main", "namespace": "decision", "environment": "staging", "scope": "s1"}
+    },
+    {
+      "seq": 5, "op_id": "ev-05", "ts": 40, "action": "create",
+      "key": "K/CONFLICT", "scope": "s1", "source": "src-agent-b",
+      "authority": "agent", "value": "x2", "revision": 1,
+      "supersedes": [], "history": [], "scenario": "conflict",
+      "facets": {"repo": "voice-worker", "branch": "main", "namespace": "decision", "environment": "staging", "scope": "s1"}
+    },
+    {
+      "seq": 6, "op_id": "ev-06", "ts": 50, "action": "revise",
+      "key": "K/ALPHA", "scope": "s1", "source": "src-agent-a",
+      "authority": "agent", "value": "a3", "revision": 3,
+      "supersedes": ["ev-02"], "history": [], "scenario": "sequential",
+      "facets": {"repo": "core-api", "branch": "main", "namespace": "config", "environment": "prod", "scope": "s1"}
+    },
+    {
+      "seq": 7, "op_id": "ev-07", "ts": 35, "action": "revise",
+      "key": "K/ALPHA", "scope": "s1", "source": "src-human",
+      "authority": "human", "value": "a9", "revision": 4,
+      "supersedes": ["ev-02"], "history": [], "scenario": "late",
+      "facets": {"repo": "core-api", "branch": "main", "namespace": "config", "environment": "prod", "scope": "s1"}
+    },
+    {
+      "seq": 8, "op_id": "ev-08", "ts": 55, "action": "create",
+      "key": "K/GAMMA", "scope": "s1", "source": "src-human",
+      "authority": "human", "value": "c1", "revision": 1,
+      "supersedes": [], "history": [], "scenario": "sequential",
+      "facets": {"repo": "web-client", "branch": "release", "namespace": "runbook", "environment": "dev", "scope": "s1"}
+    },
+    {
+      "seq": 9, "op_id": "ev-09", "ts": 65, "action": "erase",
+      "key": "K/GAMMA", "scope": "s1", "source": "src-human",
+      "authority": "human", "value": null, "revision": 2,
+      "supersedes": ["ev-08"], "history": [], "scenario": "erased",
+      "facets": {"repo": "web-client", "branch": "release", "namespace": "runbook", "environment": "dev", "scope": "s1"}
+    },
+    {
+      "seq": 10, "op_id": "ev-10", "ts": 200, "action": "create",
+      "key": "K/EPSILON", "scope": "s1", "source": "src-human",
+      "authority": "human", "value": "e1", "revision": 1,
+      "supersedes": [], "history": [], "scenario": "future",
+      "facets": {"repo": "ops-runbooks", "branch": "experiment", "namespace": "spec", "environment": "sandbox", "scope": "s1"}
+    }
+  ]
+}

@@ -1,0 +1,759 @@
+{
+  "archive": "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents-cleanup-backup-20261124\\retired-workspace-source.zip",
+  "archive_sha256": "21f1c69c426d3e661adc66719ba10bbc812e1535b8756cb66c7ac5e6375cc58b",
+  "retained": [
+    {
+      "old_path": "ebrain-tournament/FINAL/00-README-BUILD-ORDER.md",
+      "new_path": "tools/ebrain/legacy/FINAL/00-README-BUILD-ORDER.md",
+      "sha256": "1205087d6135e3701c525e73b2c13d9eada584e57e4aa701c92ca395a2dfc60f"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/01-architecture.md",
+      "new_path": "tools/ebrain/legacy/FINAL/01-architecture.md",
+      "sha256": "08033ef3c45649241f905b321019e44743f5767341d77b230b0ad92a9cc569b5"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/02-data-model.md",
+      "new_path": "tools/ebrain/legacy/FINAL/02-data-model.md",
+      "sha256": "05e1ae1547b4fb20ef53a3f18befeef01113f6805c50c72b6675c5a0c4e0a077"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/03-interfaces.md",
+      "new_path": "tools/ebrain/legacy/FINAL/03-interfaces.md",
+      "sha256": "00347037bc9057ec162ecd683b8d55e34335ee9db8e990d6775fcf40d5826b13"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/04-algorithms.md",
+      "new_path": "tools/ebrain/legacy/FINAL/04-algorithms.md",
+      "sha256": "0feba9b5b92011b1f5cfeed56b9bb8c02c7ea7a5d15a07d68c345d79061a38b5"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/05-event-flows.md",
+      "new_path": "tools/ebrain/legacy/FINAL/05-event-flows.md",
+      "sha256": "02a1d53f3c01b9e42d6e7003ecf1da82ebd94a9a99bc9cca1566e1a41454a42a"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/06-security.md",
+      "new_path": "tools/ebrain/legacy/FINAL/06-security.md",
+      "sha256": "cb1e13b0d8117b9778543c0ab5d4427df5b1b7dffa7eca2556b350e3b3a705a9"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/07-ui.md",
+      "new_path": "tools/ebrain/legacy/FINAL/07-ui.md",
+      "sha256": "96b5d7f5eebd649896405752dc3f613727282edf6eca762e16e8ccd3f8457e23"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/08-config.md",
+      "new_path": "tools/ebrain/legacy/FINAL/08-config.md",
+      "sha256": "8cf5eee5d7beb8eb2788a860e62748337d5f5ae489d76ffae4183842aa11b90c"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/09-test-plan.md",
+      "new_path": "tools/ebrain/legacy/FINAL/09-test-plan.md",
+      "sha256": "0713ff816ec563461b731e4c81c979140e2352828bdfba63fabacb1bbd434090"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/10-milestones.md",
+      "new_path": "tools/ebrain/legacy/FINAL/10-milestones.md",
+      "sha256": "fd07ae45426c93fe604028e91b8c78bbb7e4931eeee68858fbe8eecffdda8034"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/11-decisions.md",
+      "new_path": "tools/ebrain/legacy/FINAL/11-decisions.md",
+      "sha256": "332944bba0fa5439962815883fe1c71e8f71f0519288d4aaaec8a90e7a8fc777"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/12-limits-and-non-goals.md",
+      "new_path": "tools/ebrain/legacy/FINAL/12-limits-and-non-goals.md",
+      "sha256": "f77d8c807054fcdb6f021787ea69a5ea4f402abd5391f2a1d41f0299062944ef"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/HONESTY.md",
+      "new_path": "tools/ebrain/legacy/FINAL/HONESTY.md",
+      "sha256": "3ba48f2719a56501459fb663084b5eb862c9f64f2548cc73bef426ecf72cb09f"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/m0_store_stub.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/m0_store_stub.py",
+      "sha256": "b845d4fafa0efaa4ab9114e964a4db16ebc80220c08161a08d78297fc3faa6c5"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/requirements-backend.txt",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/requirements-backend.txt",
+      "sha256": "c0daaaba8cc59927929447450c07090d8d8825fa9d9f154c77d01740c654df68"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/adapter.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/adapter.py",
+      "sha256": "c3fa1d4e18a61559981895e989508fc1171d6f6e037063153b95342f321a8acc"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/ebrain/__init__.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/ebrain/__init__.py",
+      "sha256": "da0b7bed4ac9b1f0b115ce834bb7584208567fa697972e8274629fd6a4ef6b7b"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/ebrain/api.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/ebrain/api.py",
+      "sha256": "31b251f558d9997907d333c3ac6a1a36e1895e407529c6f55dda549ab25489e0"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/ebrain/facts.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/ebrain/facts.py",
+      "sha256": "ab8b8c87befbebfedfa80c10208c14a0aac98a0f306d2d8ccf745df98955141e"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/ebrain/limits_facts.json",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/ebrain/limits_facts.json",
+      "sha256": "66ad4bb4e0f160b3c9282f82481ce18ed8241580732b0d63ff7d3cc8f81d7d00"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/ebrain/models.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/ebrain/models.py",
+      "sha256": "421fce866ad3f252824ec1fc6523d6fc2eef14b7c5b82a2e6478dd8a20f4be20"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/ebrain/store.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/ebrain/store.py",
+      "sha256": "26402fb7189ee9d38bb029cc20b44150d19313d55a4fa5a285dd434263aacfa4"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/tests/conftest.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/tests/conftest.py",
+      "sha256": "fac4f992d8b0c48f8f146101a77522ecc880ecd81eb71314ca0f4e79b82ce139"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/tests/test_api.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/tests/test_api.py",
+      "sha256": "c90591a7d6a62af5a6d2218710e46e69cbd0271a73436cd6d751c13cf642fe9e"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/tests/test_facts.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/tests/test_facts.py",
+      "sha256": "4d865da8ad65214ae1133ffd003e438f511d31ac959c1c88c20e44b53aa28d2e"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/tests/test_final.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/tests/test_final.py",
+      "sha256": "b7952d577b8f1af94486bcd1441ab11cb1a281072af2ba9b892afbceef588abf"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/tests/test_store.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/tests/test_store.py",
+      "sha256": "e219989ecbc288320f457e7ef918ad0b6999045d5f8d39e396242b80c6d5e132"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/tests/test_tags.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/tests/test_tags.py",
+      "sha256": "a7abf2e256de56ac4bad29c22857405579094ff4c417a90901fff6cba7a26e34"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/impl/tests/test_tenancy.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/impl/tests/test_tenancy.py",
+      "sha256": "2a0f1b44d96f70b8a1db6e40125e03a2be903d96e0b42419dfcf93f36b1b8b78"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/results/RESULTS.md",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/results/RESULTS.md",
+      "sha256": "9bf01b18d39f9270cc7baaef88079def3041c910cb7309a9d67363134b8b3947"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/results/count_pairs.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/results/count_pairs.py",
+      "sha256": "bb294bba5f2fe011b5f00ccd5f327b3b09409610960195a411c3a345fd867645"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/results/public_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/results/public_10k_101.csv",
+      "sha256": "20f96e1efb6a5b61fcca0d2143dd2bb112a551b3b419efe452d1a30480c5068a"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/results/public_1k.csv",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/results/public_1k.csv",
+      "sha256": "6aa255709e8dabfc05eb07e240984f33a75173e199f180208d3ea025e5cfaa2a"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/results/review_band_pairs.txt",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/results/review_band_pairs.txt",
+      "sha256": "9f2b517e645c6af68d3e02a23763c0715bb5dab681589235f90385e905d81101"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/results/t042_shipped_heal_auto_10000_101.csv",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/results/t042_shipped_heal_auto_10000_101.csv",
+      "sha256": "df8d0a17fa04f5781c018f26030c31bd60e7761bfb7709015e93e14c88e7879c"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/results/t042_shipped_heal_auto_1000_101.csv",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/results/t042_shipped_heal_auto_1000_101.csv",
+      "sha256": "a2c36c3a2384f5bd39cdd07f101bb0407f248c24309b993bdc1dbc3ab3cb8ba1"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/results/t042_shipped_heal_auto_1000_102.csv",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/results/t042_shipped_heal_auto_1000_102.csv",
+      "sha256": "033b64bd1522c214ea42571bdf7d7926edf2056df38bb560371ca84efd850fb0"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/results/t042_shipped_heal_auto_1000_103.csv",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/results/t042_shipped_heal_auto_1000_103.csv",
+      "sha256": "905649586cef29539b34f3e0ed08c96031c31acbedddce4e457ca75058422a29"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/results/t042_shipped_join_on_10000_101.csv",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/results/t042_shipped_join_on_10000_101.csv",
+      "sha256": "83e95b26f5f72d8a7c3cead123979b73d32d2bec6f94cd0bea10ec260b0f9c5c"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/results/t042_shipped_join_on_1000_101.csv",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/results/t042_shipped_join_on_1000_101.csv",
+      "sha256": "05016def589ac0bf6cb145e28cdb8b709ebbbce022f7d59b01039ee5064347c3"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/results/t042_shipped_join_on_1000_102.csv",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/results/t042_shipped_join_on_1000_102.csv",
+      "sha256": "c0b25ff81356247ba99d0e675acd49057fa776aaa3217f1888a2055e6e37ad14"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/results/t042_shipped_join_on_1000_103.csv",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/results/t042_shipped_join_on_1000_103.csv",
+      "sha256": "e29aa230a009c4bbe8115b5988d37a271409cacc636ef684f1a35f4aab603eb8"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/variants/heal_auto/adapter.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/variants/heal_auto/adapter.py",
+      "sha256": "305437255dbe6c1d8533500f2de39c5c378d9553426821c224fd4a2cec8b882e"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/variants/join_on_heal_auto/adapter.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/variants/join_on_heal_auto/adapter.py",
+      "sha256": "e3ba5ac8c713c63b4025d80a6248e579b5ec68c5e5b8ab5cc0fba837a88eea3f"
+    },
+    {
+      "old_path": "ebrain-tournament/FINAL/reference/variants/join_on_low_threshold/adapter.py",
+      "new_path": "tools/ebrain/legacy/FINAL/reference/variants/join_on_low_threshold/adapter.py",
+      "sha256": "290e4993997f7a0a994b8fb37c20a7f479d0242a93140a3e71dce031d837cbd2"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/CONTRACT_ISSUES.md",
+      "new_path": "tools/ebrain/legacy/benchmark/CONTRACT_ISSUES.md",
+      "sha256": "b82ae1b6c19931101746f892d37f89823672c595a97f200b6e2c14b5a60ddd68"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/INTERFACE.md",
+      "new_path": "tools/ebrain/legacy/benchmark/INTERFACE.md",
+      "sha256": "a9d73fd532788e1b1b5cd6e7f5332710c8a3b2e2f0e5c7f7e6067d007845c830"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/results.csv",
+      "new_path": "tools/ebrain/legacy/benchmark/results.csv",
+      "sha256": "9077c2300fc34ccec17b2c9ed4a6f68f6e73bf54da9ce9cd29140df5487b04a0"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/results_v2.csv",
+      "new_path": "tools/ebrain/legacy/benchmark/results_v2.csv",
+      "sha256": "9e06d7311e555de273f2c8d208dbf6dff243a2bcda9a8d48bcc3ff593d49e0df"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/control/adapter.py",
+      "new_path": "tools/ebrain/legacy/benchmark/control/adapter.py",
+      "sha256": "737e427705ec8d1c784f041745d466447bf61057c1e04fa70d5ad0e62a57d93d"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/harness/README.md",
+      "new_path": "tools/ebrain/legacy/benchmark/harness/README.md",
+      "sha256": "856de22f5b284bff22e6738b2f09930cbadd9ebf1387a28e776280ce815128a8"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/harness/__init__.py",
+      "new_path": "tools/ebrain/legacy/benchmark/harness/__init__.py",
+      "sha256": "5228620715d601547d86bbae7002fef3d298a1ac0c4224bc044fea0b0d4ec326"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/harness/api.py",
+      "new_path": "tools/ebrain/legacy/benchmark/harness/api.py",
+      "sha256": "42c63e69e8d32f7098b912d754b28693154edd2a53802b0636d2dde78a4fc914"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/harness/generate.py",
+      "new_path": "tools/ebrain/legacy/benchmark/harness/generate.py",
+      "sha256": "698d5e21efeabff2c8daa41684613c466f89d245636ada909ec7e96305fc8ce9"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/harness/loader.py",
+      "new_path": "tools/ebrain/legacy/benchmark/harness/loader.py",
+      "sha256": "ef0e171db13707405446ee7c0c2012fbf54b31a3219dcc813aa18eb0c8151ee8"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/harness/metrics.py",
+      "new_path": "tools/ebrain/legacy/benchmark/harness/metrics.py",
+      "sha256": "49ff02bcc18aeffd08f26efb7123cb26282fde41cb22e114ce95b3630eb211b4"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/harness/runner.py",
+      "new_path": "tools/ebrain/legacy/benchmark/harness/runner.py",
+      "sha256": "6a283544a2e15a74f93cefef5673e8f1506644cde20bb4559d635f655d745322"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/harness/scenarios.py",
+      "new_path": "tools/ebrain/legacy/benchmark/harness/scenarios.py",
+      "sha256": "3adfc8d0da773a4ff763341f15d0260b212a598cde6faa3b91b9558550bd8736"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/harness/tokens.py",
+      "new_path": "tools/ebrain/legacy/benchmark/harness/tokens.py",
+      "sha256": "44e2803668e75f4a20cc969e973e4d0b6b53f7aa60a3f73ebdc86660e5a0a31c"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/harness/truth.py",
+      "new_path": "tools/ebrain/legacy/benchmark/harness/truth.py",
+      "sha256": "86afe47cfe2a543494cc53b1a20633811a919c451cdcf5f83ad44db1352e6cd9"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/naive/adapter.py",
+      "new_path": "tools/ebrain/legacy/benchmark/naive/adapter.py",
+      "sha256": "e61ab8da2591b5d580374d3c6529ee5e2dba5d2aa1423dcca34e89e019f86b34"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/seeds/public_seeds.txt",
+      "new_path": "tools/ebrain/legacy/benchmark/seeds/public_seeds.txt",
+      "sha256": "8ef357c6e23fa99ccf0496aef972e1654099affdcabf4c414bf073b6b9af6627"
+    },
+    {
+      "old_path": "ebrain-tournament/benchmark/tests/test_harness.py",
+      "new_path": "tools/ebrain/legacy/benchmark/tests/test_harness.py",
+      "sha256": "3dd1d251d5baebc4b205c21b2ca5dc3494cde8131ff5120b507bfccbfdf974d5"
+    },
+    {
+      "old_path": "ebrain-tournament/results/baseline_10000_101_ref.csv",
+      "new_path": "tools/ebrain/legacy/results/baseline_10000_101_ref.csv",
+      "sha256": "3321d3131bea75ab65e2f14d6ba5867e1cbdd3010b3a643e5d49587f6492a004"
+    },
+    {
+      "old_path": "ebrain-tournament/results/baseline_10000_102_ref.csv",
+      "new_path": "tools/ebrain/legacy/results/baseline_10000_102_ref.csv",
+      "sha256": "6ad8c61f863be81479d24e744e6881b8639e0619d1d144f9442df1aed9ade50c"
+    },
+    {
+      "old_path": "ebrain-tournament/results/baseline_10000_103_ref.csv",
+      "new_path": "tools/ebrain/legacy/results/baseline_10000_103_ref.csv",
+      "sha256": "31e02f2879fae93c14b52410f9122b87e260605aee22d1bf1c9a3078cb1ae77b"
+    },
+    {
+      "old_path": "ebrain-tournament/results/baseline_1000_101_ref.csv",
+      "new_path": "tools/ebrain/legacy/results/baseline_1000_101_ref.csv",
+      "sha256": "daf44dcb810f670413b7aa4e2c1cf442f05f44d7f4d19f1245669c104b826300"
+    },
+    {
+      "old_path": "ebrain-tournament/results/baseline_1000_102_ref.csv",
+      "new_path": "tools/ebrain/legacy/results/baseline_1000_102_ref.csv",
+      "sha256": "6774c05cf585191d62c9d4036cd0fce3cf2a3cdcd434c033cca89ea71ca9f6c9"
+    },
+    {
+      "old_path": "ebrain-tournament/results/baseline_1000_103_ref.csv",
+      "new_path": "tools/ebrain/legacy/results/baseline_1000_103_ref.csv",
+      "sha256": "1426b43c36d0482d2988f61ba3a096dad41f07b66c077e2349320028e470ef87"
+    },
+    {
+      "old_path": "ebrain-tournament/results/baseline_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/baseline_10k_101.csv",
+      "sha256": "d6435f326ead3543456df86655bf047b20f45c6982318b47b8b8c40cbf418cfd"
+    },
+    {
+      "old_path": "ebrain-tournament/results/baseline_1k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/baseline_1k_101.csv",
+      "sha256": "12f2eb66d930d08c267f23c80c7089a06381e06b065187ec7e9a48837ccb1b1d"
+    },
+    {
+      "old_path": "ebrain-tournament/results/baseline_matrix.ps1",
+      "new_path": "tools/ebrain/legacy/results/baseline_matrix.ps1",
+      "sha256": "e73335d6c6a979b185f5f2de25c39fa3f568eed5d2b21a04d2f222af1947b1a4"
+    },
+    {
+      "old_path": "ebrain-tournament/results/cov_0.45_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/cov_0.45_10k_101.csv",
+      "sha256": "471cfae31a85809b663823e1d0d4caa19f9813605fe738454d74d0a40eca0eaa"
+    },
+    {
+      "old_path": "ebrain-tournament/results/cov_0.4_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/cov_0.4_10k_101.csv",
+      "sha256": "044d5bd29efe7543ce2d2346bb47d24aea5148d53b10e7b577e3fff499e0037d"
+    },
+    {
+      "old_path": "ebrain-tournament/results/cov_0.55_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/cov_0.55_10k_101.csv",
+      "sha256": "892c1517b019e05be82343d0bb9a5da1c50a189ae5d17e408b31dffb8fdd2fa1"
+    },
+    {
+      "old_path": "ebrain-tournament/results/cov_0.5_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/cov_0.5_10k_101.csv",
+      "sha256": "cc66203f24ffc3a5f8ec28004d0b9862e9637fe0d662a77cfae74cd5dfa54145"
+    },
+    {
+      "old_path": "ebrain-tournament/results/extended_baseline_50k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/extended_baseline_50k_101.csv",
+      "sha256": "694d6e52d486877546211f00392f0ce992dad7d7ded10b3c0876f09b2cf6a1a7"
+    },
+    {
+      "old_path": "ebrain-tournament/results/extended_probe_20k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/extended_probe_20k_101.csv",
+      "sha256": "2af5ddf6cfc2fcbab15cc59fee2ec38dc278b7bb53c53ce811435542e15198d4"
+    },
+    {
+      "old_path": "ebrain-tournament/results/extended_protoF_50k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/extended_protoF_50k_101.csv",
+      "sha256": "bef4248d2c4e62c732e50da3a83889f1d77b21968a7d772b30ebc73255f4e788"
+    },
+    {
+      "old_path": "ebrain-tournament/results/final_matrix.ps1",
+      "new_path": "tools/ebrain/legacy/results/final_matrix.ps1",
+      "sha256": "02e9d30538f7abc8e5ac945890ad14ccd727a196bd5663b8f549f9b0f4632e15"
+    },
+    {
+      "old_path": "ebrain-tournament/results/final_protoF_10000_101.csv",
+      "new_path": "tools/ebrain/legacy/results/final_protoF_10000_101.csv",
+      "sha256": "34cec29769e0734a7c45e9b286a8bc873c46ebd66e34bd95faf08be401271968"
+    },
+    {
+      "old_path": "ebrain-tournament/results/final_protoF_10000_102.csv",
+      "new_path": "tools/ebrain/legacy/results/final_protoF_10000_102.csv",
+      "sha256": "27aa1d4eff2b209bcc74f554a7d36af144cac56590ef12049008b3a70adddea4"
+    },
+    {
+      "old_path": "ebrain-tournament/results/final_protoF_10000_103.csv",
+      "new_path": "tools/ebrain/legacy/results/final_protoF_10000_103.csv",
+      "sha256": "6e17e024db9d66b1f60748d5eabcbe6ca9ecc3ceb854c597ab0120789b7a4be5"
+    },
+    {
+      "old_path": "ebrain-tournament/results/final_protoF_1000_101.csv",
+      "new_path": "tools/ebrain/legacy/results/final_protoF_1000_101.csv",
+      "sha256": "3aa2d3c5d5e516b7824f5143c978a159388e5c0a9022278f35abc82aa4d66bf0"
+    },
+    {
+      "old_path": "ebrain-tournament/results/final_protoF_1000_102.csv",
+      "new_path": "tools/ebrain/legacy/results/final_protoF_1000_102.csv",
+      "sha256": "867e09402c0a16ac5dcffc326db6d87bb4e0cad10d1a608e27997ad1d430a9cd"
+    },
+    {
+      "old_path": "ebrain-tournament/results/final_protoF_1000_103.csv",
+      "new_path": "tools/ebrain/legacy/results/final_protoF_1000_103.csv",
+      "sha256": "fbaf64f84a63954e7a6054503eee9b5398b7a45f6b8f7456d569ac0cc16a5a29"
+    },
+    {
+      "old_path": "ebrain-tournament/results/gridF_1_r12_c0.7_k8.csv",
+      "new_path": "tools/ebrain/legacy/results/gridF_1_r12_c0.7_k8.csv",
+      "sha256": "131f7d93738347ce8b51e0f01baeee8d537f41b6f4aecf211af7518cf62f166f"
+    },
+    {
+      "old_path": "ebrain-tournament/results/gridF_2_r6_c0.7_k8.csv",
+      "new_path": "tools/ebrain/legacy/results/gridF_2_r6_c0.7_k8.csv",
+      "sha256": "2c9ef48bf64ff7d65f48bebc7fd81637194d2772aae8b63bb304bb25c31c75ac"
+    },
+    {
+      "old_path": "ebrain-tournament/results/gridF_3_r20_c0.7_k8.csv",
+      "new_path": "tools/ebrain/legacy/results/gridF_3_r20_c0.7_k8.csv",
+      "sha256": "96e44a181dd9fed9e3c76b897923c53ce8971539eefb121a8a8adf061fa6de5c"
+    },
+    {
+      "old_path": "ebrain-tournament/results/gridF_4_r12_c0.85_k8.csv",
+      "new_path": "tools/ebrain/legacy/results/gridF_4_r12_c0.85_k8.csv",
+      "sha256": "37eb7f7776c4716560fe3cf8d3eeda0ac14d320c82abe3c055c5a6a60cfc3944"
+    },
+    {
+      "old_path": "ebrain-tournament/results/gridF_5_r12_c0.7_k4.csv",
+      "new_path": "tools/ebrain/legacy/results/gridF_5_r12_c0.7_k4.csv",
+      "sha256": "9e23294083b583ac41b6bc7491e287a17e32c4b93a7187a2b7d86efff2dbb1e9"
+    },
+    {
+      "old_path": "ebrain-tournament/results/gridF_6_r6_c0.85_k4.csv",
+      "new_path": "tools/ebrain/legacy/results/gridF_6_r6_c0.85_k4.csv",
+      "sha256": "962a4510732f21536445d2e8cb6c46c257dbca5b6fbbb1eb38e0736daf72ce2a"
+    },
+    {
+      "old_path": "ebrain-tournament/results/grid_F.ps1",
+      "new_path": "tools/ebrain/legacy/results/grid_F.ps1",
+      "sha256": "e584b35d742c4a9b34986f144e3a94c914d5083aeeda1e7f209f4a2207d2dad6"
+    },
+    {
+      "old_path": "ebrain-tournament/results/grid_cov.ps1",
+      "new_path": "tools/ebrain/legacy/results/grid_cov.ps1",
+      "sha256": "2fcaaf8c974135eebe7fac819d4c7e37201fe57c843fe22454180428f3b21bfe"
+    },
+    {
+      "old_path": "ebrain-tournament/results/log_extended_baseline_50k_101.txt",
+      "new_path": "tools/ebrain/legacy/results/log_extended_baseline_50k_101.txt",
+      "sha256": "4f9029daa1b188c5ffd488d4ce8dad289ef42f9df8f8573969043352b9982818"
+    },
+    {
+      "old_path": "ebrain-tournament/results/log_extended_protoF_50k_101.txt",
+      "new_path": "tools/ebrain/legacy/results/log_extended_protoF_50k_101.txt",
+      "sha256": "24157838c3f44fa2e3ebd34da41a1c3043b8f57cbb90b16034a680f683797796"
+    },
+    {
+      "old_path": "ebrain-tournament/results/probe_diag.py",
+      "new_path": "tools/ebrain/legacy/results/probe_diag.py",
+      "sha256": "9ca4adaa2259260de07c2af76f46e8f97f785a686212467cafe55077dff957d3"
+    },
+    {
+      "old_path": "ebrain-tournament/results/probe_frag.py",
+      "new_path": "tools/ebrain/legacy/results/probe_frag.py",
+      "sha256": "a38ee507f9d57af934068ede22d90bb360e1c32e007f88b63f1b556ee2769fd6"
+    },
+    {
+      "old_path": "ebrain-tournament/results/probe_merge.py",
+      "new_path": "tools/ebrain/legacy/results/probe_merge.py",
+      "sha256": "6c68e8d94e69f6f58887e403ef3df428934c41dea523bfa27804cf979a5bae8b"
+    },
+    {
+      "old_path": "ebrain-tournament/results/probe_rank.py",
+      "new_path": "tools/ebrain/legacy/results/probe_rank.py",
+      "sha256": "aea6afddbfe6d1c8364dc47770823fedb605dda6b306b1e69a8aa61800da8e81"
+    },
+    {
+      "old_path": "ebrain-tournament/results/probe_terms.py",
+      "new_path": "tools/ebrain/legacy/results/probe_terms.py",
+      "sha256": "5861660ffa62b036a9e35f8ce6e8ababff17e24684efcf7c58f744229cd7ff3d"
+    },
+    {
+      "old_path": "ebrain-tournament/results/probe_zombie.py",
+      "new_path": "tools/ebrain/legacy/results/probe_zombie.py",
+      "sha256": "1e405e096d76a6318cda1b41d66ff78beb8635cf43a5bfa8563ceb99e328269d"
+    },
+    {
+      "old_path": "ebrain-tournament/results/protoA_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/protoA_10k_101.csv",
+      "sha256": "fbc9e08f2e8761659f67f868e81b82d2824a0896b80d8055bb0406630d399d9e"
+    },
+    {
+      "old_path": "ebrain-tournament/results/protoB_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/protoB_10k_101.csv",
+      "sha256": "d3c8276c6934e8967c8776b68cef6472d7b7417fffd1bea2b10811592840fb81"
+    },
+    {
+      "old_path": "ebrain-tournament/results/protoC_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/protoC_10k_101.csv",
+      "sha256": "7c809ca2cccb25ea22c4536cce13a7eedfa56f16bdff6bb951acd2ddd903c401"
+    },
+    {
+      "old_path": "ebrain-tournament/results/protoE_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/protoE_10k_101.csv",
+      "sha256": "6828add520644695a19718c625e5b0d1e916a46c2ae6170f0570a3aeb34ce0b4"
+    },
+    {
+      "old_path": "ebrain-tournament/results/protoG_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/protoG_10k_101.csv",
+      "sha256": "9b98338618e47c766120f9b30ba0df9114de7916a39bf4f5e1ff4100adb6d58a"
+    },
+    {
+      "old_path": "ebrain-tournament/results/protoH_cov0.55_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/protoH_cov0.55_10k_101.csv",
+      "sha256": "4becaac8aa9fc370459cffcaa5e3e194bad903027c8a576145ca4a61e48ead21"
+    },
+    {
+      "old_path": "ebrain-tournament/results/protoH_cov0.7_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/protoH_cov0.7_10k_101.csv",
+      "sha256": "fce71c8d6ad8f97e68abf5ba336c6b70eeae05c7d2c3a9801696d576973559e1"
+    },
+    {
+      "old_path": "ebrain-tournament/results/protoH_cov0.85_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/protoH_cov0.85_10k_101.csv",
+      "sha256": "b249d341e06e3ccb549aaf6eaab30f589a3a1574f69f4bd843820d5c8d7a923a"
+    },
+    {
+      "old_path": "ebrain-tournament/results/protoK_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/protoK_10k_101.csv",
+      "sha256": "c4b777c073f175977abf71ede796421e350782bbbe081be4ff5c70fba10ed84a"
+    },
+    {
+      "old_path": "ebrain-tournament/results/run_50k_autocap.ps1",
+      "new_path": "tools/ebrain/legacy/results/run_50k_autocap.ps1",
+      "sha256": "0abe08d5c57b5ef0c815a8e918328358ce1aef2a81de1f5d8bab0f9eecaa9766"
+    },
+    {
+      "old_path": "ebrain-tournament/results/run_50k_both.ps1",
+      "new_path": "tools/ebrain/legacy/results/run_50k_both.ps1",
+      "sha256": "e0ba6525639af7801d5e5deaf249394208862f556e1443c10164c30b2973a64b"
+    },
+    {
+      "old_path": "ebrain-tournament/results/run_extended.py",
+      "new_path": "tools/ebrain/legacy/results/run_extended.py",
+      "sha256": "d094bec6f83042bda02c448309e568f403a71f4838c409482e41084e38f43cc2"
+    },
+    {
+      "old_path": "ebrain-tournament/results/time_50k.py",
+      "new_path": "tools/ebrain/legacy/results/time_50k.py",
+      "sha256": "490543f7f8d925d05eb676cf502e850cc9a4a2d34b390fe18150c136723c3a91"
+    },
+    {
+      "old_path": "ebrain-tournament/results/verify_autocap_10k_101.csv",
+      "new_path": "tools/ebrain/legacy/results/verify_autocap_10k_101.csv",
+      "sha256": "817b51bdd1f3ea91c64037a90cacda021b6ebbb8a9cb34a2441647ddc4c20244"
+    },
+    {
+      "old_path": "ebrain-tournament/results/proto_A/adapter.py",
+      "new_path": "tools/ebrain/legacy/results/proto_A/adapter.py",
+      "sha256": "54d3fbd4c40b667b966da4dbb4582b9b1c7e7c6e27942d9eb50c10e0af4e1187"
+    },
+    {
+      "old_path": "ebrain-tournament/results/proto_B/adapter.py",
+      "new_path": "tools/ebrain/legacy/results/proto_B/adapter.py",
+      "sha256": "26cfec0df473bb9b8274e7ebdea5390fa113b77b75b3e6cefa62de6a5d73fc73"
+    },
+    {
+      "old_path": "ebrain-tournament/results/proto_C/adapter.py",
+      "new_path": "tools/ebrain/legacy/results/proto_C/adapter.py",
+      "sha256": "3078085769b687602d7991a7fd798789b0f9f133dda199da941c03956dbefb0d"
+    },
+    {
+      "old_path": "ebrain-tournament/results/proto_E/adapter.py",
+      "new_path": "tools/ebrain/legacy/results/proto_E/adapter.py",
+      "sha256": "76f746f87ba83db218620cc63432c60926d89b4095b342da42a92b3a8c787a84"
+    },
+    {
+      "old_path": "ebrain-tournament/results/proto_F/adapter.py",
+      "new_path": "tools/ebrain/legacy/results/proto_F/adapter.py",
+      "sha256": "b5adddfc36160e3a1d2d2a33ceb3373424f1d96eaa72c43ed983d36abe49b244"
+    },
+    {
+      "old_path": "ebrain-tournament/results/proto_G/adapter.py",
+      "new_path": "tools/ebrain/legacy/results/proto_G/adapter.py",
+      "sha256": "26f43d8d2ba65e269bcf6a9fc6bae3e7c63a4cf4202c78223929092618099fe1"
+    },
+    {
+      "old_path": "ebrain-tournament/results/proto_H/adapter.py",
+      "new_path": "tools/ebrain/legacy/results/proto_H/adapter.py",
+      "sha256": "0177cf18bb0239d1f08c43aaa9c558ae6940f5aef68ff66b8de02b33df9cc656"
+    },
+    {
+      "old_path": "ebrain-tournament/results/proto_K/adapter.py",
+      "new_path": "tools/ebrain/legacy/results/proto_K/adapter.py",
+      "sha256": "9056eaeb808a27a942b2ac15f31ae93166e145a61b8445e1d5403fadbc163e92"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/anchors.md",
+      "new_path": "tools/ebrain/legacy/judge/anchors.md",
+      "sha256": "cc7fdcb1589d7ac4d31542b6cae2c7eba492d0e9a0dab08eecb521e5dc418aff"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/results_summary.md",
+      "new_path": "tools/ebrain/legacy/judge/results_summary.md",
+      "sha256": "bdafceaf476c3c777c716b5d39afd751a17347a794c279ba2760e021fb7d7118"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/scorecard.md",
+      "new_path": "tools/ebrain/legacy/judge/scorecard.md",
+      "sha256": "752410ea0a8c50af935cc4c46710e9d698e88eee931b91dd51d09775e80575df"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/verdict.md",
+      "new_path": "tools/ebrain/legacy/judge/verdict.md",
+      "sha256": "887d20a9503a201d93230473fb1cd8ef0e14df313448622d67d512fc03e7429b"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/blind/Spec-X_v1.md",
+      "new_path": "tools/ebrain/legacy/judge/blind/Spec-X_v1.md",
+      "sha256": "e9127b75c0d309dad85970e7e9e12f3e4c4b60057b098935e10479954fe99832"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/blind/Spec-X_v2.md",
+      "new_path": "tools/ebrain/legacy/judge/blind/Spec-X_v2.md",
+      "sha256": "0138b4338bcabab7cd8e118ab19305336fd07acb294d2015ca24eca5bf1d644a"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/blind/Spec-Y_v1.md",
+      "new_path": "tools/ebrain/legacy/judge/blind/Spec-Y_v1.md",
+      "sha256": "0f8f0ac59a92871be7288f668c759d334feed22b0038ab1d72c6905c6b8f3f71"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/blind/Spec-Y_v2.md",
+      "new_path": "tools/ebrain/legacy/judge/blind/Spec-Y_v2.md",
+      "sha256": "4c7ee492ed47c588c8c97123b48322e222091d3cc941009d03c3c58f3b0367c9"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/blind/Spec-Z_v1.md",
+      "new_path": "tools/ebrain/legacy/judge/blind/Spec-Z_v1.md",
+      "sha256": "2cca96eec53be3507e4882077ef9448ea3cd08e08ebeb260dfe7a4e30a9098d3"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/blind/Spec-Z_v2.md",
+      "new_path": "tools/ebrain/legacy/judge/blind/Spec-Z_v2.md",
+      "sha256": "5343322836d7b0c87c4b072c354fc9cb18582fbcca9a68b8658d98fa72b2eea7"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/blind/ledger_P7.md",
+      "new_path": "tools/ebrain/legacy/judge/blind/ledger_P7.md",
+      "sha256": "d4bc304804b3594ed283f8bd3371b188125bd463d3a18cc2fab539e6508bbbb2"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/blind/ledger_R2.md",
+      "new_path": "tools/ebrain/legacy/judge/blind/ledger_R2.md",
+      "sha256": "d14a9d9874b148c413d95e24adf2df79eda6f165fb3cda3a932f0357410387b1"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/blind/ledger_T5.md",
+      "new_path": "tools/ebrain/legacy/judge/blind/ledger_T5.md",
+      "sha256": "192c1ccfd866592cfed9b662cb3e11d3e8bfcb73b46ec9e7cdbbaecbff0537e2"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/blind/round_record.md",
+      "new_path": "tools/ebrain/legacy/judge/blind/round_record.md",
+      "sha256": "3d10055213a1267dd481f8d47a5d2c08184bd4385d404a24cc116a64b7464e49"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/blind/code/Spec-X/adapter.py",
+      "new_path": "tools/ebrain/legacy/judge/blind/code/Spec-X/adapter.py",
+      "sha256": "f1f5d34af2f2818d8ca210650cafcbe8e3c1eca77566f545aa72624075e8a2fa"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/blind/code/Spec-Y/adapter.py",
+      "new_path": "tools/ebrain/legacy/judge/blind/code/Spec-Y/adapter.py",
+      "sha256": "97a0f6095133f7110ec8fbadbe681b352ae5e91c246c683cb9bd8975ad306566"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/blind/code/Spec-Z/adapter.py",
+      "new_path": "tools/ebrain/legacy/judge/blind/code/Spec-Z/adapter.py",
+      "sha256": "db7dbfa0623145c79759eeb33eb90684b32e2b27f296a6c915439fa109425cce"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/tools/audit.py",
+      "new_path": "tools/ebrain/legacy/judge/tools/audit.py",
+      "sha256": "dc0198f7dafe948f9f88f24a4fd96c9f34b2c0f25bd8b3301f13ecdd5b60f06b"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/tools/audit_out.txt",
+      "new_path": "tools/ebrain/legacy/judge/tools/audit_out.txt",
+      "sha256": "cf5792a1decdfc95ae7b3d39236f5c02ce323d0e33b6ec95d113bf7463f4c288"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/tools/rb_diag.py",
+      "new_path": "tools/ebrain/legacy/judge/tools/rb_diag.py",
+      "sha256": "343128d9d3dc88760221935cd2bed7efd593e61366359add262d218fd10fa0eb"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/tools/score.py",
+      "new_path": "tools/ebrain/legacy/judge/tools/score.py",
+      "sha256": "82c3258a2abce89e6dfb212a6c3d0ccc14ccd3f6aa7ce0ea2c3eeb5d1d254db7"
+    },
+    {
+      "old_path": "ebrain-tournament/judge/tools/score_out.txt",
+      "new_path": "tools/ebrain/legacy/judge/tools/score_out.txt",
+      "sha256": "67beb8e7f853df7be0cf5972dc9638c21389808fbb5b28957859e134d6dc59ac"
+    },
+    {
+      "old_path": "ebrain-tournament/STATE.md",
+      "new_path": "tools/ebrain/legacy/STATE.md",
+      "sha256": "67949bb34f0eed26af79e9620210e70e2927dc93a220e60b6d5ce42df24d87ac"
+    },
+    {
+      "old_path": "ebrain-tournament/CODEBASE_MAP.md",
+      "new_path": "tools/ebrain/legacy/CODEBASE_MAP.md",
+      "sha256": "bbcf962d5c7352f5a086d96a1f6e7cf737a03de4a6053a98b49893b9ea5e1299"
+    },
+    {
+      "old_path": "ebrain-tournament/BUILD_PROMPT.md",
+      "new_path": "tools/ebrain/legacy/BUILD_PROMPT.md",
+      "sha256": "bdcf9fb3a23619688fa50331593a3fa0be0ad3853909c617d0a29c7f6749f1a4"
+    }
+  ],
+  "spec_original": "docs/ebrain/SPEC_DEV_BRAIN_V2.md",
+  "spec_current": "docs/ebrain/SPEC_DEV_BRAIN_V3.md",
+  "spec_sha256": "18539a28a852a2e658308fedc1830f7fffd1e995c8608b423bbee6438cd1e3f8"
+}

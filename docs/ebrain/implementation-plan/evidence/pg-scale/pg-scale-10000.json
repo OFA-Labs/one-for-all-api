@@ -1,0 +1,11 @@
+{
+  "utc": "2026-11-25T07:52:55.007209+00:00",
+  "database": "postgresql://127.0.0.1:55432/ebrain_v3_test (restricted runtime role)",
+  "facts_written": 10000,
+  "queries": 100,
+  "joint_exact_correct": 100,
+  "joint_exact": 1.0,
+  "write_seconds": 535.57,
+  "latency_ms_p50": 34.163,
+  "latency_ms_p95": 68.305
+}

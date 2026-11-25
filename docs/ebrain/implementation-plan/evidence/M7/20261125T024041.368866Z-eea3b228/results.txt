@@ -1,0 +1,17 @@
+run_id=20261125T024041.368866Z-eea3b228
+command=C:\Users\jaiva\OneDrive\Desktop\voice-agents\one-for-all-api\.venv\Scripts\python.exe -m pytest tests/v3/test_eval_protocol.py tests/v3/test_contracts_v3.py -q --junitxml=C:\Users\jaiva\AppData\Local\Temp\m7-junit.xml
+cwd=C:\Users\jaiva\OneDrive\Desktop\voice-agents\one-for-all-api
+python=3.12.10
+pytest_exit=0
+discovered=24 passed=24 failed=0 skipped=0 errors=0
+........................                                                 [100%]
+24 passed in 10.52s
+
+[cli] help exit=0 :: usage: tools.ebrain.v3_eval.cli [-h] |                                 {protocol,generate,evaluate,negative-controls,verify-manifest,_worker} |                                 ...
+[cli] protocol exit=0 :: { |   "dataset": { |     "canary_chains_per_events": 20,
+[cli] generate_stream exit=0 :: {"counts": {"distinct_fact_count": 1000, "event_count": 1125, "max_revision": 2, "revision_count": 125, "scenario_counts": {"conflict": 133, "scoped": 334, "sequential": 658}, "stream_sha256": "448202d44b2fbeeb130c13cec989cc17c012cd6d48c4723b0de00463d21ad4a1"}, "mode": "distinct_fact_count", "seed": 101, "size": 1000}
+[cli] negative_controls exit=0 :: true_plus_zombie   correctly_failed=True detectors={'zombie': True, 'all_abstain': False, 'joint_exact_false': True, 'leak': False} | empty              correctly_failed=True detectors={'zombie': False, 'all_abstain': True, 'joint_exact_false': True, 'leak': False} | always_current     correctly_failed=True detectors={'zombie': True, 'all_abstain': False, 'joint_exact_false': True, 'leak': False}
+[cli] evaluate_missing_adapter exit=3 :: status=NOT_RUN | adapter=tools/ebrain/v3-eval/fixtures/does-not-exist.py sha256=None | NOT_RUN: adapter missing (no accuracy number is claimed)
+[cli] evaluate_reference exit=0 :: status=OK | adapter=tools/ebrain/v3-eval/fixtures/reference_contender.py sha256=c54af9dca8702b3da46dd190b1807bedb46a128b0bfdb366931613a3db81b248 | ALL      joint_exact                         1.0 n=1
+[cli] evaluate_zombie exit=4 :: status=OK | adapter=tools/ebrain/v3-eval/fixtures/negative_controls.py sha256=9bcd0f51008fccc0210a2e93f5bf1ce2a918fb4b140b7eef7aa9d58fb72ca51b | ALL      joint_exact                         0.0 n=1
+[cli] verify_manifest exit=0 :: manifest=OK expected=6d15381c9d8dc13c09e1797b39e3f4564d768e2c061a1882e4771454f46a13f3 found=6d15381c9d8dc13c09e1797b39e3f4564d768e2c061a1882e4771454f46a13f3

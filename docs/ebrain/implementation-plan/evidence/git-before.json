@@ -1,0 +1,27 @@
+{
+  "one-for-all-api": {
+    "status": " M docs/ebrain/DECISIONS_LOG.md\n?? docs/ebrain/HANDOFF_TO_PLANNER.md\n?? docs/ebrain/SPEC_DEV_BRAIN_V2.md\n?? ebrain/voice_client.py\n?? tests/test_voice_client.py\n",
+    "files": {
+      "docs/ebrain/DECISIONS_LOG.md": "667176cde92e7f03c31894db54b2e506457997343ccd835cb0c4dd524421bd14",
+      "docs/ebrain/HANDOFF_TO_PLANNER.md": "5a03663c109ee7fb21c3f5c9ad50400f2d41ddc043c307c2d43a7eaf4b47fbc8",
+      "docs/ebrain/SPEC_DEV_BRAIN_V2.md": "18539a28a852a2e658308fedc1830f7fffd1e995c8608b423bbee6438cd1e3f8",
+      "ebrain/voice_client.py": "aac62691133c3439fb0d682c78e54524c5010ce9954ba301e348bd6d443a0800",
+      "tests/test_voice_client.py": "842021758a20d779f4c4e2c11b546d693fd890689c4f0116ee5d24a4f5facbaf"
+    }
+  },
+  "one-for-all-web": {
+    "status": " M src/features/e-brain/components/e-brain.tsx\n M src/features/e-brain/components/use-ebrain-limits.ts\n M src/features/e-brain/e-brain.css\n M src/lib/ebrain/mock-client.ts\n M tests/e-brain.spec.ts\n?? src/features/e-brain/components/ebrain-states.tsx\n?? src/features/e-brain/components/heal-state.tsx\n?? src/features/e-brain/components/honesty-panel.tsx\n?? src/features/e-brain/components/memory-list.tsx\n?? src/features/e-brain/components/pairs-review.tsx\n",
+    "files": {
+      "src/features/e-brain/components/e-brain.tsx": "8005afef1fd7be83e5007d3794ef46fbc3014addaa8ae730596ec780b67058ec",
+      "src/features/e-brain/components/use-ebrain-limits.ts": "c5eea9312a6fbe9b743115a5453f8ad903f1d799a2b706f74c96e0ba794a467c",
+      "src/features/e-brain/e-brain.css": "48ccfb0a50e127b47aa7b673649715f820727cf14e4e032c7e46600b460b7357",
+      "src/lib/ebrain/mock-client.ts": "ed1c4d21d414ebf63b9aabdc37e93e7f8379fc1b4971ebb0907a5cafcfa04bc2",
+      "tests/e-brain.spec.ts": "8db03deacf94b540de919a90b9a63e45d5678744a3f5117ea74898835be9830b",
+      "src/features/e-brain/components/ebrain-states.tsx": "a69a1f1e910aca1ff9ef87caa1ddc59c4b4ace75975bf28e9de1be2d8c3e7446",
+      "src/features/e-brain/components/heal-state.tsx": "5b85f1f8a23c7b842c8cdfd3d5c78f6591278a509096d88d55fce0db422521fc",
+      "src/features/e-brain/components/honesty-panel.tsx": "19867f9a76056b9ca8dfa875605fc86f6eea9f1cd6f16c918d46304df5c762d8",
+      "src/features/e-brain/components/memory-list.tsx": "ec9a0f6f639365d6bc95b698500ed062615a76789861cc6361d345a2f26eac71",
+      "src/features/e-brain/components/pairs-review.tsx": "ea4e14b62c7aa7ac031424005158863c516a8334a89169824509c6123292750e"
+    }
+  }
+}

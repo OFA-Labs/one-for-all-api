@@ -1,0 +1,339 @@
+F.F..FF....F.F....F..F                                                   [100%]
+================================== FAILURES ===================================
+________________________ test_C06_shared_observed_base ________________________
+
+pg_ledger = <ebrain.v3.db.postgres.PostgresLedger object at 0x0000025FA61CA3F0>
+
+    def test_C06_shared_observed_base(pg_ledger):
+        from ..v3_helpers import write as make_write
+        c = ctx()
+        k = key()
+>       head = pg_ledger.admit(c, make_write("base", k, "base"))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\v3\integration\test_concurrent_decisions.py:18: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ebrain\v3\db\postgres.py:242: in admit
+    cur.execute(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.Cursor [closed] [BAD] at 0x25fa60ee5d0>
+query = 'INSERT INTO v3_outbox(org_id, job_id, job_type, scope, payload_digest, seq) VALUES (%s,%s,%s,%s,%s,%s)'
+params = ('org-demo', 'claim:1', 'projection', 'proj-a', '8f18f74aa5275bdf853b7418e1351fff5db7caa4f87341c18ab3918ec59d7d27', 1)
+prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.NotNullViolation: null value in column "state" of relation "v3_outbox" violates not-null constraint
+
+.venv-ebrain-test\Lib\site-packages\psycopg\cursor.py:117: NotNullViolation
+____________________ test_C03_committed_write_worker_crash ____________________
+
+pg_ledger = <ebrain.v3.db.postgres.PostgresLedger object at 0x0000025FA61C9EE0>
+pg_conn = <psycopg.Connection [IDLE] (host=127.0.0.1 port=55432 user=ebrain_migration_agent database=ebrain_v3_test) at 0x25fa61ca150>
+
+    def test_C03_committed_write_worker_crash(pg_ledger, pg_conn):
+        """A committed event is visible without waiting for any projection worker."""
+        c = ctx()
+        k = key()
+>       receipt = pg_ledger.admit(c, write("o1", k, "committed"))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\v3\integration\test_consistency.py:15: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ebrain\v3\db\postgres.py:242: in admit
+    cur.execute(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.Cursor [closed] [BAD] at 0x25fa60eef90>
+query = 'INSERT INTO v3_outbox(org_id, job_id, job_type, scope, payload_digest, seq) VALUES (%s,%s,%s,%s,%s,%s)'
+params = ('org-demo', 'claim:1', 'projection', 'proj-a', 'e90d27cc9a79a7bae8eb701ef49c70109574dd36591d7381afb48dc0c1cf6cb8', 1)
+prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.NotNullViolation: null value in column "state" of relation "v3_outbox" violates not-null constraint
+
+.venv-ebrain-test\Lib\site-packages\psycopg\cursor.py:117: NotNullViolation
+____________________ test_atomic_admission_and_idempotency ____________________
+
+pg_ledger = <ebrain.v3.db.postgres.PostgresLedger object at 0x0000025FA6220560>
+
+    def test_atomic_admission_and_idempotency(pg_ledger):
+        c = ctx()
+        k = key()
+>       first = pg_ledger.admit(c, write("o1", k, "v1", idem="i1"))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\v3\integration\test_ledger.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ebrain\v3\db\postgres.py:242: in admit
+    cur.execute(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.Cursor [closed] [BAD] at 0x25fa60ef050>
+query = 'INSERT INTO v3_outbox(org_id, job_id, job_type, scope, payload_digest, seq) VALUES (%s,%s,%s,%s,%s,%s)'
+params = ('org-demo', 'claim:1', 'projection', 'proj-a', 'e5f2394151489d03c611d48a11341b776506e5861e647c4680d8288c04355a3f', 1)
+prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.NotNullViolation: null value in column "state" of relation "v3_outbox" violates not-null constraint
+
+.venv-ebrain-test\Lib\site-packages\psycopg\cursor.py:117: NotNullViolation
+____________________ test_concurrent_last_slot_idempotency ____________________
+
+pg_ledger = <ebrain.v3.db.postgres.PostgresLedger object at 0x0000025FA6221FD0>
+
+    def test_concurrent_last_slot_idempotency(pg_ledger):
+        c = ctx()
+        k = key()
+        results: list[str] = []
+    
+        def run(n: int) -> None:
+            try:
+                pg_ledger.admit(c, write(f"c{n}", k, f"v{n}", idem="shared"))
+                results.append("ok")
+            except IdempotencyConflict:
+                results.append("conflict")
+    
+        with ThreadPoolExecutor(max_workers=2) as pool:
+>           list(pool.map(run, (1, 2)))
+
+tests\v3\integration\test_ledger.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\_base.py:619: in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\_base.py:317: in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\_base.py:401: in __get_result
+    raise self._exception
+..\..\..\..\AppData\Local\Programs\Python\Python312\Lib\concurrent\futures\thread.py:59: in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\v3\integration\test_ledger.py:38: in run
+    pg_ledger.admit(c, write(f"c{n}", k, f"v{n}", idem="shared"))
+ebrain\v3\db\postgres.py:242: in admit
+    cur.execute(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.Cursor [closed] [BAD] at 0x25fa60eebd0>
+query = 'INSERT INTO v3_outbox(org_id, job_id, job_type, scope, payload_digest, seq) VALUES (%s,%s,%s,%s,%s,%s)'
+params = ('org-demo', 'claim:1', 'projection', 'proj-a', '84568c1b3a7a0f60ea7078d47f16c19ab30df5f823c84cff02bff1746a9a18e9', 1)
+prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.NotNullViolation: null value in column "state" of relation "v3_outbox" violates not-null constraint
+
+.venv-ebrain-test\Lib\site-packages\psycopg\cursor.py:117: NotNullViolation
+____________________ test_job_in_same_transaction_as_event ____________________
+
+pg_ledger = <ebrain.v3.db.postgres.PostgresLedger object at 0x0000025FA62229C0>
+pg_conn = <psycopg.Connection [IDLE] (host=127.0.0.1 port=55432 user=ebrain_migration_agent database=ebrain_v3_test) at 0x25fa662d610>
+
+    def test_job_in_same_transaction_as_event(pg_ledger, pg_conn):
+        c = ctx()
+>       receipt = pg_ledger.admit(c, write("o1", key(), "v"))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\v3\integration\test_outbox.py:13: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ebrain\v3\db\postgres.py:242: in admit
+    cur.execute(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.Cursor [closed] [BAD] at 0x25fa65b8290>
+query = 'INSERT INTO v3_outbox(org_id, job_id, job_type, scope, payload_digest, seq) VALUES (%s,%s,%s,%s,%s,%s)'
+params = ('org-demo', 'claim:1', 'projection', 'proj-a', '9e5d229f353dd211cddc1d3c0c69931f0c951bb9e0a52a607171563da11fd787', 1)
+prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.NotNullViolation: null value in column "state" of relation "v3_outbox" violates not-null constraint
+
+.venv-ebrain-test\Lib\site-packages\psycopg\cursor.py:117: NotNullViolation
+_________________________ test_H10_degraded_failures __________________________
+
+pg_ledger = <ebrain.v3.db.postgres.PostgresLedger object at 0x0000025FA6221970>
+
+    def test_H10_degraded_failures(pg_ledger):
+        c = ctx()
+>       answer = QueryService(pg_ledger.cfg, DEFAULT_POLICY).answer(
+            c, Selector(scope=c.scope), pg_ledger.snapshot(c), (), (), (), (),
+            incomplete=True,
+        )
+
+tests\v3\integration\test_query_snapshot.py:13: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ebrain\v3\retrieval\query.py:120: in answer
+    candidate_set = self.candidates(
+ebrain\v3\retrieval\query.py:75: in candidates
+    check_read_epoch(ctx, snapshot)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+ctx = AuthorizedContext(principal=Principal(subject='alice', org_id='org-demo', grants=(Grant(scope='proj-a', predicates=('d...: 'write'>), source_contract=<SourceContract.FIRST_PARTY_DECLARED: 'first_party_declared'>, auth_epoch=1, source_id='')
+snapshot = Snapshot(org_id='org-demo', knowledge_seq=0, valid_at='2026-11-25T05:42:09.893036+00:00', identity_generation=1, policy_version='1', auth_epoch=0, retrieval_generation='', model_generation='')
+
+    def check_read_epoch(ctx: AuthorizedContext, snapshot: Snapshot) -> None:
+        """Final authorization check before delivery, also for historical reads."""
+        if snapshot.auth_epoch != ctx.auth_epoch:
+>           raise AuthEpochChanged("authorization epoch changed during read")
+E           ebrain.v3.errors.AuthEpochChanged: [auth_epoch_changed] authorization epoch changed during read
+
+ebrain\v3\auth\context.py:99: AuthEpochChanged
+______________________ test_C09_digest_and_current_grant ______________________
+
+pg_ledger = <ebrain.v3.db.postgres.PostgresLedger object at 0x0000025FA61CBF50>
+
+    def test_C09_digest_and_current_grant(pg_ledger):
+        workflow = ReviewService()
+        c = ctx()
+        workflow.propose(c, _decision(c.scope))
+        workflow.submit(c, "d1")
+        with pytest.raises(StaleReview):
+            workflow.vote(ctx(subject="bob"), Vote(
+                decision_id="d1", version=2, approve=True, digest="digest-1", voter="bob"))
+        workflow.vote(ctx(subject="bob"), Vote(
+            decision_id="d1", version=1, approve=True, digest="digest-1", voter="bob"))
+>       with pytest.raises(Forbidden):
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE Forbidden
+
+tests\v3\integration\test_review_approval.py:32: Failed
+______________________ test_foreign_org_cannot_read_rows ______________________
+
+pg_ledger = <ebrain.v3.db.postgres.PostgresLedger object at 0x0000025FA662CFB0>
+pg_conn = <psycopg.Connection [IDLE] (host=127.0.0.1 port=55432 user=ebrain_migration_agent database=ebrain_v3_test) at 0x25fa662d130>
+
+    def test_foreign_org_cannot_read_rows(pg_ledger, pg_conn):
+        c = ctx()
+>       pg_ledger.admit(c, write("o1", key(), "secret"))
+
+tests\v3\integration\test_rls.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+ebrain\v3\db\postgres.py:242: in admit
+    cur.execute(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <psycopg.Cursor [closed] [BAD] at 0x25fa60eeed0>
+query = 'INSERT INTO v3_outbox(org_id, job_id, job_type, scope, payload_digest, seq) VALUES (%s,%s,%s,%s,%s,%s)'
+params = ('org-demo', 'claim:1', 'projection', 'proj-a', 'b1ba32e076ca87dfd1e151d7890bb8fb0871ba32907b4641be3ec4a9ec3ce5ba', 1)
+prepare = None, binary = None
+
+    def execute(
+        self,
+        query: Query,
+        params: Params | None = None,
+        *,
+        prepare: bool | None = None,
+        binary: bool | None = None,
+    ) -> Self:
+        """
+        Execute a query or command to the database.
+        """
+        try:
+            with self._conn.lock:
+                self._conn.wait(
+                    self._execute_gen(query, params, prepare=prepare, binary=binary)
+                )
+        except e._NO_TRACEBACK as ex:
+>           raise ex.with_traceback(None)
+E           psycopg.errors.NotNullViolation: null value in column "state" of relation "v3_outbox" violates not-null constraint
+
+.venv-ebrain-test\Lib\site-packages\psycopg\cursor.py:117: NotNullViolation
+=========================== short test summary info ===========================
+FAILED tests/v3/integration/test_concurrent_decisions.py::test_C06_shared_observed_base
+FAILED tests/v3/integration/test_consistency.py::test_C03_committed_write_worker_crash
+FAILED tests/v3/integration/test_ledger.py::test_atomic_admission_and_idempotency
+FAILED tests/v3/integration/test_ledger.py::test_concurrent_last_slot_idempotency
+FAILED tests/v3/integration/test_outbox.py::test_job_in_same_transaction_as_event
+FAILED tests/v3/integration/test_query_snapshot.py::test_H10_degraded_failures
+FAILED tests/v3/integration/test_review_approval.py::test_C09_digest_and_current_grant
+FAILED tests/v3/integration/test_rls.py::test_foreign_org_cannot_read_rows - ...
+8 failed, 14 passed in 4.55s

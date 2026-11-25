@@ -1,0 +1,69 @@
+{
+    "note":  "Frozen legacy synthetic protocol. Runtime may differ from original Python 3.11 research. Product source hashes supplement harness adapter hash. Not V3 evidence.",
+    "git_head":  "d3797e62bb1d4666fd4ff301d687733d366737ab",
+    "python":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\.venv\\Scripts\\python.exe",
+    "args":  [
+                 "-m",
+                 "harness.runner",
+                 "--contender",
+                 "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\tools\\ebrain\\product-adapter",
+                 "--size",
+                 "1000",
+                 "--seed",
+                 "101",
+                 "--out",
+                 "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\docs\\ebrain\\implementation-plan\\evidence\\legacy-product-1000-101-20261124T175356522Z-d5fd0f72\\results.csv",
+                 "--timeout-s",
+                 "900"
+             ],
+    "seed":  101,
+    "csv_sha256":  "e62272de610ecbc2aa829c4ebd87bb6158f506ed0adeebfb013b04459011d846",
+    "size_events":  1000,
+    "contender":  "product",
+    "completed_at_utc":  "2026-11-24T17:53:58.9566291Z",
+    "run_id":  "20261124T175356522Z-d5fd0f72",
+    "cwd":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\tools\\ebrain\\legacy\\benchmark",
+    "exit_code":  0,
+    "runtime":  [
+                    "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+                    "3.49.1"
+                ],
+    "source_hashes":  [
+                          {
+                              "sha256":  "da0b7bed4ac9b1f0b115ce834bb7584208567fa697972e8274629fd6a4ef6b7b",
+                              "path":  "ebrain/__init__.py"
+                          },
+                          {
+                              "sha256":  "3cf554d5c663bbf40dfc735c6e55f25f8dbf340e46583dd8582062010ae21a7c",
+                              "path":  "ebrain/__main__.py"
+                          },
+                          {
+                              "sha256":  "7d4a49ade93d6b0a4fec7fc2e640a3a5c5f637760d3127d0826cdb9ee7cc1705",
+                              "path":  "ebrain/api.py"
+                          },
+                          {
+                              "sha256":  "91a12e93bc48181a0bd026b7f8201e588f77e078b3a99836c278425a0de95a39",
+                              "path":  "ebrain/cli.py"
+                          },
+                          {
+                              "sha256":  "ab8b8c87befbebfedfa80c10208c14a0aac98a0f306d2d8ccf745df98955141e",
+                              "path":  "ebrain/facts.py"
+                          },
+                          {
+                              "sha256":  "421fce866ad3f252824ec1fc6523d6fc2eef14b7c5b82a2e6478dd8a20f4be20",
+                              "path":  "ebrain/models.py"
+                          },
+                          {
+                              "sha256":  "26402fb7189ee9d38bb029cc20b44150d19313d55a4fa5a285dd434263aacfa4",
+                              "path":  "ebrain/store.py"
+                          },
+                          {
+                              "sha256":  "aac62691133c3439fb0d682c78e54524c5010ce9954ba301e348bd6d443a0800",
+                              "path":  "ebrain/voice_client.py"
+                          },
+                          {
+                              "sha256":  "11bd8a17dbaab30b35dbee64e0104675b62d56d4a3f275b559159446cbc20d39",
+                              "path":  "tools/ebrain/product-adapter/adapter.py"
+                          }
+                      ]
+}

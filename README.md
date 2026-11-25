@@ -2,6 +2,15 @@
 
 Backend for ONE FOR ALL.
 
+For the current E-Brain baseline and the next coding agent's complete V3 work,
+start with the [implementation plan](docs/ebrain/implementation-plan/README.md).
+It includes eight milestone READMEs, 52 checkpoints, named regression coverage,
+approval gates, migration/recovery and executed validation evidence. V3 is
+proposed, not implemented. The retired tournament's frozen spec/harness/results
+now live in [tools/ebrain](tools/ebrain/README.md); the obsolete offline voice app
+has been archived outside this workspace. The dated M1/M2 notes below describe
+the original implementation and do not override the verified current-state plan.
+
 E-Brain is EXPERIMENTAL shared project memory for Claude Code, Codex and the
 voice agent. M1 ports the reference SQLite store and authenticated HTTP API:
 accepted writes retain their history, queries select admissible current values,
@@ -15,10 +24,12 @@ uv pip install --python .venv\Scripts\python.exe -r requirements.txt
 .venv\Scripts\python.exe -m pytest tests -q
 ```
 
-The full M2 suite passes **65 tests, with 1 skipped**. This includes the M1
+The current pre-plan suite passed **71 tests, with 1 skipped**. This includes the M1
 acceptance tests, three M1 integration regressions and ten M2 bridge regressions.
-The existing CSV comparison skips because benchmark CSVs are not shipped in
-this repo. The seven reference test files remain unchanged;
+The exact measured-CSV comparison runs when using
+`powershell -NoProfile -File tools/ebrain/scripts/Test-CurrentBackend.ps1`, which
+supplies the retained CSV paths without changing the original test. Without
+that configuration the test may skip. The seven reference test files remain unchanged;
 `tests/test_bridges.py` verifies the product-spec amendment, CLI, hooks and
 bootstrap, and expects a sibling `one-for-all-web` checkout with PowerShell.
 

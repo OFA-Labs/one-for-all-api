@@ -1,0 +1,15 @@
+{
+  "title": "ebrain-v3-scoped-cursor",
+  "type": "object",
+  "required": ["schema", "scope", "opaque", "signature", "issued_at", "snapshot_seq"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": 3},
+    "scope": {"type": "string", "minLength": 1},
+    "opaque": {"type": "string", "minLength": 1},
+    "signature": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "issued_at": {"type": "string", "minLength": 1},
+    "snapshot_seq": {"type": "integer", "minimum": 0},
+    "expires_at": {"type": ["string", "null"]}
+  }
+}

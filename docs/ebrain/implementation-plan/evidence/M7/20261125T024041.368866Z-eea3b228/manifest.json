@@ -1,0 +1,265 @@
+{
+  "adapter": {
+    "name": "none",
+    "note": "test suite uses fixture adapters only"
+  },
+  "command": [
+    "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "tests/v3/test_eval_protocol.py",
+    "tests/v3/test_contracts_v3.py",
+    "-q",
+    "--junitxml=C:\\Users\\jaiva\\AppData\\Local\\Temp\\m7-junit.xml"
+  ],
+  "counts": {
+    "discovered": 24,
+    "errors": 0,
+    "failed": 0,
+    "passed": 24,
+    "skipped": 0
+  },
+  "created_at_utc": "20261125T024041.366367Z",
+  "cwd": "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api",
+  "dataset_hash": "448202d44b2fbeeb130c13cec989cc17c012cd6d48c4723b0de00463d21ad4a1",
+  "dirty_digest": "91ab8dddafb4af47772ed68e34a52a2d6e7f2d1d90bed227666c50b053ad4610",
+  "exit_code": 0,
+  "extra": {
+    "cli_checks": [
+      {
+        "args": [
+          "--help"
+        ],
+        "excerpt": "usage: tools.ebrain.v3_eval.cli [-h] |                                 {protocol,generate,evaluate,negative-controls,verify-manifest,_worker} |                                 ...",
+        "exit_code": 0,
+        "label": "help"
+      },
+      {
+        "args": [
+          "protocol"
+        ],
+        "excerpt": "{ |   \"dataset\": { |     \"canary_chains_per_events\": 20,",
+        "exit_code": 0,
+        "label": "protocol"
+      },
+      {
+        "args": [
+          "generate",
+          "--seed",
+          "101",
+          "--size",
+          "1000",
+          "--mode",
+          "distinct_fact_count",
+          "--stream"
+        ],
+        "excerpt": "{\"counts\": {\"distinct_fact_count\": 1000, \"event_count\": 1125, \"max_revision\": 2, \"revision_count\": 125, \"scenario_counts\": {\"conflict\": 133, \"scoped\": 334, \"sequential\": 658}, \"stream_sha256\": \"448202d44b2fbeeb130c13cec989cc17c012cd6d48c4723b0de00463d21ad4a1\"}, \"mode\": \"distinct_fact_count\", \"seed\": 101, \"size\": 1000}",
+        "exit_code": 0,
+        "label": "generate_stream"
+      },
+      {
+        "args": [
+          "negative-controls"
+        ],
+        "excerpt": "true_plus_zombie   correctly_failed=True detectors={'zombie': True, 'all_abstain': False, 'joint_exact_false': True, 'leak': False} | empty              correctly_failed=True detectors={'zombie': False, 'all_abstain': True, 'joint_exact_false': True, 'leak': False} | always_current     correctly_failed=True detectors={'zombie': True, 'all_abstain': False, 'joint_exact_false': True, 'leak': False}",
+        "exit_code": 0,
+        "label": "negative_controls"
+      },
+      {
+        "args": [
+          "evaluate",
+          "--adapter",
+          "tools/ebrain/v3-eval/fixtures/does-not-exist.py",
+          "--seed",
+          "101"
+        ],
+        "excerpt": "status=NOT_RUN | adapter=tools/ebrain/v3-eval/fixtures/does-not-exist.py sha256=None | NOT_RUN: adapter missing (no accuracy number is claimed)",
+        "exit_code": 3,
+        "label": "evaluate_missing_adapter"
+      },
+      {
+        "args": [
+          "evaluate",
+          "--adapter",
+          "tools/ebrain/v3-eval/fixtures/reference_contender.py",
+          "--seed",
+          "101",
+          "--size",
+          "100"
+        ],
+        "excerpt": "status=OK | adapter=tools/ebrain/v3-eval/fixtures/reference_contender.py sha256=c54af9dca8702b3da46dd190b1807bedb46a128b0bfdb366931613a3db81b248 | ALL      joint_exact                         1.0 n=1",
+        "exit_code": 0,
+        "label": "evaluate_reference"
+      },
+      {
+        "args": [
+          "evaluate",
+          "--adapter",
+          "tools/ebrain/v3-eval/fixtures/negative_controls.py",
+          "--seed",
+          "101",
+          "--size",
+          "100"
+        ],
+        "excerpt": "status=OK | adapter=tools/ebrain/v3-eval/fixtures/negative_controls.py sha256=9bcd0f51008fccc0210a2e93f5bf1ce2a918fb4b140b7eef7aa9d58fb72ca51b | ALL      joint_exact                         0.0 n=1",
+        "exit_code": 4,
+        "label": "evaluate_zombie"
+      },
+      {
+        "args": [
+          "verify-manifest",
+          "--manifest",
+          "C:\\Users\\jaiva\\AppData\\Local\\Temp\\m7-evidence-dataset\\dataset_manifest.json"
+        ],
+        "excerpt": "manifest=OK expected=6d15381c9d8dc13c09e1797b39e3f4564d768e2c061a1882e4771454f46a13f3 found=6d15381c9d8dc13c09e1797b39e3f4564d768e2c061a1882e4771454f46a13f3",
+        "exit_code": 0,
+        "label": "verify_manifest"
+      }
+    ],
+    "dataset_counts": {
+      "distinct_fact_count": 1000,
+      "event_count": 1125,
+      "max_revision": 2,
+      "revision_count": 125,
+      "scenario_counts": {
+        "conflict": 133,
+        "scoped": 334,
+        "sequential": 658
+      },
+      "stream_sha256": "448202d44b2fbeeb130c13cec989cc17c012cd6d48c4723b0de00463d21ad4a1"
+    },
+    "dataset_manifest_sha256": "6d15381c9d8dc13c09e1797b39e3f4564d768e2c061a1882e4771454f46a13f3",
+    "results_sanitized": true,
+    "test_summary": {
+      "discovered": 24,
+      "errors": 0,
+      "failed": 0,
+      "passed": 24,
+      "skipped": 0
+    }
+  },
+  "failure_policy": {
+    "adapter_exception": "FAIL",
+    "mandatory_skip": "FAIL",
+    "missing_adapter": "NOT_RUN",
+    "sealed_tuning": "RETIRE_SUITE",
+    "threshold_breach": "FAIL",
+    "timeout": "FAIL",
+    "zero_denominator": "NOT_RUN"
+  },
+  "git_head": "d3797e62bb1d4666fd4ff301d687733d366737ab",
+  "limitations": [
+    "Synthetic deterministic data only; no sealed suite configured.",
+    "No live model, Postgres, load or restore evidence in this run.",
+    "Full-suite `pytest tests` during this session also included concurrently-added non-M7 tests; this manifest records only the two M7 test files listed in `command`."
+  ],
+  "manifest_schema_version": 1,
+  "manifest_sha256": "3f302138837612b0c2f2a5661cdb8730983e6d42af3d492f5cf091216f048510",
+  "mode": "distinct_fact_count",
+  "oracle_hash": "1b5ea65fd19ceb0eeb3b701c74c04b90dfebd1ae030a88cecb676bb6747a2ddc",
+  "protocol_hash": "676de5b2376ca322a3b4b19537e45385f22f84f2cc9a4ff350adf30a3f4cbeb3",
+  "protocol_id": "ebrain-v3-public",
+  "protocol_version": "1.0.0",
+  "python": {
+    "executable": "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\.venv\\Scripts\\python.exe",
+    "version": "3.12.10"
+  },
+  "run_id": "20261125T024041.368866Z-eea3b228",
+  "seed": 101,
+  "size": 1000,
+  "source_digests": [
+    {
+      "path": "docs/ebrain/contracts/v3/ack.schema.json",
+      "sha256": "fc89e83df5f8ca40a36db1370273672218bee32e1f2395097b6064ab99178112"
+    },
+    {
+      "path": "docs/ebrain/contracts/v3/answer.schema.json",
+      "sha256": "dee80ef244cacb5acbd1b987718eaa23fda507c3a3c9468f91874d4e49a2016d"
+    },
+    {
+      "path": "docs/ebrain/contracts/v3/compatibility_matrix.schema.json",
+      "sha256": "080c33a64cf26c02465dfc41442a34be4a5106ee7ec2e9440020a6aebaa901fc"
+    },
+    {
+      "path": "docs/ebrain/contracts/v3/error.schema.json",
+      "sha256": "588bd42b8572ddf30fb52018171b2e2ad8c2f6fd0ef233e800de0f326f9d746e"
+    },
+    {
+      "path": "docs/ebrain/contracts/v3/negotiation.schema.json",
+      "sha256": "60ff6e4f455261bc192a01f846cc8140eb5aa35c7846dbde0e34bb5b00db31d6"
+    },
+    {
+      "path": "docs/ebrain/contracts/v3/query.schema.json",
+      "sha256": "75bf2a84318fdf9fd00c3b163423251f13ce0a5f65f911465c7f67a052306c78"
+    },
+    {
+      "path": "docs/ebrain/contracts/v3/receipt.schema.json",
+      "sha256": "d843940eba0153415f43558d1dc9d0f44863a30bdde650eab80f50eda4dde780"
+    },
+    {
+      "path": "docs/ebrain/contracts/v3/scoped_cursor.schema.json",
+      "sha256": "c37b7f360987805c28da077f3f7dfc290e2945f3f2a1c26b2f3f55ad2e046a3e"
+    },
+    {
+      "path": "docs/ebrain/contracts/v3/write.schema.json",
+      "sha256": "95fac7e938cb786b06ac399524f1e4f750de599fcdfde412fdeaeb329093969b"
+    },
+    {
+      "path": "tests/v3/__init__.py",
+      "sha256": "1813819a01ab0942b8af4efcdae44a74f6d6b5b690e55d9ce34e3d4bc4e03a8b"
+    },
+    {
+      "path": "tests/v3/conftest.py",
+      "sha256": "32213b545b888939cc8684c46b80b2e762e8e2c4627dedd2118e430503442214"
+    },
+    {
+      "path": "tests/v3/test_contracts_v3.py",
+      "sha256": "d7fecbb82b97aa9980ac50328c0cd018a7983106c37890cfba3d9f1ec57c5093"
+    },
+    {
+      "path": "tests/v3/test_eval_protocol.py",
+      "sha256": "dd37839bd7296ecf564f257ab161db20e024bd1f9b34b6b81e441b66241504e1"
+    },
+    {
+      "path": "tools/ebrain/v3-eval/__init__.py",
+      "sha256": "d0af2d670b4b116f88b621cdc05288925380050c25e1a2479db30743ff4acad6"
+    },
+    {
+      "path": "tools/ebrain/v3-eval/cli.py",
+      "sha256": "65581db613bceb55b1ab2827e13880c03d0794aebbc8edeabb17f2882c352885"
+    },
+    {
+      "path": "tools/ebrain/v3-eval/generator.py",
+      "sha256": "0f17d10f4a33a6aff652e1e02bcda64d20f8362f281f46acc109ade0aeec5a8e"
+    },
+    {
+      "path": "tools/ebrain/v3-eval/manifest.py",
+      "sha256": "3d2d4bd7a1d6838ede4c2d9b8dcc36b96713c186e957adc6288fa2705384f1b1"
+    },
+    {
+      "path": "tools/ebrain/v3-eval/metrics.py",
+      "sha256": "37178e9440a32866ba8a57235044a30163c5c0405dfebc017f855c2b841ba133"
+    },
+    {
+      "path": "tools/ebrain/v3-eval/oracle.py",
+      "sha256": "b632c7b403c43d64c507bf9d57223da138fa8a3f41a9f674949d98f42cccbf5b"
+    },
+    {
+      "path": "tools/ebrain/v3-eval/runner.py",
+      "sha256": "c7db6f853121b2972d55506d93498b5d4dfa932e66704bf312af4a2bc39f502d"
+    },
+    {
+      "path": "tools/ebrain/v3-eval/schema.py",
+      "sha256": "4abf76c11536b87d5bfa19f78d296349f85129b8644ae7686689a11f1622a0fd"
+    },
+    {
+      "path": "tools/ebrain/v3_eval/__init__.py",
+      "sha256": "a19e7f42fb83ecfc811a809e3b5ed1986af0bb8781b2fd62bc27a85ed1d3e7ce"
+    },
+    {
+      "path": "tools/ebrain/v3_eval/cli.py",
+      "sha256": "5bf93934a151d4c1bb56ee581b3782db7dab254f4be51197d657c20e8a0ac054"
+    }
+  ],
+  "status": "PASS"
+}

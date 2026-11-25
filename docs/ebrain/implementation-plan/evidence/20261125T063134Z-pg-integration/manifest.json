@@ -1,0 +1,44 @@
+{
+  "run_id": "20261125T063134Z-pg-integration",
+  "utc": "2026-11-25T06:31:34.888225+00:00",
+  "cwd": "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "git_commit": "d3797e62bb1d4666fd4ff301d687733d366737ab",
+  "database": "ebrain_v3_test",
+  "host_port": "127.0.0.1:55432",
+  "server_version": "16.16 (Debian 16.16-1.pgdg12+1)",
+  "extensions": {
+    "pgcrypto": "1.3",
+    "plpgsql": "1.0",
+    "vector": "0.8.7"
+  },
+  "migration_role": "ebrain_migration_agent",
+  "runtime_role": "ebrain_runtime_agent",
+  "role_flags": [
+    {
+      "role": "ebrain_migration_agent",
+      "super": false,
+      "createdb": false,
+      "createrole": false,
+      "bypassrls": false
+    },
+    {
+      "role": "ebrain_runtime_agent",
+      "super": false,
+      "createdb": false,
+      "createrole": false,
+      "bypassrls": false
+    }
+  ],
+  "table_count": 15,
+  "policy_count": 15,
+  "command": "python -m pytest tests/v3/integration -q",
+  "exit": 0,
+  "summary": "22 passed in 4.60s",
+  "live_cli_cross_process_pass": false,
+  "gate_command": "python tools/ebrain/scripts/validate_v3_gate.py",
+  "gate_exit": 0,
+  "gate_summary": "  \"skipped_present\": false",
+  "credential_handling": "synthetic passwords generated in-process; never printed or written to disk",
+  "owner_roles_modified": false
+}

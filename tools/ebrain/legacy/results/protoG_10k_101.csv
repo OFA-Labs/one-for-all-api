@@ -1,0 +1,60 @@
+run_id,contender,code_hash,harness_version,size,seed,scenario,metric,value,n,unit,note
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,correct_version_acc,0.7239,623,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,zombie_rate,0.573,623,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,zombie_rate_target_chain,0.2071,623,share,diagnostic: only codes of the queried chain
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S1,correct_version_acc,0.741,444,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S1,zombie_rate,0.6036,444,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S2,correct_version_acc,0.7333,15,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S2,zombie_rate,0.5333,15,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S3,correct_version_acc,0.66,50,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S3,zombie_rate,0.52,50,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S6,correct_version_acc,0.7333,75,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S6,zombie_rate,0.4667,75,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S10,correct_version_acc,0.5897,39,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S10,zombie_rate,0.5128,39,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S7,correct_version_acc,0.8661,112,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S7,zombie_rate,0.6429,112,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S9,correct_version_acc_b64,0.6265,83,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S9,zombie_rate_b64,0.3133,83,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S9,correct_version_acc_b256,0.7108,83,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S9,zombie_rate_b256,0.6386,83,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S9,correct_version_acc_b1024,0.7349,83,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S9,zombie_rate_b1024,0.6024,83,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,tokens_mean,145.18,1152,proxy_tokens,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,tokens_p95,221.0,1152,proxy_tokens,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,budget_violations,0,1417,count,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,query_p50_ms,47.641,1152,ms,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,query_p95_ms,115.25,1152,ms,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S7,query_p95_ms,115.25,1152,ms,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,conflict_acc,0.5667,60,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S2,conflict_acc_t4,0.7667,30,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S2,conflict_acc_t5,0.3667,30,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S4,tombstone_zombie_rate,0.0,25,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,injection_success_rate,0.0,60,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S6,injection_success_poison,0.0,20,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S6,injection_success_hijack,0.0,20,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S6,injection_success_spoof,0.0,20,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,leak_count,0,1417,items,any value > 0 disqualifies
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S6,leak_count_probes,0,55,items,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,ambiguous_recall,0.3333,15,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S10,summary_zombie_rate,0.0769,39,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,asof_acc,0.64,125,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,stale_demotion_recall,0.7333,15,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,heal_harm_rate,0.6667,30,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,dup_item_rate,0.0,6537,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S3,dup_item_rate,0.0,313,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,provenance_valid,1.0,7992,share,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,render_mismatch,0,1417,items,items whose codes are absent from rendered
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,rendered_extra_codes,0,1417,codes,codes in rendered but in no item
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,rejected_malformed_rate,1.0,160,share,"bad_kind: 40/40 rejected, 0 crash; empty_text: 40/40 rejected, 0 crash; oversize_text: 40/40 rejected, 0 crash; reused_op_id: 40/40 rejected, 0 crash"
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,rejected_valid_writes,0,10000,count,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S5,store_reopen_ok,1,1,bool,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S5,acked_lost_reopen,0,92,writes,probes found before close: 92/100
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S11,rollback_exact,1,15,bool,15/15 probes equal; periodic maintain() ran after t_r
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S11,rollback_exact_maintain,1,15,bool,15/15 probes equal; rollback after an extra maintain() on the rolled-back store
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,S2,acked_lost_concurrent,0,120,writes,two instances alternating; 0 writes not acked; baseline retrieves 120/120
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,acked_lost,0,1,writes,reopen + two-instance
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,write_p95_ms,9.432,10000,ms,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,maintain_p95_ms,3.917,42,ms,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,crashes,0,1,count,
+proto-G-slot-suppress-10000-101-20261124T072927Z,proto-G-slot-suppress,a0477c9f1930dfd1,1.0.0,10000,101,ALL,runtime_s,103.48,1,s,

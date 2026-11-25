@@ -1,0 +1,23 @@
+{
+  "utc": "2026-11-25T06:21:42.271171+00:00",
+  "models": {
+    "embedding": "intfloat/multilingual-e5-small",
+    "reranker": "cross-encoder/ms-marco-MiniLM-L6-v2"
+  },
+  "development_facts": 300,
+  "queries": 120,
+  "embedding_dimensions": 384,
+  "semantic_recall_at_5": 0.1167,
+  "rerank_recall_at_1": 0.0083,
+  "encode_all_docs_ms": 2625.49,
+  "query_latency_ms_p50": 21.066,
+  "query_latency_ms_p95": 23.898,
+  "gates": {
+    "recall_at_5_min": 0.99,
+    "recall_at_5_pass": false,
+    "p95_ms_max": 200,
+    "latency_pass": true
+  },
+  "activation": "NOT_ACTIVATED",
+  "note": "Development calibration only. Sealed/pilot strata not used; no model is on the authoritative path."
+}

@@ -1,0 +1,316 @@
+=== Spec-X seed=6900668410346330544 N=169 n=8
+
+--- https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/internal/cli/exchangehash.go#L76-L110
+    from ledger_P7.md: | P7-01-13 | KB-01 | https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/internal/cli/amend_fold.go#L29-L57 , https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/internal/cli/exchangehash.go#L76-L110 | Judged-version check (optimistic concurr
+    pin_ok=True
+    file_lines=201 range_ok=True
+    ident_hits={'--expect-hash': 'absent', 'xh1:': 'file'}
+       76| // compareExchangeHashes compares two exchange hashes three ways: unknown
+       77| // when either side lacks the current version prefix, otherwise equal or
+       78| // changed.
+       79| func compareExchangeHashes(first, second string) hashComparison {
+       80| 	if !strings.HasPrefix(first, exchangeHashPrefix) || !strings.HasPrefix(second, exchangeHashPrefix) {
+       81| 		return hashUnknown
+       82| 	}
+       83| 
+
+--- https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/docs/specs/technical/vault-write-lock.md#L32-L39
+    from ledger_P7.md: | P7-01-12 | KB-01 | https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/internal/cli/locker.go#L15-L55 , https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/docs/specs/technical/vault-write-lock.md#L32-L39 | Whole-vault advisory write lock |
+    pin_ok=True
+    file_lines=128 range_ok=True
+    ident_hits={'<vault>/.luhmann.lock': 'absent', '.manifest.lock': 'range', 'flock': 'absent'}
+       32| Rationale: two concurrent `ingest`, `amend`, `resituate` or `activate` runs would corrupt the vault
+       33| or the chunk index, and many parallel sub-recalls make that common. Every read-modify-write writer
+       34| therefore takes the lock at its command's entry point: `.luhmann.lock` for notes and sidecars, and
+       35| `.manifest.lock` for the chunk index. The helpers they share never take a lock themselves, so a
+       36| command never waits on a lock it already holds. That rule is a convention, not a checked
+       37| invariant. The lock works on a raw file descriptor rather than a Go file object, because a dropped
+       38| file object's finalizer would close the descriptor and silently release the lock while it was still
+       39| meant to be held.
+
+--- https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/memory.py#L650-L656
+    from ledger_P7.md: | P7-02-13 | KB-02 | https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/memory.py#L139-L152 , https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/memory.py#L650-L656 | Supersede keeps history; Confirm appends evid
+    pin_ok=True
+    file_lines=705 range_ok=True
+    ident_hits={'confirmed_at': 'file', '{statement, provenance, said_at, replaced_at}': 'absent', 'entries.json': 'file', 'history': 'window'}
+      650| def _past(entry: Entry, replaced_at: str) -> dict:
+      651|     return {
+      652|         "statement": entry.statement,
+      653|         "provenance": entry.provenance,
+      654|         "said_at": entry.said_at,
+      655|         "replaced_at": replaced_at,
+      656|     }
+
+--- https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/memory.py#L335-L365
+    from ledger_P7.md: | P7-02-21 | KB-02 | https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/memory.py#L335-L365 , https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/outside.py#L89-L115 | Open-thread working memory with expiry and ou
+    pin_ok=True
+    file_lines=705 range_ok=True
+    ident_hits={'git log': 'absent', 'gh pr list': 'absent', 'close_thread': 'window', 'threads.json': 'file'}
+      335|     def note_threads(self, threads: Sequence[Thread], session_id: str, at: str) -> list[str]:
+      336|         """Record what a session left open, and close what it finished. Returns the closed threads it reopened."""
+      337|         noted, closed = self._threads(), self._closed()
+      338|         reopened = []
+      339|         for thread in threads:
+      340|             if thread.is_open:
+      341|                 if closed.pop(thread.slot, None):
+      342|                     reopened.append(thread.slot)
+
+--- https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/dev/eval/LEDGER.md#L49
+    from ledger_P7.md: 5. **Graph value.** gbrain: relational retrieval lifts R@5 0.6626→0.7241 — https://github.com/garrytan/gbrain/blob/b8875aab6faaea050f954f30227ebf96f13cc54c/docs/architecture/RETRIEVAL.md#L29-L33 . Engram: personalized PageRank refuted (32–36 regressions) — https://github.com/toejough/engram/blob/d2c
+    pin_ok=True
+    file_lines=174 range_ok=True
+    ident_hits={}
+       49| | <a id="ppr-killed"></a>**Spreading-activation / personalized PageRank improves retrieval on this vault** | refuted | drops non-activated baseline no
+
+--- https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/reconcile.py#L112-L133
+    from ledger_P7.md: | P7-02-05 | KB-02 | https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/reconcile.py#L112-L133 | Slot aliasing | A claim's slot resolves to an existing entry if equal, listed as alias, same word set ignoring `-`/`_` and order, or (active entry) same statem
+    pin_ok=True
+    file_lines=199 range_ok=True
+    ident_hits={' and order, or (active entry) same statement — then an ': 'absent'}
+      112| def _home(entries: Mapping[str, Entry], claim: Claim) -> tuple[str, str | None]:
+      113|     """The slot a claim belongs under, and the claim's own name for it if that is a new alias.
+      114| 
+      115|     The model names slots, and it does not always name the same thing the same way.
+      116|     A claim belongs to an existing entry if it uses the entry's slot or an alias,
+      117|     spells either differently, or says what the entry already says.
+      118|     """
+      119|     if claim.slot in entries:
+
+--- https://github.com/lukaszraczylo/claude-mnemonic/blob/f950786a0f89e588fb692b7e2e12c17aafc6c007/internal/worker/service.go#L1192-L1201
+    from ledger_P7.md: 2. **Delete vs never delete.** Mnemonic hard-deletes on LLM INVALID and (opt-in) all superseded rows — https://github.com/lukaszraczylo/claude-mnemonic/blob/f950786a0f89e588fb692b7e2e12c17aafc6c007/internal/worker/service.go#L1192-L1201 . gbrain consolidate "never DELETE — facts stay as audit trail"
+    pin_ok=True
+    file_lines=1925 range_ok=True
+    ident_hits={'amend --discard': 'absent'}
+     1192| 	// Verify with Claude CLI (this is slow but we're in background)
+     1193| 	if !processor.VerifyObservation(s.ctx, obs, req.cwd) {
+     1194| 		// Invalid - delete it
+     1195| 		deleted, err := store.DeleteObservations(s.ctx, []int64{obs.ID})
+     1196| 		if err == nil && deleted > 0 {
+     1197| 			log.Info().
+     1198| 				Int64("id", obs.ID).
+     1199| 				Str("title", obs.Title.String).
+
+--- https://github.com/garrytan/gbrain/blob/b8875aab6faaea050f954f30227ebf96f13cc54c/src/core/cycle.ts#L169-L174
+    from ledger_P7.md: 2. **Delete vs never delete.** Mnemonic hard-deletes on LLM INVALID and (opt-in) all superseded rows — https://github.com/lukaszraczylo/claude-mnemonic/blob/f950786a0f89e588fb692b7e2e12c17aafc6c007/internal/worker/service.go#L1192-L1201 . gbrain consolidate "never DELETE — facts stay as audit trail"
+    pin_ok=True
+    file_lines=3356 range_ok=True
+    ident_hits={'amend --discard': 'absent'}
+      169|   // v0.31: cluster unconsolidated facts per (source_id, entity_slug);
+      170|   // Sonnet-synthesize one take per cluster; INSERT into takes(kind='fact');
+      171|   // mark facts consolidated_at + consolidated_into. Never DELETE — facts
+      172|   // stay as audit trail. Placed AFTER patterns (graph-fresh) and BEFORE
+      173|   // embed (so the new takes get embedded same-cycle).
+      174|   'consolidate',
+=== Spec-Y seed=497540842346583540 N=111 n=8
+
+--- https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/memory.py#L40-L42
+    from ledger_T5.md: | T5-02-18 | KB-02 | https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/memory.py#L40-L42 | Working-memory threads with TTL | Open threads expire after 14 days (`_THREAD_LIFE`) unless touched; closed by session tool `close_thread` (must state what finished
+    pin_ok=True
+    file_lines=705 range_ok=True
+    ident_hits={'_THREAD_LIFE': 'range', 'close_thread': 'file'}
+       40| # How much of a topic's titles its index line may list: all of them, or less when the index has no room.
+       41| _TOPIC_HOOK_LIMITS = (None, 600, 300, _HOOK_LIMIT)
+       42| _THREAD_LIFE = timedelta(days=14)
+
+--- https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/archive.py#L346-L413
+    from ledger_T5.md: | T5-02-15 | KB-02 | https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/archive.py#L346-L413 | Verbatim archive + BM25 + RRF | SQLite `turns` + FTS5 (porter unicode61) via triggers (L24-L67); query words as quoted terms AND, fallback OR; multiple phrasings
+    pin_ok=True
+    file_lines=476 range_ok=True
+    ident_hits={'turns': 'range'}
+      346|     def search(
+      347|         self,
+      348|         query: str | Sequence[str],
+      349|         *,
+      350|         project: str | None,
+      351|         since: str | None = None,
+      352|         until: str | None = None,
+      353|         tools: bool = False,
+
+--- https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/reconcile.py#L136-L153
+    from ledger_T5.md: - Claimed: "reviews previous sessions, identifies stale or contradictory memories, preserves decisions, improves future session context." Found: true and code-backed. Review trigger = daily dream started by the first session after 20 h (plus manual `dream review`); stale = anchored file gone, or mod
+    pin_ok=True
+    file_lines=199 range_ok=True
+    ident_hits={'dream review': 'absent', 'history': 'absent', 'dream purge --yes': 'absent', '.remcycle/withheld': 'absent'}
+      136| def _decide(entry: Entry | None, claim: Claim) -> Op | None:
+      137|     if entry is None:
+      138|         if claim.type != ClaimType.LESSON and claim.provenance not in _THE_PERSONS_WORD:
+      139|             return Reject(claim, "nothing the person said supports it")
+      140|         return Add(claim)
+      141|     if _same_statement(entry.statement, claim.statement):
+      142|         return None if claim.evidence in entry.evidence else Confirm(claim.slot, claim.evidence, claim.said_at)
+      143|     if entry.said_at and claim.said_at < entry.said_at:
+
+--- https://github.com/garrytan/gbrain/blob/b8875aab6faaea050f954f30227ebf96f13cc54c/src/schema.sql#L181-L278
+    from ledger_T5.md: | T5-03-31 | KB-03 | https://github.com/garrytan/gbrain/blob/b8875aab6faaea050f954f30227ebf96f13cc54c/src/schema.sql#L181-L278 | Generation counters for cache invalidation | Per-page `generation` bumped by trigger when content columns change; global `page_generation_clock_seq` bumped per statement (
+    pin_ok=True
+    file_lines=3795 range_ok=True
+    ident_hits={'generation': 'range', 'page_generation_clock_seq': 'range'}
+      181| -- BEGIN GENERATED from src/core/page-body/schema.ts (PAGE_GENERATION_BUMP_FN_SQL). Edit that file, then run: bun run build:schema
+      182| CREATE OR REPLACE FUNCTION bump_page_generation_fn() RETURNS trigger SET search_path = pg_catalog, public, pg_temp AS $func$
+      183| BEGIN
+      184|   IF (TG_OP = 'INSERT') THEN
+      185|     NEW.generation := COALESCE((SELECT MAX(generation) FROM pages), 0) + 1;
+      186|   ELSIF (OLD.compiled_truth IS DISTINCT FROM NEW.compiled_truth)
+      187|      OR (OLD.timeline IS DISTINCT FROM NEW.timeline)
+      188|      OR (OLD.frontmatter IS DISTINCT FROM NEW.frontmatter)
+
+--- https://github.com/garrytan/gbrain/blob/b8875aab6faaea050f954f30227ebf96f13cc54c/src/core/link-extraction.ts#L1319-L1348
+    from ledger_T5.md: | T5-03-23 | KB-03 | https://github.com/garrytan/gbrain/blob/b8875aab6faaea050f954f30227ebf96f13cc54c/src/core/link-extraction.ts#L1319-L1348 | Zero-LLM auto-link + type inference | On trusted local writes, parse markdown links, `[[wikilinks]]`, typed blockquotes (RETRIEVAL.md L55-L73); infer link t
+    pin_ok=True
+    file_lines=2462 range_ok=True
+    ident_hits={'[[wikilinks]]': 'file'}
+     1319| const WORKS_AT_RE = /\b(?:joined\b[^.\n]{0,80}?\bas (?:an? |the )?(?:senior |staff |principal |lead |founding |chief )?(?:engineer|developer|designer|
+     1320| 
+     1321| // Investment context. Order patterns from most-specific to least to keep
+     1322| // regex efficient. Includes funding-round verbs ("led the seed", "led X's
+     1323| // Series A"), narrative verbs ("invests in", "investing in"), historical
+     1324| // ("early investor in", "first check"), and portfolio framing ("portfolio
+     1325| // company", "portfolio includes").
+     1326| const INVESTED_RE = /\b(?:invested in|invests in|investing in|invest in|investment in|investments in|backed by|funding from|funded by|raised from|led 
+
+--- https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/docs/intent.md#L87
+    from ledger_T5.md: 2. **Retrieval substrate: graph vs lexical.** Remcycle: "Plain BM25 beat the graph and vector memory systems on the academic benchmark. Embeddings are added only if logs show lexical misses" (https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/docs/intent.md#L87). gb
+    pin_ok=True
+    file_lines=195 range_ok=True
+    ident_hits={}
+       87| **Ranked lexical search first.** Rejected for now: embeddings and graphs. Plain BM25 beat the graph and vector memory systems on the academic benchmar
+
+--- https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/internal/auto/prompts/place.txt#L14-L20
+    from ledger_T5.md: - Claimed: "self-correcting memory; learns from sessions, identifies memories that are not being followed, evaluates them, fixes memory problems." Found: learning from sessions is true (turn judgement, T5-01-01). "Not being followed" detection and fixing existed only in March 2026 code (Haiku FOLLOW
+    pin_ok=True
+    file_lines=26 range_ok=True
+    ident_hits={}
+       14| Also list, for each lesson, the seen notes that the lesson corrects, narrows or refutes, each as an object with the
+       15| note's file name as "note", a "type" and a "claim": "updates" when the lesson replaces what the note says with a newer
+       16| value or fact, "narrows" when it limits the note to a part of its claim, "refutes" when it shows the note is wrong, and
+       17| the claim of the note that changes, in one short sentence.
+       18| A lesson supersedes a seen note only when it is about that note's own claim: a lesson about another claim supersedes
+       19| nothing, even when it is near the note, and so does a lesson that only adds to a note. A lesson is never merged into a
+       20| seen note: the placement only decides where the lesson's own note goes.
+
+--- https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/internal/auto/prompts/judge.txt#L12-L55
+    from ledger_T5.md: | T5-01-02 | KB-01 | https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/internal/auto/prompts/judge.txt#L12-L55 | Lesson admission rubric + "covered" dedup | Prompt lists what counts: user correction, explicit remember request, evidence-confirmed reversal, approach conf
+    pin_ok=True
+    file_lines=64 range_ok=True
+    ident_hits={'covered': 'range'}
+       12| List each lesson the turn contains: a correction by the user ("no, do X"), an explicit request by the user to remember
+       13| something (even something that holds a secret), a reversal confirmed by evidence (a mistake of the agent that the agent
+       14| itself then corrected: it says its earlier guess or claim was wrong and gives the corrected one plainly, as in "I blamed
+       15| the compiler flag, but the build failed because of a stale cache", even when the user only asked a question: it is a
+       16| lesson; a reversal is written as a feedback lesson, not as a fact; its behavior is what the earlier reasoning did wrong,
+       17| its impact what the mistake cost, and its action the guard that would have prevented it, which names the corrected cause
+       18| or value exactly), or an approach confirmed to have worked: either the user names the approach and says that it worked, or the agent tried an approach
+       19| proves it worked (a test passing, a check going green). A thanks, or an "it worked", that names no approach confirms
+=== Spec-Z seed=10508268828411092061 N=113 n=8
+
+--- https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/internal/luhmann/luhmann.go#L44-L121
+    from ledger_R2.md: | R2-01-18 | KB-01 | https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/internal/luhmann/luhmann.go#L44-L121 | Luhmann zettelkasten IDs + filename convention | Notes named `<luhmann>.<YYYY-MM-DD>.<slug>.md` (note-document-format.md L45-L47). IDs alternate digit/letter s
+    pin_ok=True
+    file_lines=121 range_ok=True
+    ident_hits={'<luhmann>.<YYYY-MM-DD>.<slug>.md': 'absent'}
+       44| // Less reports whether Luhmann ID a sorts before b: segment by segment, a digit segment by its number (fewer digits
+       45| // first, then lexically) and a letter segment by LetterLess, with an ID that is the start of another first. An ID that
+       46| // cannot be parsed sorts by its text.
+       47| func Less(a, b string) bool {
+       48| 	left, leftErr := ParseID(a)
+       49| 	right, rightErr := ParseID(b)
+       50| 
+       51| 	if leftErr != nil || rightErr != nil {
+
+--- https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/memory.py#L172-L179
+    from ledger_R2.md: 2. **Delete vs archive on staleness.** Mnemonic hard-deletes when Haiku says INVALID (https://github.com/lukaszraczylo/claude-mnemonic/blob/f950786a0f89e588fb692b7e2e12c17aafc6c007/internal/worker/service.go#L1192-L1201). Remcycle withholds and asks (https://github.com/lianmatsuo/remcycle/blob/be1e2
+    pin_ok=True
+    file_lines=705 range_ok=True
+    ident_hits={}
+      172|     def _hold(self, slot: str, records: dict[str, dict], status: Status) -> None:
+      173|         """Move the entry's file out of the folder sessions read, and drop its index line."""
+      174|         self._withheld.mkdir(parents=True, exist_ok=True)
+      175|         file = self._folder / f"{slot}.md"
+      176|         if file.exists():
+      177|             disk.replace(file, self._withheld / f"{slot}.md")
+      178|         self._index_drop(slot)
+      179|         records.setdefault(slot, {})["status"] = status
+
+--- https://github.com/lukaszraczylo/claude-mnemonic/blob/f950786a0f89e588fb692b7e2e12c17aafc6c007/internal/scoring/calculator.go#L30-L100
+    from Spec-Z_v2.md: | R2-04-05 | https://github.com/lukaszraczylo/claude-mnemonic/blob/f950786a0f89e588fb692b7e2e12c17aafc6c007/internal/scoring/calculator.go#L30-L100 | PASS | formula in doc comment L32-L42 and `CalculateComponents`; default weights live in scoring.go (not re-opened) |
+    pin_ok=True
+    file_lines=144 range_ok=True
+    ident_hits={'CalculateComponents': 'range'}
+       30| // Calculate computes the importance score for an observation at the given time.
+       31| //
+       32| // The scoring formula:
+       33| //
+       34| //	FinalScore = (BaseScore × TypeWeight × RecencyDecay) + FeedbackContrib + ConceptContrib + RetrievalContrib
+       35| //
+       36| // Where:
+       37| //   - BaseScore = 1.0
+
+--- https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/mirror.py#L62-L100
+    from ledger_R2.md: | R2-02-09 | KB-02 | https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/mirror.py#L62-L100 | Copy → stage → atomic folder-rename accept, with git history | Mirror = remcycle's own git repo copy of each project's memory. `stage()` copies to `<folder>.stagin
+    pin_ok=True
+    file_lines=161 range_ok=True
+    ident_hits={'*.new': 'range', '_finish_accept': 'range', 'accept()': 'range', '.git': 'range', '<folder>.staging': 'absent', 'stage()': 'absent', '.retired': 'file'}
+       62|     def stage(self) -> Path:
+       63|         """A fresh copy to change. The mirror itself stays as it is until `accept`."""
+       64|         self._finish_accept()
+       65|         if self.staging.exists():
+       66|             disk.clear(self.staging)
+       67|         # A writer that was killed leaves the file it was still writing. It is not part of the memory.
+       68|         shutil.copytree(self.folder, self.staging, ignore=shutil.ignore_patterns(".git", "*.new"))
+       69|         return self.staging
+
+--- https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/daily.py#L15-L62
+    from ledger_R2.md: | R2-02-26 | KB-02 | https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/src/dream/daily.py#L15-L62 | Daily consolidation trigger without a scheduler | `DUE_AFTER = 20h`; first session after 20 h starts `dream run` detached (new session / process group, session env v
+    pin_ok=True
+    file_lines=178 range_ok=True
+    ident_hits={'DUE_AFTER = 20h': 'absent', 'dream run': 'range'}
+       15| DUE_AFTER = timedelta(hours=20)
+       16| """How long after one daily dream started the next may start."""
+       17| WEEK = timedelta(days=7)
+       18| _COMING_UP = timedelta(minutes=1)
+       19| """How long a daily dream that was just started is given to take the lock it runs under."""
+       20| LOCK_WAIT = 5.0
+       21| """Seconds a daily dream waits for that lock. A session asking whether one is running holds it for a moment."""
+       22| 
+
+--- https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/internal/cli/exchangehash.go#L91-L131
+    from ledger_R2.md: | R2-01-21 | KB-01 | https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/internal/cli/exchangehash.go#L91-L131 | Exchange hash + `--expect-hash` compare-and-swap | `xh1:` + sha256 of canonical sorted-key JSON of offered fields + canonical body. Curation actions on an off
+    pin_ok=True
+    file_lines=201 range_ok=True
+    ident_hits={'--expect-hash': 'absent', 'xh1:': 'file'}
+       91| // exchangeHash returns a note's exchange hash: the version prefix plus the
+       92| // sha256 of the canonical (sorted-key) JSON of every offered frontmatter
+       93| // field and the note's canonical body text (canonicalExchangeBody), with
+       94| // absent fields as empty strings or lists. It is the one function both the
+       95| // server and the child use, so the same file hashes the same on both sides.
+       96| // It depends on no non-offered field — identity, pending, tags, sources, supersedes, skill
+       97| // fields, or the exchange fields themselves. The note is hashed as its LF
+       98| // form (toLF), so a note with CRLF line endings hashes exactly as its LF
+
+--- https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/internal/auto/judge.go#L87-L122
+    from Spec-Z_v2.md: | R2-01-08 | https://github.com/toejough/engram/blob/d2ce817c74ee4fc65645635887510b47b231230f/internal/auto/judge.go#L87-L122 | PASS | constants `windowLimit = 8000`, `contextLines = 6`, `lineLimit = 1200`, `noteLimit = 400`, `lookupLimit = 500`, `judgeMaxTokens = 3000`, `judgeTimeoutMs = 30000` at 
+    pin_ok=True
+    file_lines=425 range_ok=True
+    ident_hits={'noteLimit = 400': 'range', 'judgeMaxTokens = 3000': 'range', 'lineLimit = 1200': 'range', 'lookupLimit = 500': 'range', 'judgeTimeoutMs = 30000': 'range', 'contextLines = 6': 'range', 'windowLimit = 8000': 'range'}
+       87| // unexported constants.
+       88| const (
+       89| 	agentLabel = "Agent: "
+       90| 	// answerProbe is how many characters of the final text tell that a line of the turn already holds it.
+       91| 	answerProbe = 80
+       92| 	// contextLines is how many lines of the conversation before the turn the window holds at most.
+       93| 	contextLines = 6
+       94| 	// divider is the line that ends the context and opens the turn.
+
+--- https://github.com/garrytan/gbrain/blob/b8875aab6faaea050f954f30227ebf96f13cc54c/src/core/facts/classify.ts#L1-L20
+    from ledger_R2.md: 1. **Who resolves a contradiction.** Remcycle: code decides by provenance authority, a model never makes the same/supersedes call (https://github.com/lianmatsuo/remcycle/blob/be1e27cd293e607b1e0c4807fd7dfd7aef28d02e/docs/intent.md#L81). gbrain: a Haiku classifier decides duplicate/supersede/independ
+    pin_ok=True
+    file_lines=239 range_ok=True
+    ident_hits={'newer': 'file'}
+        1| /**
+        2|  * v0.31 Hot Memory — contradiction classifier with cosine fast-path + fallback.
+        3|  *
+        4|  * Decision tree (per /plan-eng-review D12 + D13):
+        5|  *
+        6|  *   1. Find candidates (entity-prefiltered, k=5 cap) — caller has done this.
+        7|  *   2. If candidates is empty → INSERT (independent).
+        8|  *   3. CHEAP FAST-PATH (D13): if top-candidate cosine ≥ the embedding

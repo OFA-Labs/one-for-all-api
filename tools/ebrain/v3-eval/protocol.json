@@ -1,0 +1,72 @@
+{
+  "protocol_id": "ebrain-v3-public",
+  "protocol_version": "1.0.0",
+  "frozen_at_utc": "2026-11-25T00:00:00Z",
+  "scope": "test-only synthetic deterministic evaluation; no product capability",
+  "manifest_schema_version": 1,
+  "dataset": {
+    "modes": ["event_count", "distinct_fact_count"],
+    "seeds": [101, 102, 103],
+    "sizes": [1000, 10000, 50000, 100000],
+    "canary_chains_per_events": 20,
+    "qualifiers": {
+      "repos": ["core-api", "voice-worker", "web-client", "ops-runbooks"],
+      "branches": ["main", "release", "experiment"],
+      "namespaces": ["config", "spec", "decision", "runbook"],
+      "environments": ["dev", "staging", "prod", "sandbox"]
+    },
+    "distinct_revision_every": 8,
+    "max_revisions_per_key": 4,
+    "scenario_mix": {
+      "sequential": 0.25,
+      "conflict": 0.15,
+      "late": 0.1,
+      "future": 0.1,
+      "erased": 0.1,
+      "scoped": 0.2,
+      "ambiguous": 0.1
+    }
+  },
+  "thresholds": {
+    "joint_exact": 0.95,
+    "legacy_presence": 0.95,
+    "zombie_rate": 0.05,
+    "filing_precision": 0.98,
+    "filing_recall": 0.98,
+    "final_candidate_recall": 0.99,
+    "conflict_accuracy": 0.9,
+    "asof_accuracy": 0.95,
+    "ambiguous_recall": 0.9,
+    "answerable_abstention": 0.05,
+    "unanswerable_abstention": 0.95
+  },
+  "negative_controls": [
+    "true_plus_zombie",
+    "empty",
+    "always_current",
+    "dropped_facets",
+    "wrong_sources",
+    "wrong_scope",
+    "label_leaking"
+  ],
+  "failure_policy": {
+    "missing_adapter": "NOT_RUN",
+    "timeout": "FAIL",
+    "adapter_exception": "FAIL",
+    "mandatory_skip": "FAIL",
+    "threshold_breach": "FAIL",
+    "zero_denominator": "NOT_RUN",
+    "sealed_tuning": "RETIRE_SUITE"
+  },
+  "sealing": {
+    "public_seeds_are_disclosed": true,
+    "sealed_suite_state": "NOT_CONFIGURED",
+    "commitment_algorithm": "sha256(canonical_json)",
+    "tuning_retires_suite": true
+  },
+  "runtime": {
+    "one_contender_per_subprocess": true,
+    "timeout_s": 900,
+    "repetitions": 1
+  }
+}

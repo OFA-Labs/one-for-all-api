@@ -1,0 +1,23 @@
+[
+  {
+    "header": "X-EBrain-Schema",
+    "requested_schema": 3,
+    "resolved_schema": 3,
+    "outcome": "supported",
+    "reason": "native schema-3 contract"
+  },
+  {
+    "header": "X-EBrain-Schema",
+    "requested_schema": 1,
+    "resolved_schema": 1,
+    "outcome": "legacy",
+    "reason": "legacy schema-1 surface; unsafe states not representable"
+  },
+  {
+    "header": "X-EBrain-Schema",
+    "requested_schema": 99,
+    "resolved_schema": null,
+    "outcome": "rejected",
+    "reason": "unknown schema is not inferred from an unrecognized field"
+  }
+]

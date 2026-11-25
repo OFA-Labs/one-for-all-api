@@ -1,0 +1,62 @@
+.....FF..............F                                                   [100%]
+================================== FAILURES ===================================
+____________________ test_atomic_admission_and_idempotency ____________________
+
+pg_ledger = <ebrain.v3.db.postgres.PostgresLedger object at 0x000001E96E7D6870>
+
+    def test_atomic_admission_and_idempotency(pg_ledger):
+        c = ctx()
+        k = key()
+        first = pg_ledger.admit(c, write("o1", k, "v1", idem="i1"))
+        replay = pg_ledger.admit(c, write("o1", k, "v1", idem="i1"))
+>       assert replay == first
+E       AssertionError: assert AdmissionRece...essing_url='') == AdmissionRece...essing_url='')
+E         
+E         Use -v to get more diff
+
+tests\v3\integration\test_ledger.py:26: AssertionError
+____________________ test_concurrent_last_slot_idempotency ____________________
+
+pg_ledger = <ebrain.v3.db.postgres.PostgresLedger object at 0x000001E96E7F8860>
+
+    def test_concurrent_last_slot_idempotency(pg_ledger):
+        c = ctx()
+        k = key()
+        results: list[str] = []
+    
+        def run(n: int) -> None:
+            try:
+                pg_ledger.admit(c, write(f"c{n}", k, f"v{n}", idem="shared"))
+                results.append("ok")
+            except IdempotencyConflict:
+                results.append("conflict")
+    
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            list(pool.map(run, (1, 2)))
+>       assert sorted(results) == ["conflict", "ok"]
+E       AssertionError: assert ['ok', 'ok'] == ['conflict', 'ok']
+E         
+E         At index 0 diff: 'ok' != 'conflict'
+E         Use -v to get more diff
+
+tests\v3\integration\test_ledger.py:45: AssertionError
+______________________ test_foreign_org_cannot_read_rows ______________________
+
+pg_ledger = <ebrain.v3.db.postgres.PostgresLedger object at 0x000001E96E7F9100>
+pg_conn = <psycopg.Connection [IDLE] (host=127.0.0.1 port=55432 user=ebrain_migration_agent database=ebrain_v3_test) at 0x1e96e7fadb0>
+
+    def test_foreign_org_cannot_read_rows(pg_ledger, pg_conn):
+        c = ctx()
+        pg_ledger.admit(c, write("o1", key(), "secret"))
+        with pg_conn.cursor() as cur:
+            cur.execute("SELECT set_config('v3.org_id', %s, true)", ("org-other",))
+            cur.execute("SELECT count(*) FROM v3_claim")
+>           assert cur.fetchone()[0] == 0
+E           assert 1 == 0
+
+tests\v3\integration\test_rls.py:27: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/v3/integration/test_ledger.py::test_atomic_admission_and_idempotency
+FAILED tests/v3/integration/test_ledger.py::test_concurrent_last_slot_idempotency
+FAILED tests/v3/integration/test_rls.py::test_foreign_org_cannot_read_rows - ...
+3 failed, 19 passed in 4.82s
