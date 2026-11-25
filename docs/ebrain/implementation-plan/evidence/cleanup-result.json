@@ -1,0 +1,44 @@
+{
+    "date":  "2026-11-24",
+    "moves":  [
+                  {
+                      "archived_at":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents-cleanup-backup-20261124\\retired-folders\\ebrain-tournament",
+                      "old":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\ebrain-tournament",
+                      "kind":  "retired-folder"
+                  },
+                  {
+                      "archived_at":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents-cleanup-backup-20261124\\retired-folders\\local-voice-assistant",
+                      "old":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\local-voice-assistant",
+                      "kind":  "retired-folder"
+                  },
+                  {
+                      "archived_at":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents-cleanup-backup-20261124\\root-media\\392b609046aa1afacb4d436ea238cc7e.jpg",
+                      "old":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\392b609046aa1afacb4d436ea238cc7e.jpg",
+                      "kind":  "unreferenced-root-image"
+                  },
+                  {
+                      "archived_at":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents-cleanup-backup-20261124\\root-media\\image copy.png",
+                      "old":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\image copy.png",
+                      "kind":  "unreferenced-root-image"
+                  },
+                  {
+                      "archived_at":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents-cleanup-backup-20261124\\root-media\\image.png",
+                      "old":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\image.png",
+                      "kind":  "unreferenced-root-image"
+                  },
+                  {
+                      "archived_at":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents-cleanup-backup-20261124\\root-media\\Screenshot 2026-11-23 165420.png",
+                      "old":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\Screenshot 2026-11-23 165420.png",
+                      "kind":  "unreferenced-root-image"
+                  },
+                  {
+                      "current":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\docs\\ebrain\\SPEC_DEV_BRAIN_V3.md",
+                      "archived_at":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents-cleanup-backup-20261124\\SPEC_DEV_BRAIN_V2-misnamed-original.md",
+                      "old":  "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\docs\\ebrain\\SPEC_DEV_BRAIN_V2.md",
+                      "kind":  "corrected-spec-filename"
+                  }
+              ],
+    "preserved_root_media":  "20261123-0935-35.2398015.mp4",
+    "note":  "Referenced homepage source video retained; API/web owner code and application data untouched.",
+    "action":  "recoverable move outside workspace"
+}

@@ -1,0 +1,12 @@
+{
+  "utc": "2026-11-25T06:22:31.701166+00:00",
+  "commitment_sha256": "8b5334b56b635ba5a2b3cc5631a1b016148ad162e035d018b096be19dab4d49f",
+  "cases": 60,
+  "public_retrieval_correct": 60,
+  "aggregate_public_accuracy": 1.0,
+  "hidden_labels_compared": true,
+  "hidden_labels_disclosed_to_builder": false,
+  "target": 0.95,
+  "pass": true,
+  "isolation": "procedural: restricted hidden file outside workspace, aggregate-only result; no human-independent audit"
+}

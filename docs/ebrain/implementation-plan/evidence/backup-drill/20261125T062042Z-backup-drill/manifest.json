@@ -1,0 +1,28 @@
+{
+  "run_id": "20261125T062042Z-backup-drill",
+  "utc": "2026-11-25T06:20:42.804703+00:00",
+  "algorithm": "AES-256-GCM",
+  "key_id": "93df1fad4a20ec71",
+  "key_handling": "AES-256 key stored outside the synced workspace in a restricted local file; key bytes never printed or written to evidence",
+  "key_file_location": "C:\\Users\\jaiva\\AppData\\Local\\Temp\\opencode",
+  "plaintext_sha256": "6a27cef4909c4df3575b7719a0dbcef85446c1ea92e187574e1b61934994900d",
+  "ciphertext_sha256": "4fbe4a8593fe5c8ecacd71c3bee3ef0b11202eedb4ae9e0edb0c36bb23fa1ed8",
+  "dump_bytes": 42608,
+  "encrypted_bytes": 42636,
+  "source_counts": {
+    "v3_event": 1,
+    "v3_claim": 1,
+    "v3_receipt": 1,
+    "v3_outbox": 1
+  },
+  "restored_counts": {
+    "v3_event": 1,
+    "v3_claim": 1,
+    "v3_receipt": 1,
+    "v3_outbox": 1
+  },
+  "counts_match": true,
+  "restored_rls_policies": 15,
+  "restore_pass": true,
+  "evidence_dir": "C:\\Users\\jaiva\\OneDrive\\Desktop\\voice-agents\\one-for-all-api\\docs\\ebrain\\implementation-plan\\evidence\\backup-drill\\20261125T062042Z-backup-drill"
+}

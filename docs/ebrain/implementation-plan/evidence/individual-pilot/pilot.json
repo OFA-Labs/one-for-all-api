@@ -1,0 +1,34 @@
+{
+  "utc": "2026-11-25T06:00:55.445782+00:00",
+  "scope_note": "sanitized engineering facts; local labels; not independently evaluated",
+  "facts_written": 5,
+  "cross_session_checks": [
+    {
+      "session": "claude-session-2",
+      "answer_status": "complete",
+      "current": [
+        "postgresql"
+      ],
+      "expected": "postgresql"
+    },
+    {
+      "session": "codex-session-3",
+      "answer_status": "complete",
+      "current": [
+        "postgresql"
+      ],
+      "expected": "postgresql"
+    }
+  ],
+  "revision_receipt": {
+    "status": "applied",
+    "seq": 6
+  },
+  "after_revision_current": [
+    "postgresql-16"
+  ],
+  "historical_value_at_prior_cut": [
+    "postgresql"
+  ],
+  "pass": true
+}
