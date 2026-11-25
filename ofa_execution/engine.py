@@ -87,7 +87,6 @@ class Engine:
         # future provider latency cannot block pause or the emergency stop.
         if self._stopped:
             raise ExecutionError("STOPPED", "Emergency stop is active. Explicitly resume local control first.")
-        self.gate.screen(plan)
         live = [t for t in self.tasks.values() if t.state not in TERMINAL]
         if len(live) >= 4:
             raise ExecutionError("QUEUE_FULL", "One foreground and three queued tasks are supported.")
@@ -100,11 +99,15 @@ class Engine:
         return {"task_id": task.id, "session_id": self.session_id, "state": "queued"}
 
     def submit(self, command_id: str, plan: Plan):
+        # DNS/application discovery can block. Never hold the control lock while
+        # screening a proposed plan; stop is rechecked at the insertion boundary.
+        self.gate.screen(plan)
         return self._once(command_id, {"kind": "plan", "plan": plan.model_dump()},
                           lambda: self._create_task(plan))
 
     def command(self, command):
         plan = self.planner.plan(command, self.capabilities())
+        self.gate.screen(plan)
         # Generated step IDs differ on each parse. Deduplicate by the original
         # command input, not those new plan IDs, so a retry returns one task.
         return self._once(command.command_id,

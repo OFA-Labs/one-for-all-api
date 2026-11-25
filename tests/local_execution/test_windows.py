@@ -13,13 +13,14 @@ from ofa_execution.planner import DeterministicPlanner
 from ofa_execution.windows import DesktopHand
 from ofa_execution.takeover import TakeoverMonitor
 from ofa_execution.hotkey import StopHotkey
-from ofa_execution.windows import Input,KeyInput,user
+from ofa_execution.windows import Input,KeyInput
 
 
 pytestmark=pytest.mark.skipif(os.name!='nt',reason='Real Windows interactive session required')
 
 
 def test_real_native_multistep_approval_input_and_readback():
+    from ofa_execution.windows import user
     cfg=LocalConfig(apps=[App(name='OFA Test Pad',executable=getattr(sys,'_base_executable',sys.executable),
                               arguments=['-m','ofa_execution.testpad'],window_title='OFA Execution Test Pad',
                               writable=True,capture=True)])

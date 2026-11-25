@@ -139,3 +139,22 @@ def test_explicit_handoff_continue_rereads_current_state(tmp_path):
         assert until(engine,task,lambda s:s['state']=='completed')['state']=='completed'
         assert hand.reads>reads
     finally:engine.close()
+
+
+def test_slow_plan_screen_does_not_block_emergency_stop(tmp_path,monkeypatch):
+    cfg=LocalConfig(read_roots=[str(tmp_path)]);engine=Engine(cfg,{'files':FileHand(cfg)},DeterministicPlanner(cfg))
+    started=threading.Event();release=threading.Event();errors=[]
+    def slow_screen(plan):started.set();release.wait(2)
+    monkeypatch.setattr(engine.gate,'screen',slow_screen)
+    def submit():
+        try:engine.submit(uid(),Plan(title='slow screen',steps=[Step(operation='file.read',target=Target(path=str(tmp_path/'fixture.txt')))]))
+        except ExecutionError as exc:errors.append(exc.code)
+    worker=threading.Thread(target=submit)
+    try:
+        worker.start();assert started.wait(1)
+        start=time.monotonic();engine.emergency_stop()
+        assert time.monotonic()-start<.25
+        release.set();worker.join(timeout=2)
+        assert errors==['STOPPED']
+        assert engine.tasks=={}
+    finally:release.set();worker.join(timeout=3);engine.close()
