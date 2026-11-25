@@ -1,0 +1,10 @@
+{
+  "apps": [],
+  "read_roots": [],
+  "write_roots": [],
+  "browser_command": [],
+  "allowed_origins": [],
+  "fixture_origins": [],
+  "approval_seconds": 60,
+  "max_tasks": 40
+}
