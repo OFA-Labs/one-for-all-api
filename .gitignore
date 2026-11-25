@@ -1,4 +1,5 @@
 .venv/
+.venv-ebrain-test/
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -8,3 +9,6 @@ __pycache__/
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
+.venv-local-execution/
+local-execution.local.json
+tools/local_execution/node_modules/
