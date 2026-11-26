@@ -8,7 +8,7 @@ import re
 ROMAN_UNITS = {
     "shunya": 0, "zero": 0, "ek": 1, "do": 2, "teen": 3, "char": 4, "chaar": 4, "paanch": 5, "panch": 5, "chhe": 6,
     "che": 6, "chah": 6, "saat": 7, "sat": 7, "aath": 8, "aat": 8, "nau": 9, "das": 10, "dus": 10, "gyarah": 11,
-    "barah": 12, "baarah": 12, "terah": 13, "chaudah": 14, "pandrah": 15, "pandrah": 15, "solah": 16, "satrah": 17,
+    "barah": 12, "baarah": 12, "terah": 13, "chaudah": 14, "pandrah": 15, "solah": 16, "satrah": 17,
     "atharah": 18, "unnis": 19, "bees": 20, "bis": 20, "ikkis": 21, "bais": 22, "teis": 23, "chaubis": 24,
     "pachchis": 25, "pachis": 25, "chhabbis": 26, "sattais": 27, "atthais": 28, "untis": 29, "tees": 30, "tis": 30,
     "ikattis": 31, "battis": 32, "taintis": 33, "chautis": 34, "paintis": 35, "chhattis": 36, "saintis": 37,
