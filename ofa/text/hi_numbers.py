@@ -117,20 +117,36 @@ def parse_date(text: str, today: dt.date | None = None) -> dt.date | None:
     return None
 
 
-def normalize_numbers(text: str) -> str:
-    """Append digit forms after Hindi number phrases for the engine, keeping the original words."""
-    pattern = re.compile(r"((?:(?:saadhe|sadhe|sava|sawa|paune|dedh|dhai|साढ़े|सवा|पौने|डेढ़|ढाई)\s+)?"
-                         r"(?:(?:" + "|".join(sorted(map(re.escape, UNITS), key=len, reverse=True)) + r")\s*)+"
-                         r"(?:(?:sau|hazaar|hazar|lakh|crore|सौ|हज़ार|हजार|लाख|करोड़)\s*(?:(?:"
-                         + "|".join(sorted(map(re.escape, UNITS), key=len, reverse=True)) + r")\s*)*)*)", re.I)
+AMBIGUOUS_SINGLE = {"do", "so", "sat", "che", "ek", "das", "nau", "tis", "bis", "char"}
 
-    def repl(m):
-        phrase = m.group(1).strip()
-        if len(phrase.split()) < 2 and phrase.casefold() in {"do", "so", "sat", "che"}:
-            return m.group(1)       # too ambiguous as a single common word
-        n = parse_number(phrase)
-        if n is None:
-            return m.group(1)
-        shown = int(n) if n == int(n) else n
-        return f"{phrase} ({shown}) "
-    return re.sub(r"\s+\)", ")", pattern.sub(repl, text)).strip()
+
+def number_hints(text: str) -> list[tuple[str, float]]:
+    """Whole-word runs of Hindi number words -> value. Never rewrites the user's text."""
+    words = re.findall(r"[\wऀ-ॿ]+", text)
+    hints, run = [], []
+
+    def flush():
+        if run and any(w.casefold() in UNITS or w.casefold() in FRACTIONS for w in run):
+            phrase = " ".join(run)
+            if not (len(run) == 1 and run[0].casefold() in AMBIGUOUS_SINGLE):
+                n = parse_number(phrase)
+                if n is not None:
+                    hints.append((phrase, n))
+        run.clear()
+    for w in words:
+        k = w.casefold()
+        if k in UNITS or k in SCALES or k in FRACTIONS or k in PREFIX:
+            run.append(w)
+        else:
+            flush()
+    flush()
+    return hints
+
+
+def normalize_numbers(text: str) -> str:
+    """The user's text unchanged, plus a bracketed digit hint for spoken Hindi numbers."""
+    hints = number_hints(text)
+    if not hints:
+        return text
+    shown = "; ".join(f"{p} = {int(n) if n == int(n) else n}" for p, n in hints)
+    return f"{text} [number words: {shown}]"
