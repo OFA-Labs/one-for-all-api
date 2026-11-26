@@ -15,6 +15,7 @@ from .executor import Executor
 from .harness.api import Harness
 from .memory import Memory
 from .orchestrator import Orchestrator
+from .ports import VoicePort
 from .policy import ApprovalStore, TurnLog
 from .vault.broker import Broker
 from .vault.pm import detect
@@ -22,15 +23,6 @@ from .vault.store import Vault
 from .vault.unlock import AutoVerifier
 
 log = logging.getLogger("ofa")
-
-# Routing from docs/bench/results-*.md (synthetic speech; see CAPABILITY_REALITY.md).
-STT_ROUTES = {("en", "command"): ["flux", "gradium", "nova3"], ("en", "dictation"): ["flux", "gradium", "nova3"],  # bench 2026-11-26
-              ("hi", "command"): ["flux", "nova3"], ("hi", "dictation"): ["flux", "nova3"]}
-
-
-def stt_order(lang: str, mode: str) -> list[str]:
-    return STT_ROUTES.get(("hi" if lang in {"hi", "hinglish"} else "en", mode), ["flux", "nova3"])
-
 
 @dataclass
 class Core:
@@ -47,8 +39,7 @@ class Core:
     orchestrator: Orchestrator
     log: deque = field(default_factory=lambda: deque(maxlen=200))
     state: dict = field(default_factory=lambda: {"session": "off", "caption": "", "mic": False, "pending": None})
-    speak_impl: object = None
-    listen_impl: object = None
+    voice: VoicePort = field(default_factory=VoicePort)
     epoch_ref: list = field(default_factory=lambda: [0])
 
     def event(self, kind: str, **data) -> None:
@@ -71,45 +62,34 @@ def build_core(cfg: OfaConfig | None = None, harness: Harness | None = None, eng
     turns = TurnLog()
     harness = harness or Harness()
     engine = engine or get_engine(cfg.engine, cfg.groq_model)
-    holder: dict = {}
-
-    async def speak(text):
-        fn = holder.get("speak")
-        if fn is None:
-            holder["core"].event("say", text=text)
-            return time.monotonic()
-        return await fn(text)
-
-    async def listen(timeout):
-        fn = holder.get("listen")
-        return await fn(timeout) if fn else None
+    built: dict = {}
+    voice = VoicePort(lambda kind, **data: built["core"].event(kind, **data))
 
     def show(kind, action=None):
-        core = holder["core"]
+        core = built["core"]
         if kind == "approval" and action is not None:
             core.state["pending"] = {"verb": action.verb, "payload": action.payload, "to": action.destinations,
                                      "files": action.file_names, "account": action.account}
             caption = f"{action.verb.upper()}: {(action.payload or '')[:160]}" + \
                       (f" → {', '.join(action.destinations)}" if action.destinations else "")
-            if holder.get("orb"):
-                holder["orb"]("awaiting_approval", caption)
+            voice.display("awaiting_approval", caption)
         elif kind == "approval_done":
             core.state["pending"] = None
-            if holder.get("orb"):
-                holder["orb"]("acting", "")
-        elif holder.get("orb") and kind in {"thinking", "acting"}:
-            holder["orb"](kind, None)
+            voice.display("acting", "")
+        elif kind in {"thinking", "acting"}:
+            voice.display(kind, None)
 
     epoch_ref = [0]
-    executor = Executor(harness, approvals, turns, audit, memory, broker, speak, listen, lambda: epoch_ref[0],
-                        lang=lambda: cfg.reply_language, show=show)
+    executor = Executor(harness, approvals, turns, audit, memory, broker, voice.speak, voice.listen,
+                        lambda: epoch_ref[0], lang=lambda: cfg.reply_language, show=show,
+                        listen_dictation=voice.listen_dictation, pause_gate=voice.pause_gate)
     handles = lambda: [m["handle"] for m in vault.list()] + [f"session:{s}" for s in memory.get("sessions", [])]
-    orch = Orchestrator(engine, executor, memory, speak, listen, handles=handles, lang=lambda: cfg.reply_language,
-                        name=lambda: memory.get("preferred_name", cfg.preferred_name), show=show)
+    orch = Orchestrator(engine, executor, memory, voice.speak, voice.listen, handles=handles,
+                        lang=lambda: cfg.reply_language, name=lambda: memory.get("preferred_name", cfg.preferred_name),
+                        show=show)
     core = Core(cfg, harness, approvals, turns, audit, memory, vault, broker, engine, executor, orch,
-                epoch_ref=epoch_ref)
-    holder["core"] = core
-    core._holder = holder
+                voice=voice, epoch_ref=epoch_ref)
+    built["core"] = core
     approvals.on_event = lambda kind, req: core.event("approval_" + kind, spoken=req.spoken[:200])
     return core
 
@@ -125,6 +105,7 @@ def build_voice(core: Core, orb_set):
 
     from .speech.flux import FluxStt
     from .speech.loop import VoiceLoop
+    from .speech.routing import stt_order
 
     dg, gr = secret("DEEPGRAM_API_KEY"), secret("GRADIUM_API_KEY")
     if dg is None:
@@ -163,9 +144,6 @@ def build_voice(core: Core, orb_set):
         core.epoch_ref[0] = e
         core.approvals.set_epoch(e)
     loop.on_epoch = on_epoch
-    core._holder["speak"] = loop.speak
-    core._holder["listen"] = loop.listen
-    core._holder["orb"] = lambda st, cap: set_state(st, cap)
-    core.executor._listen_dictation = loop.listen_dictation
-    core.executor.gate = loop.paused.wait
+    core.voice.attach(speak=loop.speak, listen=loop.listen, listen_dictation=loop.listen_dictation,
+                      pause_gate=loop.paused.wait, display=set_state)
     return loop

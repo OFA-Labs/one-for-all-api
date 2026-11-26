@@ -83,7 +83,7 @@ async def main(out_path: Path):
     async def listen(timeout):
         await asyncio.sleep(0.05)
         return Heard(replies.pop(0), 0.95, "mic") if replies else None
-    core._holder["speak"], core._holder["listen"] = speak, listen
+    core.voice.attach(speak=speak, listen=listen)
     proc = pad()
     rows = []
     try:
