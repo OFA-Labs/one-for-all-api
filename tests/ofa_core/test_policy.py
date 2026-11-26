@@ -191,9 +191,9 @@ def test_kill_switch_invalidates_pending_and_granted():
 
 
 def test_expired_grant_refused():
-    store, a = ApprovalStore(ttl=0.01), send_action()
+    store, a = ApprovalStore(), send_action()
     req = run(store.obtain(a, speak_now, listener(Heard("yes"))))
-    time.sleep(0.03)
+    req.expires = time.monotonic() - 1     # expire deterministically; wall-clock TTLs flake on slow runners
     with pytest.raises(PolicyDenied) as e:
         store.consume(req.id, a, 0)
     assert e.value.code == "APPROVAL_EXPIRED"
