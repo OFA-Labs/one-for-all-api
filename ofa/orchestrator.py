@@ -34,6 +34,19 @@ Handles you may use: {handles}
 Remembered mappings: {mappings}"""
 
 MAX_STEPS = 25
+TAIL = re.compile(r"(\s*(anything else( you need| i can help with)?\??|is there anything else\??|done\.?|finished\.?))+\s*$", re.I)
+
+
+def tidy(text: str) -> str:
+    text = re.sub(r"[*_`#>]+", "", text)
+    text = re.sub(r"(\s*\.\.\.)+", "", text)
+    text = re.sub(r"\s+", " ", text).strip()
+    text = re.sub(r"\?\.", "?", text)
+    for phrase in ("Completed. Anything else?", "Ho gaya. Aur kuch?"):
+        if text.endswith(phrase):
+            head = TAIL.sub("", text[: -len(phrase)]).strip().rstrip(".?!")
+            text = (head + ". " if head else "") + phrase
+    return re.sub(r"\.\s*\.", ".", text).strip()
 
 
 @dataclass
@@ -156,7 +169,7 @@ class Orchestrator:
 
     async def _engine_error(self, err: EngineError) -> str:
         """§7.3: tell the user and ask. Never switch engine or model silently."""
-        if err.code == "RATE_LIMIT" and (err.retry_after or 0) <= 15 and self._retries < 3:
+        if err.code == "RATE_LIMIT" and (err.retry_after or 0) <= 30 and self._retries < 5:
             self._retries += 1
             wait = max(1, int(err.retry_after or 5))
             await self.speak(f"Groq asked me to slow down; retrying in {wait} seconds.")
@@ -238,7 +251,8 @@ class Orchestrator:
             status = "partial" if ok else "failed"
         verified = status == "done" and bool(effects or outbound or not actions)
         if status == "done" and effects:
-            spoken = (summary.rstrip(". ") + ". " if summary else "") + self._completed()
+            head = TAIL.sub("", summary or "").strip().rstrip(".?! ")
+            spoken = (head + ". " if head else "") + self._completed()
         elif status == "done":
             spoken = summary or " ".join(spoken_parts) or self._completed()
         elif status == "answered":
@@ -254,7 +268,7 @@ class Orchestrator:
             EGRESS.guard(spoken, "tts")
         except LeakBlocked:
             spoken = "I blocked my reply because it contained a protected value."
-        return TurnResult(re.sub(r"[*_`#>]+", "", spoken).strip(), status, actions, verified)
+        return TurnResult(tidy(spoken), status, actions, verified)
 
     def _completed(self) -> str:
         return "Ho gaya. Aur kuch?" if self.lang() == "hi" else "Completed. Anything else?"

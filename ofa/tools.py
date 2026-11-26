@@ -103,7 +103,10 @@ def to_action(name: str, args: dict, turn_id: str | None, label: str | None = No
     if name == "read_file":
         return Action(verb="read_file", target=args.get("path"), args={"op": "read_file"})
     if name == "write_file":
-        return Action(verb="file_write", target=args.get("path"), payload=args.get("text"), args={"op": "write_file"})
+        from pathlib import Path
+        path = str(args.get("path") or "")
+        return Action(verb="file_write", target=path, payload=args.get("text"), exists=bool(path) and Path(path).exists(),
+                      args={"op": "write_file"})
     if name == "run_command":
         return Action(verb="run_command_readonly", payload=args.get("command"), target=args.get("cwd"),
                       args={"op": "run_command"})

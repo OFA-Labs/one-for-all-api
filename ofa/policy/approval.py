@@ -40,7 +40,8 @@ VERB_EN = {"send": "send", "post": "post", "forward": "forward", "share": "share
            "order": "place the order", "create_account": "create an account", "run_command": "run the command",
            "change_password": "change the password", "change_security": "change a security setting",
            "change_permission": "change permissions", "grant_permission": "grant a permission",
-           "search_private": "search", "release_otp": "use the one-time code", "file_write": "save over",
+           "search_private": "search", "release_otp": "use the one-time code", "file_write": "save a file",
+           "run_command_readonly": "run the command",
            "install": "install", "uninstall": "uninstall", "change_setting": "change the setting",
            "click": "press", "key": "press", "fill": "fill in", "plan": "run this plan",
            "phone_send": "send from your phone", "sign_out": "sign out of", "open": "open", "close": "close",
@@ -55,6 +56,8 @@ def render_spoken(action: Action, lang: str = "en") -> str:
         parts.append(f"I'm about to press {action.element_label or action.key or 'this control'}")
         if action.target:
             parts.append(f"in {action.target}")
+    elif action.verb == "file_write" and action.exists:
+        parts.append("I'm about to overwrite the existing file")
     else:
         parts.append(f"I'm about to {verb}")
     if action.payload and action.verb != "run_command":
