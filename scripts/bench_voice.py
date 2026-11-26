@@ -1,5 +1,5 @@
 """Small fixed voice benchmark (§4.2, plan 03). Synthesizes the reference set with provider TTS (cached),
-then runs every STT candidate and writes docs/bench/results-<date>.md. Live calls count against live_budget.
+then runs every STT candidate and writes docs/ofa/bench/results-<date>.md. Live calls count against live_budget.
 
     .venv-ofa/Scripts/python.exe scripts/bench_voice.py
 """
@@ -25,10 +25,10 @@ from voice.config import Settings  # noqa: E402
 from voice.deepgram import DeepgramStt, DeepgramTts  # noqa: E402
 from voice.gradium import GradiumStt, GradiumTts  # noqa: E402
 
-WS = ROOT.parent
-REFS = WS / "docs/bench/refs.yaml"
-AUDIO = WS / "_local/bench/audio"
-CACHE = WS / "_local/bench/cache.json"
+BENCH = ROOT / "docs/ofa/bench"
+REFS = BENCH / "refs.yaml"
+AUDIO = ROOT / ".voice-local/bench/audio"      # ignored by git
+CACHE = ROOT / ".voice-local/bench/cache.json"
 
 
 def norm(s: str) -> str:
@@ -124,7 +124,7 @@ async def main() -> None:
 
 
 def write_report(rows) -> None:
-    out = WS / f"docs/bench/results-{time.strftime('%Y-%m-%d')}.md"
+    out = BENCH / f"results-{time.strftime('%Y-%m-%d')}.md"
     lines = [f"# Voice benchmark {time.strftime('%Y-%m-%d')}", "",
              "Synthetic speech (provider TTS: Deepgram `flux-haley-en`/`flux-anjali-hi`, Gradium default EN voice), "
              "clean audio, no noise. **Not** the user's real voice: accents, noise and mic quality are untested.", "",
