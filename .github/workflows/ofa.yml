@@ -1,10 +1,10 @@
 name: OFA core checks
 on:
   pull_request:
-    paths: ["ofa/**", "ofa_execution/**", "voice/**", "tests/ofa/**", "requirements-ofa.txt", ".github/workflows/ofa.yml"]
+    paths: ["ofa/**", "ofa_execution/**", "voice/**", "tests/ofa_core/**", "requirements-ofa.txt", ".github/workflows/ofa.yml"]
   push:
     branches: [staging]
-    paths: ["ofa/**", "ofa_execution/**", "voice/**", "tests/ofa/**", "requirements-ofa.txt", ".github/workflows/ofa.yml"]
+    paths: ["ofa/**", "ofa_execution/**", "voice/**", "tests/ofa_core/**", "requirements-ofa.txt", ".github/workflows/ofa.yml"]
 jobs:
   ofa:
     name: OFA unit tests (fake providers)
@@ -15,4 +15,4 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install -r requirements-ofa.txt
-      - run: python -m pytest tests/ofa -q
+      - run: python -m pytest tests/ofa_core -q
