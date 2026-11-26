@@ -83,6 +83,9 @@ def classify_tier(action: Action, turns: TurnLog | None = None, epoch: int = 0) 
                               for ref in (action.target, action.handle.split("/", 1)[-1] if action.handle else None))
         if not named:
             tier = 2
+    # Searching a private source the user named themselves ("search my Downloads") is a direct command.
+    if verb == "search_private" and turns and turns.names(action.authorized_by_turn, action.target, epoch):
+        tier = 1
     if action.tier_hint is not None and action.tier_hint > tier:
         tier = min(2, action.tier_hint)
     return tier
