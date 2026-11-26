@@ -81,7 +81,7 @@ def create_app(settings: Settings, events: Events, session: Any, token: str,
 
     @app.get("/v1/health")
     async def health():
-        return {"service": "ofa-desktop", "version": "0.2.2", "os": "windows",
+        return {"service": "ofa-desktop", "version": "0.2.3", "os": "windows",
                 "identity_mode": "local-development", "llm_enabled": False}
 
     @app.post("/v1/pairing")

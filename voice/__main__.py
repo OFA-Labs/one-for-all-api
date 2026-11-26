@@ -120,6 +120,11 @@ async def serve(handoff: Any, consent: bool, overlay: Overlay,
         None,  # OFA Engine is not implemented in this iteration.
         bridge, cache, emit, dispatcher, authorize,
     )
+    overlay.callbacks.update(
+        stop=lambda:loop.call_soon_threadsafe(lambda:asyncio.create_task(session.close("overlay_stop"))),
+        interrupt=lambda:loop.call_soon_threadsafe(lambda:asyncio.create_task(session.interrupt())),
+        send=lambda text:loop.call_soon_threadsafe(lambda:asyncio.create_task(session.submit_text(text))),
+    )
     session.runtime=runtime
     refresh_catalog(False)
     stop = asyncio.Event()

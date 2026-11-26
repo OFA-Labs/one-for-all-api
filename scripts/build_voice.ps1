@@ -16,7 +16,7 @@ try {
         if ($voiceExit -ne 0) { throw "Voice build tool failed (exit $voiceExit)." }
     }
     Invoke-VoicePython @('-m','pip','install','-r','requirements-voice-dev.lock')
-    Invoke-VoicePython @('-m','PyInstaller','--noconfirm','--onedir','--windowed','--name','OFA-Desktop','--paths',$voiceRoot,'--collect-all','comtypes','--collect-all','hassil','--collect-data','unicode_rbnf','scripts/voice_entry.py')
+    Invoke-VoicePython @('-m','PyInstaller','--noconfirm','--onedir','--windowed','--name','OFA-Desktop','--paths',$voiceRoot,'--collect-all','comtypes','--collect-all','hassil','--collect-data','unicode_rbnf','--add-data','voice/assets;voice/assets','scripts/voice_entry.py')
     Copy-Item -LiteralPath 'scripts/install_voice.ps1' -Destination 'dist/install_voice.ps1'
     Copy-Item -LiteralPath 'scripts/uninstall_voice.ps1' -Destination 'dist/uninstall_voice.ps1'
     Compress-Archive -Path 'dist/OFA-Desktop', 'dist/install_voice.ps1', 'dist/uninstall_voice.ps1' -DestinationPath 'dist/OFA-Desktop-Windows.zip' -Force

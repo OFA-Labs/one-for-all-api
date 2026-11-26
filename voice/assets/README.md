@@ -1,0 +1,1 @@
+Source: OFA-Labs/one-for-all-web PR #8 extension/media/orb.mp4. Native asset: 240px at 24fps, 3x playback, scale-to-cover then centered circular crop. Rendered at 120 logical pixels with DPI-aware sampling. GIF is committed, so runtime/package builds need neither Pillow nor ffmpeg.
