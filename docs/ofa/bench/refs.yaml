@@ -1,0 +1,65 @@
+# Fixed benchmark set (§4.2): 20 EN, 20 HI, 20 Hinglish. `crit` = critical tokens; any listed form counts.
+# Audio is synthesized by provider TTS (no human recordings), cached in _local/bench/audio (never Git).
+en:
+  - {id: en01, text: "Open Slack and send the report to Priya at five thirty.", crit: [[priya], ["5:30", "five thirty", "530"]]}
+  - {id: en02, text: "Don't send the email to Rahul yet.", crit: [["don't", "do not", "dont"], [rahul]]}
+  - {id: en03, text: "Search GitHub for the OFA Labs repository and open the pull requests.", crit: [[github], ["pull requests", "pull request"]]}
+  - {id: en04, text: "Type npm install inside the VS Code terminal.", crit: [[npm], ["vs code", "vscode"]]}
+  - {id: en05, text: "Call Ananya on WhatsApp tomorrow at nine.", crit: [[ananya], [whatsapp], ["9", nine]]}
+  - {id: en06, text: "Book a cab for 7:45 in the morning.", crit: [["7:45", "seven forty five", "745"]]}
+  - {id: en07, text: "Never delete the folder named invoices.", crit: [[never], [invoices]]}
+  - {id: en08, text: "Transfer two thousand five hundred rupees to Karan.", crit: [["2500", "2,500", "two thousand five hundred"], [karan]]}
+  - {id: en09, text: "Open Cursor and ask Claude Code to review the diff.", crit: [[cursor], [claude], [diff]]}
+  - {id: en10, text: "Find my resume PDF in Downloads.", crit: [[resume], [pdf], [downloads]]}
+  - {id: en11, text: "Reply to Meera saying I will not join the call.", crit: [[meera], ["will not", "won't"]]}
+  - {id: en12, text: "Set a reminder for the 14th of December.", crit: [["14th", fourteenth, "14"], [december]]}
+  - {id: en13, text: "Push the branch to origin but do not merge it.", crit: [[push], ["do not", "don't"], [merge]]}
+  - {id: en14, text: "Open Google Drive and share the budget sheet with Arjun.", crit: [["google drive", drive], [arjun]]}
+  - {id: en15, text: "Scroll down until you see a job posted in Bangalore.", crit: [[scroll], [bangalore, bengaluru]]}
+  - {id: en16, text: "Paste the API key into the settings page.", crit: [[api], [settings]]}
+  - {id: en17, text: "My phone number ends in four four seven one.", crit: [["4471", "four four seven one", "44 71"]]}
+  - {id: en18, text: "Close Chrome but keep Spotify running.", crit: [[chrome], [spotify]]}
+  - {id: en19, text: "Stop. Cancel that message.", crit: [[stop], [cancel]]}
+  - {id: en20, text: "Open LinkedIn and look for senior Python developer roles.", crit: [[linkedin], [python]]}
+hi:
+  - {id: hi01, text: "कल शाम पांच बजे मीटिंग है, प्रिया को बता दो।", crit: [[kal], [paanch, panch, "5"], [priya]]}
+  - {id: hi02, text: "राहुल को अभी मैसेज मत भेजो।", crit: [[rahul], [mat]]}
+  - {id: hi03, text: "मेरे डाउनलोड फोल्डर में रिज्यूमे ढूंढो।", crit: [[download], [resume, rijyume, rijyoome]]}
+  - {id: hi04, text: "दो हज़ार पांच सौ रुपये करण को भेज दो।", crit: [["2500", "do hazaar paanch sau", "do hajar paanch sau", "2,500"], [karan]]}
+  - {id: hi05, text: "परसों सुबह दस बजे की कैब बुक करो।", crit: [[parson, parso], [das, "10"]]}
+  - {id: hi06, text: "व्हाट्सएप खोलो और माँ को कॉल करो।", crit: [[whatsapp, vhatsep, vhatsaep, "whats"], [maan, maa, ma]]}
+  - {id: hi07, text: "इस फाइल को डिलीट नहीं करना है।", crit: [[delete, dilit, dileet], [nahin, nahi]]}
+  - {id: hi08, text: "साढ़े तीन बजे याद दिलाना।", crit: [[saadhe, sadhe, "3:30", "3.30"], [teen, "3"]]}
+  - {id: hi09, text: "अगले सोमवार को रिपोर्ट भेजनी है।", crit: [[agle], [somvaar, somvar, monday], [report]]}
+  - {id: hi10, text: "स्लैक पर टीम चैनल खोलो।", crit: [[slack, slaik, slek], [team, teem], [channel, chainal, chenal]]}
+  - {id: hi11, text: "गूगल ड्राइव में बजट वाली शीट खोलो।", crit: [[google, gugal], [drive, draiv], [budget, bajat]]}
+  - {id: hi12, text: "मेरा नंबर नौ आठ सात छह है।", crit: [[nau, "9"], [aath, aat, "8"]]}
+  - {id: hi13, text: "क्रोम बंद करो लेकिन म्यूजिक चलने दो।", crit: [[chrome, krom], [lekin]]}
+  - {id: hi14, text: "रुको, अभी कुछ मत करो।", crit: [[ruko], [mat]]}
+  - {id: hi15, text: "अनन्या को ईमेल में लिखो कि मैं कल नहीं आऊंगा।", crit: [[ananya, anany], [kal], [nahin, nahi]]}
+  - {id: hi16, text: "पंद्रह दिसंबर को छुट्टी है।", crit: [[pandrah, "15"], [disambar, december]]}
+  - {id: hi17, text: "लिंक्डइन पर पायथन की नौकरी ढूंढो।", crit: [[linkedin, linkdin], [python, paithan, payathan]]}
+  - {id: hi18, text: "डेढ़ लाख रुपये का बजट है।", crit: [[dedh, "1.5", "150000", "1,50,000"], [lakh, laakh]]}
+  - {id: hi19, text: "विंडो को बाईं तरफ रख दो।", crit: [[window, vindo], [baain, baayin, baeen, baee, left]]}
+  - {id: hi20, text: "सब कुछ रद्द करो।", crit: [[radd, rad]]}
+hinglish:
+  - {id: hg01, text: "कल का meeting cancel कर दो।", crit: [[kal], [meeting], [cancel]]}
+  - {id: hg02, text: "Priya को message भेजो कि मैं late आऊंगा।", crit: [[priya], [message], [late]]}
+  - {id: hg03, text: "Slack पे team channel open करो।", crit: [[slack], [team], [channel]]}
+  - {id: hg04, text: "मेरा resume Downloads folder में है, उसको attach कर दो।", crit: [[resume], [downloads, download], [attach]]}
+  - {id: hg05, text: "VS Code में terminal खोलो और npm install चलाओ।", crit: [["vs code", vscode], [terminal], [npm]]}
+  - {id: hg06, text: "Rahul को अभी email मत करो।", crit: [[rahul], [email], [mat]]}
+  - {id: hg07, text: "शाम सात बजे की cab book करो।", crit: [[saat, "7"], [cab], [book]]}
+  - {id: hg08, text: "GitHub पे pull request review करो पर merge मत करना।", crit: [[github], ["pull request"], [merge], [mat]]}
+  - {id: hg09, text: "Google Drive से budget sheet Arjun को share करो।", crit: [[google], [budget], [arjun], [share]]}
+  - {id: hg10, text: "दो हज़ार rupees Karan को transfer कर दो।", crit: [["2000", "do hazaar", "2,000", "do hajar"], [karan], [transfer]]}
+  - {id: hg11, text: "WhatsApp पे mom को बोलो मैं घर आ रहा हूँ।", crit: [[whatsapp], [mom], [ghar]]}
+  - {id: hg12, text: "LinkedIn पे Bangalore वाली Python jobs ढूंढो।", crit: [[linkedin], [bangalore, bengaluru], [python]]}
+  - {id: hg13, text: "Chrome close कर दो but Spotify चलने दो।", crit: [[chrome], [spotify]]}
+  - {id: hg14, text: "Claude Code से बोलो कि tests run करे।", crit: [[claude], [tests, test]]}
+  - {id: hg15, text: "Downloads में latest PDF कौन सा है?", crit: [[downloads, download], [pdf], [latest]]}
+  - {id: hg16, text: "Meera को reply करो कि call पे नहीं आ पाऊंगा।", crit: [[meera], [reply], [nahin, nahi]]}
+  - {id: hg17, text: "Settings में Bluetooth on कर दो।", crit: [[settings], [bluetooth]]}
+  - {id: hg18, text: "Window को right side पे रख दो।", crit: [[window], [right]]}
+  - {id: hg19, text: "रुको, वो message मत भेजो।", crit: [[ruko], [message], [mat]]}
+  - {id: hg20, text: "Ananya का number नौ आठ सात छह पांच है।", crit: [[ananya], [nau, "9"], [paanch, panch, "5"]]}
