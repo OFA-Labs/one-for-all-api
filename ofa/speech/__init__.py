@@ -1,1 +1,1 @@
-"""OFA speech: provider routing by capability+language, Flux STT, benchmark, voice loop."""
+"""OFA speech: Deepgram Flux client, spoken controls and the echo guard."""

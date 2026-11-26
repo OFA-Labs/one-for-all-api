@@ -17,22 +17,31 @@ Keys (names only, never commit values):
 | `GROQ_API_KEY` | `.env` in this folder (ignored by git) | `GROQ_API_KRY` (typo) is accepted with a warning |
 | `DEEPGRAM_API_KEY`, `GRADIUM_API_KEY` | env, or the DPAPI store written by `python -m voice --save-speech-credentials` | already present on the dev machine |
 
-Optional: `OFA_HEADPHONES=true` (enables barge-in), `OFA_EN_TTS=gradium`, `OFA_GROQ_MODEL`, `OFA_PORT` (default 8768).
+Optional: `VOICE_HEADPHONES=true` (enables barge-in), `OFA_GROQ_MODEL`, `OFA_PORT` (vault page, default 8768).
 
 ## Run
 
 ```powershell
-.venv-ofa/Scripts/python.exe -m ofa --env-file .env          # voice: press Caps Lock to talk
-.venv-ofa/Scripts/python.exe -m ofa vault --env-file .env    # opens the local vault page
-.venv-ofa/Scripts/python.exe -m ofa say --env-file .env "open notepad"
-.venv-ofa/Scripts/python.exe -m ofa text --env-file .env     # typed REPL
-.venv-ofa/Scripts/python.exe -m ofa doctor | audit | memory [forget KEY | clear]
+# API repo: the assistant (native top-middle panel + Caps Lock + OFA brain), companion API on 127.0.0.1:8767
+.venv-ofa/Scripts/python.exe -m ofa --env-file .env
+# Web repo: your frontend
+npm run dev                                   # http://127.0.0.1:3000/desktop
 ```
 
-The voice run prints a **Dashboard** link (`http://127.0.0.1:3000/ofa#port=8768&token=…`) for the web app
-(`one-for-all-web`, `npm run dev`) and a **Vault** link. Both carry a per-process token in the URL fragment.
+1. Open `/desktop`, press **Connect computer** and approve the card on the panel (once per browser).
+2. Press **Caps Lock** to start talking; press it again to stop. Say "yes / haan" or "no / nahi" when asked.
+3. The panel input accepts typed requests. Typed text can never approve a consequential action.
 
-Typed text can never approve a consequential (Tier 2) action. Approvals are spoken: "yes / haan / bhej do".
+Plain "open <app>" commands run on the companion's verified fast path without the model. Everything else goes
+to OFA. Without a Groq key the companion runs only its built-in commands.
+
+Other tools:
+
+```powershell
+.venv-ofa/Scripts/python.exe -m ofa vault --env-file .env    # local page for adding secrets
+.venv-ofa/Scripts/python.exe -m ofa say --env-file .env "open notepad"
+.venv-ofa/Scripts/python.exe -m ofa doctor | audit | memory [forget KEY | clear]
+```
 
 ## Test
 
@@ -55,6 +64,6 @@ Live-call counts are capped in `ofa/live_budget.py` and recorded in `../docs/ofa
 | `ofa/engine/` | `ReasoningEngine` contract, Groq, OpenAI-compatible user engine, fake |
 | `ofa/harness/` | Windows UIA → OCR → (vision) helpers, SendInput, redacted screenshots |
 | `ofa/executor.py`, `ofa/effects/`, `ofa/orchestrator.py`, `ofa/tools.py` | the only path from model to effects |
-| `ofa/speech/` | Flux STT, persistent voice loop, echo guard |
-| `ofa/orb.py`, `ofa/server.py`, `ofa/ui/` | orb, loopback API, vault page, mock forms |
+| `ofa/companion.py`, `ofa/speech/` | brain adapter for the companion session; Flux STT, spoken controls, echo guard |
+| `ofa/server.py`, `ofa/ui/` | local vault page and mock forms |
 | `ofa/phone.py` | optional Android-over-adb surface |
