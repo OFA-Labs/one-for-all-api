@@ -138,6 +138,11 @@ class Executor:
         except Exception as exc:   # report honestly; never claim success
             result = {"status": "error", "reason": type(exc).__name__, "detail": str(exc)[:200]}
         result.setdefault("status", "ok")
+        if action.args.get("op") in {"open", "click", "double_click", "right_click", "key", "focus", "type",
+                                     "replace", "dictate", "scroll_up", "scroll_down", "close"} and result["status"] != "cancelled":
+            g = await asyncio.to_thread(self.h.glance)
+            if g:
+                result["now"] = g
         if tier == 2:
             idem = action.digest()
             verified = result["status"] == "ok" and result.get("verified", result.get("screen_changed", False))

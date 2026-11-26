@@ -198,7 +198,15 @@ class Harness:
         return {"opened": path, "verified": False, "reason": "No window titled with that name appeared"}
 
     # --- reading ---------------------------------------------------------------------------
-    def screen(self, window=None, ocr: bool | None = None, limit: int = 80) -> dict:
+    def glance(self, limit: int = 25) -> dict | None:
+        """Short fresh reading of the front window, attached to action results to save engine calls."""
+        try:
+            r = self.screen(None, ocr=False, limit=limit)
+            return {"window": r["window"], "elements": r["elements"], "more": r["truncated"]}
+        except Exception:
+            return None
+
+    def screen(self, window=None, ocr: bool | None = None, limit: int = 60) -> dict:
         w = self.resolve_window(window)
         els, complete = self.b.uia_tree(w["hwnd"])
         sources = ["uia"]
@@ -263,7 +271,7 @@ class Harness:
             return self.last.by_id(ref)
         r = self.find_text(ref)
         if r["match"] in {"exact", "contains"} and len(r["elements"]) >= 1:
-            return self.last.by_id(r["elements"][0]["id"])
+            return self.last.by_id(r["elements"][0].split(" ", 1)[0])
         raise HarnessError("ELEMENT_NOT_FOUND", f"No element matching {ref!r}")
 
     # --- acting ----------------------------------------------------------------------------

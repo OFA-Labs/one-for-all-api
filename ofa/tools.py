@@ -18,13 +18,13 @@ EFFECTS = ["none", "send", "post", "submit", "apply", "share", "upload", "attach
            "change_setting", "change_password", "install", "uninstall", "sign_out"]
 
 TOOLS = [
-    _fn("open", "Open an app by name, a website URL, a file/folder path, or ms-settings: page.", {"target": S}, ["target"]),
+    _fn("open", "Open an app, URL, file/folder path or ms-settings: page.", {"target": S}, ["target"]),
     _fn("windows", "List open windows.", {}),
-    _fn("screen", "Read UI elements of a window (default: front window). Returns ids like u3/o5.",
+    _fn("screen", "Read a window's UI elements (default front). Lines: id role \"text\" =value.",
         {"window": S, "ocr": {"type": "boolean"}}),
-    _fn("act", "Do one UI action. kind: click|double_click|right_click|type|replace|key|scroll_up|scroll_down|focus|"
-        "close|minimize|maximize|restore|snap_left|snap_right|drag|wait_for. element: id from screen. "
-        "Set effect if this action sends/submits/deletes/pays etc; set to/account for outbound actions.",
+    _fn("act", "One UI action. kind: click|double_click|right_click|type|replace|key|scroll_up|scroll_down|focus|close|"
+        "minimize|maximize|restore|snap_left|snap_right|drag|wait_for. element=id from screen. effect+to+account for "
+        "anything outbound/destructive. Result includes a fresh short reading (now).",
         {"kind": S, "element": S, "text": S, "keys": S, "window": S, "effect": {"type": "string", "enum": EFFECTS},
          "to": {"type": "array", "items": S}, "account": S, "to_element": S}, ["kind"]),
     _fn("dictate", "Type the user's exact last words (verbatim) into an element; or mode=compose with text you drafted.",

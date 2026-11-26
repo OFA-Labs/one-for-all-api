@@ -53,6 +53,7 @@ class Orchestrator:
         self.history: list[dict] = []
         self.history_turns = history_turns
         self.busy = False
+        self._retries = 0
 
     # --- context ------------------------------------------------------------------------------
     def _system(self) -> str:
@@ -93,6 +94,7 @@ class Orchestrator:
             self.busy = False
 
     async def _run(self, text: str, turn_id: str, epoch: int) -> TurnResult:
+        self._retries = 0
         user = normalize_numbers(text)
         msgs = [{"role": "system", "content": self._system()}, *self.history[-2 * self.history_turns:],
                 {"role": "user", "content": user}]
@@ -154,6 +156,12 @@ class Orchestrator:
 
     async def _engine_error(self, err: EngineError) -> str:
         """§7.3: tell the user and ask. Never switch engine or model silently."""
+        if err.code == "RATE_LIMIT" and (err.retry_after or 0) <= 15 and self._retries < 3:
+            self._retries += 1
+            wait = max(1, int(err.retry_after or 5))
+            await self.speak(f"Groq asked me to slow down; retrying in {wait} seconds.")
+            await asyncio.sleep(wait)
+            return "retry"
         if err.code in {"RATE_LIMIT", "ENGINE_DOWN"}:
             wait = int(err.retry_after or 10)
             await self.speak(f"{err.user_message} Should I wait about {wait} seconds and try again?")
@@ -212,6 +220,8 @@ class Orchestrator:
 
     def _report(self, finished, spoken_parts, actions) -> TurnResult:
         """The completion phrase is spoken only when OFA's own evidence says the effects happened."""
+        if finished is None and any(a["tier"] and a["tier"] >= 1 for a in actions):
+            finished = ("done", " ".join(spoken_parts)[-300:])   # no finish call: judged by evidence below
         status, summary = finished or ("answered", " ".join(spoken_parts)[-400:])
         effects = [a for a in actions if a["tier"] and a["tier"] >= 1 and a["tool"] not in {"screen", "windows", "files", "read_file"}]
         failed = [a for a in effects if a["status"] not in {"ok", "skipped", "rejected"}]
