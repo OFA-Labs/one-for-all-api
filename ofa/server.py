@@ -13,6 +13,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field
 
 from . import live_budget
+from .speech.routing import STT_ROUTES
 from .vault.handles import HandleError
 from .vault.store import VaultError, VaultLocked
 
@@ -78,7 +79,7 @@ def create_app(core, voice=None, token: str | None = None) -> FastAPI:
                            "metrics": core.engine.metrics().summary()},
                 "keys": core.cfg.names_set(), "vault": {"unlocked": core.vault.unlocked, "items": len(core.vault.list())},
                 "voice": {"active": bool(voice and voice.active), "mode": getattr(voice, "mode", None),
-                          "stt_routes": {f"{k[0]}/{k[1]}": v for k, v in __import__("ofa.runtime", fromlist=["x"]).STT_ROUTES.items()}},
+                          "stt_routes": {f"{k[0]}/{k[1]}": v for k, v in STT_ROUTES.items()}},
                 "live_calls": live_budget.used(), "events": list(core.log)[-60:]}
 
     @app.post("/command", dependencies=[Depends(auth)])
