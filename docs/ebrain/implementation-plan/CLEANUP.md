@@ -13,7 +13,7 @@ voice-agents/
     tools/ebrain/legacy/            retained frozen research/evaluation assets
     tools/ebrain/scripts/           active validation/benchmark entry points
   one-for-all-web/                  existing app, owner changes preserved
-  20261123-0935-35.2398015.mp4       referenced homepage source media
+  _local/media/20261123-0935-35.2398015.mp4  provenance-only source media (never committed; filename unchanged)
 ```
 
 ## Disposition
@@ -28,7 +28,7 @@ voice-agents/
 | `local-voice-assistant/` | External `retired-folders/local-voice-assistant/` | Superseded offline app; current API voice bridge retained |
 | Four root JPG/PNG/screenshot files | External `root-media/` and source ZIP | No exact filename reference found in active API/web; originals recoverable |
 | Misnamed `docs/ebrain/SPEC_DEV_BRAIN_V2.md` | Identical contents at `SPEC_DEV_BRAIN_V3.md`; old file externally archived | Header is V3 and matches Downloads V3 byte-for-byte; no true V2 source invented |
-| Root MP4 | Kept in place | `public/media/home-gaze-manifest.json` and homepage test refer to its source name; source asset is not redundant evidence |
+| Root MP4 | Moved to workspace `_local/media/` (local-only, never committed) | Filename is unchanged because `public/media/home-gaze-manifest.json` and the homepage test assert that exact source name; the site itself plays derived assets from `public/media/` |
 
 The retired top-level folders no longer exist inside `voice-agents`. Generated dependency caches/venvs in the retired originals remain only in the external recoverable folder; they are not copied into the API source tree. No broad “unused file” deletion was attempted in active API/web because unrelated app features and dirty owner files are valid work.
 

@@ -25,3 +25,27 @@ voice-traces/
 build/
 dist/
 *.spec
+
+# Local-only workspace help (anchored to this repo root)
+/_local/
+/local-only/
+/reports/
+/research_notes/
+/browser use/
+/implementation_voice-pipeline.md
+/validate_plan.py
+/*.mp4
+/*.webm
+/*.mov
+
+# Generated output and tool state
+*.log
+*.tmp
+temp/
+playwright-report/
+test-results/
+.cache/
+artifacts/
+.promptible/
+/worktrees/
+.worktrees/
