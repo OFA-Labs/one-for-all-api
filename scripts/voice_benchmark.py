@@ -13,7 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from voice.events import Events
 from voice.failover import Breaker, SttChain
-from voice.fakes import FakeLlm, FakeStt, FakeTts
+from voice.fakes import FakeStt, FakeTts
 from voice.handoff import load_handoff, settings_from_handoff
 from voice.replay import ReplayFeed
 

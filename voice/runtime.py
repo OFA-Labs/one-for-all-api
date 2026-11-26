@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 from uuid import uuid4
 
-from ofa_execution.contracts import Step, Target, Expectation, ExecutionError
+from ofa_execution.contracts import Step, Target, Expectation
 from .capabilities import Receipt, MissingCapability
 from .orchestrator import approval_choice
 

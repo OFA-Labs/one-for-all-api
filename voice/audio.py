@@ -3,8 +3,6 @@ from __future__ import annotations
 
 import asyncio
 import threading
-from collections import deque
-from collections.abc import Callable
 
 import numpy as np
 import sounddevice as sd

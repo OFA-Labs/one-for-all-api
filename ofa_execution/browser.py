@@ -6,10 +6,9 @@ Production extension-side policy/pairing hardening remains a separate milestone.
 """
 from __future__ import annotations
 
-import json
 from urllib.parse import urlsplit
 
-from .contracts import Element, Evidence, ExecutionError, Observation, Outcome
+from .contracts import Evidence, ExecutionError, Observation, Outcome
 from .verification import verify
 
 

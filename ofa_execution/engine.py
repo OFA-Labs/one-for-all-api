@@ -7,7 +7,7 @@ import time
 from collections import deque
 from dataclasses import dataclass, field
 
-from .contracts import ExecutionError, Plan, Step, digest, uid
+from .contracts import ExecutionError, Plan, digest, uid
 from .policy import Gate
 
 
