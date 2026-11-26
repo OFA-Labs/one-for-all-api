@@ -30,6 +30,7 @@ def test_web_v3_job_exists_and_gates_release(workflow: str) -> None:
     assert "  web-v3:" in workflow
     assert "repository: OFA-Labs/one-for-all-web" in workflow
     assert "run: npm run verify" in workflow
+    assert "PLAYWRIGHT_BROWSERS_PATH: ./.cache/ms-playwright" in workflow
     assert "needs: [pure-and-legacy, postgres-integration, web-v3]" in workflow
     assert "WEB: ${{ needs.web-v3.result }}" in workflow
     assert 'test "$WEB" = "success"' in workflow
