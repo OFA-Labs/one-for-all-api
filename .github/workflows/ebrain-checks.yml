@@ -5,7 +5,7 @@ name: E-Brain checks (V3)
 # tools/ebrain/scripts/ci_prepare_pg.py creates synthetic restricted roles,
 # applies the pinned migration and exports the migration/runtime DSNs. If that
 # preparation cannot run, the job fails instead of silently skipping tests.
-# Web checks run in the one-for-all-web repository CI (separate repo); observed
+# Web checks run in the web-v3 job below against one-for-all-web@staging; observed
 # results are recorded in docs/ebrain/implementation-plan/evidence/M14-web-v3/.
 
 on:
@@ -90,13 +90,36 @@ jobs:
       - name: Run the real Postgres / RLS / concurrency suite
         run: python -m pytest tests/v3/integration -q
 
-  # Web checks run in the one-for-all-web repository CI (separate repo).
+  # Web V3 checks run against one-for-all-web@staging in the job below.
   # Observed web results are recorded in docs/ebrain/implementation-plan/evidence/M14-web-v3/.
+  web-v3:
+    name: Web V3 typecheck, lint, build and Playwright checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: OFA-Labs/one-for-all-web
+          ref: staging
+          path: web-checkout
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web-checkout/package-lock.json
+      - name: Install pinned web dependencies
+        working-directory: web-checkout
+        run: npm ci
+      - name: Install Playwright Chromium
+        working-directory: web-checkout
+        run: npx playwright install --with-deps chromium
+      - name: Run npm run verify (typecheck, lint, build, test)
+        working-directory: web-checkout
+        run: npm run verify
 
   release-gate:
     name: Release gate (fails on any NOT_RUN mandatory case)
     runs-on: ubuntu-latest
-    needs: [pure-and-legacy, postgres-integration]
+    needs: [pure-and-legacy, postgres-integration, web-v3]
     if: always()
     services:
       postgres:
@@ -126,7 +149,9 @@ jobs:
         env:
           PURE: ${{ needs.pure-and-legacy.result }}
           PG: ${{ needs.postgres-integration.result }}
+          WEB: ${{ needs.web-v3.result }}
         run: |
           test "$PURE" = "success" || { echo "Pure/legacy job failed: release gate blocked"; exit 2; }
           test "$PG" = "success" || { echo "Postgres job NOT_RUN/FAILED: release gate blocked"; exit 2; }
-          echo "Web V3 checks are owned by one-for-all-web CI; see docs/ebrain/implementation-plan/evidence/M14-web-v3/"
+          test "$WEB" = "success" || { echo "Web V3 job NOT_RUN/FAILED: release gate blocked"; exit 2; }
+          echo "All four prerequisite checks are green; web evidence: docs/ebrain/implementation-plan/evidence/M14-web-v3/"

@@ -26,9 +26,13 @@ def test_legacy_job_checks_out_sibling_web_repo(workflow: str) -> None:
     assert ".venv/Scripts/python.exe" in workflow
 
 
-def test_no_reference_to_nonexistent_web_job(workflow: str) -> None:
-    assert "needs.web-v3" not in workflow
-    assert "needs: [pure-and-legacy, postgres-integration]" in workflow
+def test_web_v3_job_exists_and_gates_release(workflow: str) -> None:
+    assert "  web-v3:" in workflow
+    assert "repository: OFA-Labs/one-for-all-web" in workflow
+    assert "run: npm run verify" in workflow
+    assert "needs: [pure-and-legacy, postgres-integration, web-v3]" in workflow
+    assert "WEB: ${{ needs.web-v3.result }}" in workflow
+    assert 'test "$WEB" = "success"' in workflow
 
 
 def test_postgres_jobs_prepare_real_dsns(workflow: str) -> None:
