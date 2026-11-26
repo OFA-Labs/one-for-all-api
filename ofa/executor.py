@@ -36,6 +36,8 @@ class Executor:
         self.plan_approved: str | None = None
         self.effects_this_turn = 0
         self.tier2_this_turn = 0
+        self.gate = None
+        self._last_tier = 2
 
     def new_turn(self, task: str, words: str) -> None:
         self.task, self.last_user_words = task, words
@@ -78,6 +80,8 @@ class Executor:
         return result
 
     async def _run(self, action: Action) -> dict:
+        if self.gate is not None:
+            await self.gate()               # spoken "pause" holds here; "stop" changes the epoch
         epoch = self.epoch()
         self._last_tier = 2
         action = self.describe(action)
@@ -121,6 +125,8 @@ class Executor:
                 self.memory.ledger_set(self.task, idem, dest, action.verb, "intent")
         elif self.epoch() != epoch:
             return {"status": "cancelled", "reason": "SESSION_STOPPED"}
+        if self.epoch() != epoch:
+            return {"status": "cancelled", "reason": "SESSION_STOPPED"}
         try:
             result = await asyncio.to_thread(self._dispatch, action)
         except HarnessError as exc:
@@ -132,6 +138,11 @@ class Executor:
         except Exception as exc:   # report honestly; never claim success
             result = {"status": "error", "reason": type(exc).__name__, "detail": str(exc)[:200]}
         result.setdefault("status", "ok")
+        if action.args.get("op") in {"open", "click", "double_click", "right_click", "key", "focus", "type",
+                                     "replace", "dictate", "scroll_up", "scroll_down", "close"} and result["status"] != "cancelled":
+            g = await asyncio.to_thread(self.h.glance)
+            if g:
+                result["now"] = g
         if tier == 2:
             idem = action.digest()
             verified = result["status"] == "ok" and result.get("verified", result.get("screen_changed", False))

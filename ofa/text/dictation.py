@@ -16,7 +16,9 @@ def spoken_punctuation(text: str) -> str:
     """Convert explicit punctuation commands. Only standalone command words are converted."""
     out = text
     for pattern, mark in PUNCT:
-        out = re.sub(r"\s*" + pattern + r"\s*", lambda m: mark + (" " if mark not in "\n(" else ""), out, flags=re.I)
+        out = re.sub(r"[ \t]*" + pattern + r"[ \t]*", lambda m: mark + (" " if mark not in "\n(" else ""), out,
+                     flags=re.I)
+    out = re.sub(r" +\n", "\n", out)
     out = re.sub(r"[ \t]+([.,?!:;)।])", r"\1", out)
     out = re.sub(r"\(\s+", "(", out)
     return re.sub(r"[ \t]{2,}", " ", out).strip(" ")

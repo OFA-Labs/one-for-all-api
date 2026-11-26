@@ -40,8 +40,14 @@ class GroqEngine:
     def metrics(self) -> EngineMetrics:
         return self._metrics
 
+    base_url = URL
+    budget_name = "groq"
+
+    def _key(self):
+        return groq_key()
+
     def _headers(self) -> dict:
-        key = groq_key()
+        key = self._key()
         if key is None:
             raise RuntimeError("GROQ_API_KEY is not set")
         return {"Authorization": f"Bearer {key.get_secret_value()}", "Content-Type": "application/json"}
@@ -53,9 +59,9 @@ class GroqEngine:
         start = time.monotonic()
         try:
             if self.count_budget:
-                live_budget.spend("groq")
+                live_budget.spend(self.budget_name)
             async with self._client_or_new() as c:
-                r = await c.get(f"{URL}/models", headers=self._headers())
+                r = await c.get(f"{self.base_url}/models", headers=self._headers())
             ok = r.status_code == 200 and any(m.get("id") == self.model for m in r.json().get("data", []))
             return HealthResult(ok, f"http {r.status_code}" + ("" if ok else "; model not listed"),
                                 (time.monotonic() - start) * 1000)
@@ -103,7 +109,7 @@ class GroqEngine:
             return
         if self.count_budget:
             try:
-                live_budget.spend("groq")
+                live_budget.spend(self.budget_name)
             except live_budget.BudgetExceeded:
                 yield EngineError("BUDGET", False, "The development live-call budget for Groq is used up.")
                 return
@@ -111,7 +117,7 @@ class GroqEngine:
         usage, finish = Usage(), "stop"
         client = self._client_or_new()
         try:
-            async with client.stream("POST", f"{URL}/chat/completions", headers=self._headers(), json=body) as r:
+            async with client.stream("POST", f"{self.base_url}/chat/completions", headers=self._headers(), json=body) as r:
                 self._metrics.rate_limits = {k: v for k, v in r.headers.items() if k.startswith("x-ratelimit")}
                 if r.status_code != 200:
                     await r.aread()
@@ -171,3 +177,17 @@ class GroqEngine:
         except Exception:
             msg = ""
         return EngineError("BAD_REQUEST", False, "Groq rejected the request. " + msg)
+
+
+class OpenAICompatEngine(GroqEngine):
+    """Stage-2 Mode B backend: any OpenAI-compatible chat API the user connects with their own key.
+    Same contract, so orchestrator, policy and broker are unchanged (§7.1)."""
+
+    def __init__(self, base_url: str, model: str, key_env: str = "OFA_ENGINE_KEY", vision: bool = False, **kw):
+        super().__init__(model, **kw)
+        self.base_url, self.key_env, self.budget_name = base_url.rstrip("/"), key_env, "groq"
+        self._info = EngineInfo("openai-compatible", model, True, False, vision, 128000, 8192, stage="user")
+
+    def _key(self):
+        from ..config import secret
+        return secret(self.key_env)

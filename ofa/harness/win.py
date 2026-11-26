@@ -51,15 +51,18 @@ class El:
         l, t, r, b = self.bbox
         return (l + r) // 2, (t + b) // 2
 
-    def public(self) -> dict:
-        d = {"id": self.id, "text": self.text[:120], "role": self.role, "src": self.source}
+    def public(self) -> str:
+        """Compact one-line form for the engine: id role "text" =value [flags]."""
+        parts = [self.id, self.role.replace(" ", "_")]
+        if self.text:
+            parts.append('"' + self.text[:80].replace('"', "'") + '"')
         if self.value and not self.is_password and self.value != self.text:
-            d["value"] = self.value[:160]
+            parts.append("=" + repr(self.value[:120]))
         if self.is_password:
-            d["password"] = True
+            parts.append("[password]")
         if not self.enabled:
-            d["disabled"] = True
-        return d
+            parts.append("[disabled]")
+        return " ".join(parts)
 
 
 # --- windows & processes ---------------------------------------------------------------------
@@ -87,22 +90,45 @@ def foreground() -> int:
 
 
 def focus(hwnd: int) -> bool:
+    """Bring a window to the front, escalating through the documented foreground-lock workarounds.
+    Success is judged only by GetForegroundWindow afterwards."""
+    if foreground() == hwnd:
+        return True
     if user.IsIconic(hwnd):
         user.ShowWindow(hwnd, 9)
-    fg = user.GetForegroundWindow()
     cur = kernel.GetCurrentThreadId()
-    other = user.GetWindowThreadProcessId(fg, None) if fg else 0
-    if other and other != cur:
-        user.AttachThreadInput(cur, other, True)
-    # Alt tap lets SetForegroundWindow succeed from a background process.
-    _key_event(0x12, False)
-    _key_event(0x12, True)
-    user.BringWindowToTop(hwnd)
-    ok = bool(user.SetForegroundWindow(hwnd))
-    if other and other != cur:
-        user.AttachThreadInput(cur, other, False)
+
+    def attempt() -> bool:
+        fg = user.GetForegroundWindow()
+        other = user.GetWindowThreadProcessId(fg, None) if fg else 0
+        target = user.GetWindowThreadProcessId(hwnd, None)
+        attached = []
+        for t in {other, target} - {0, cur}:
+            if user.AttachThreadInput(cur, t, True):
+                attached.append(t)
+        try:
+            _key_event(0x12, False)
+            _key_event(0x12, True)
+            user.BringWindowToTop(hwnd)
+            user.SetForegroundWindow(hwnd)
+        finally:
+            for t in attached:
+                user.AttachThreadInput(cur, t, False)
+        time.sleep(0.12)
+        return foreground() == hwnd
+
+    if attempt():
+        return True
+    user.SwitchToThisWindow.argtypes = [wt.HWND, wt.BOOL]
+    user.SwitchToThisWindow(hwnd, True)
+    time.sleep(0.2)
+    if foreground() == hwnd:
+        return True
+    user.ShowWindow(hwnd, 6)      # minimize then restore: Windows grants foreground on restore
     time.sleep(0.15)
-    return ok and foreground() == hwnd
+    user.ShowWindow(hwnd, 9)
+    time.sleep(0.25)
+    return attempt() or foreground() == hwnd
 
 
 def show(hwnd: int, how: str) -> None:
