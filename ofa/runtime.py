@@ -25,7 +25,7 @@ from .vault.unlock import AutoVerifier
 log = logging.getLogger("ofa")
 
 # Routing from docs/bench/results-*.md (synthetic speech; see CAPABILITY_REALITY.md).
-STT_ROUTES = {("en", "command"): ["flux", "gradium", "nova3"], ("en", "dictation"): ["flux", "gradium", "nova3"],
+STT_ROUTES = {("en", "command"): ["flux", "gradium", "nova3"], ("en", "dictation"): ["flux", "gradium", "nova3"],  # bench 2026-11-26
               ("hi", "command"): ["flux", "nova3"], ("hi", "dictation"): ["flux", "nova3"]}
 
 
@@ -133,7 +133,7 @@ def build_voice(core: Core, orb_set):
     s = Settings(mode="live", consent=True, deepgram_key=dg.get_secret_value(),
                  gradium_key=gr.get_secret_value() if gr else "",
                  headphones=os.getenv("OFA_HEADPHONES", "false") == "true", command_only=False, silence_ms=700,
-                 tts_order=("gradium", "deepgram") if os.getenv("OFA_EN_TTS", "deepgram") == "gradium" else ("deepgram", "gradium"))
+                 tts_order=("gradium", "deepgram") if os.getenv("OFA_EN_TTS", "gradium") == "gradium" else ("deepgram", "gradium"))
     stt = {"flux": FluxStt(dg.get_secret_value()), "nova3": DeepgramStt(s)}
     if gr:
         stt["gradium"] = GradiumStt(s)

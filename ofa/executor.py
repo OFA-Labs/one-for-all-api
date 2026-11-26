@@ -17,6 +17,7 @@ from .memory import Memory
 from .policy import Action, ApprovalState, ApprovalStore, PolicyDenied, TurnLog, classify_tier
 from .vault.broker import Broker, TargetIdentity
 
+DICTATION_CUE = re.compile(r"\b(type|write|likho|likh do|likhna|dictate|enter the text|type karo)\b|लिखो|लिख दो|टाइप", re.I)
 TERMINALS = {"windowsterminal.exe", "powershell.exe", "pwsh.exe", "cmd.exe", "wt.exe", "conhost.exe",
              "alacritty.exe", "wezterm-gui.exe", "mintty.exe"}
 OUTBOUND = {"send", "post", "forward", "share", "publish", "submit", "apply", "upload", "attach", "comment",
@@ -85,6 +86,11 @@ class Executor:
         epoch = self.epoch()
         self._last_tier = 2
         action = self.describe(action)
+        if action.args.get("op") in {"type", "replace"} and action.payload and DICTATION_CUE.search(self.last_user_words):
+            from .text.dictation import find_span
+            if find_span(self.last_user_words, action.payload) is None and not action.args.get("compose"):
+                return {"status": "rejected", "reason": "VERBATIM_MISMATCH",
+                        "detail": "The user dictated: type their exact words (use dictate), or mode=compose only if they asked you to write it."}
         if action.verb == "dictate":
             prepared = await self._prepare_dictation(action)
             if isinstance(prepared, dict):

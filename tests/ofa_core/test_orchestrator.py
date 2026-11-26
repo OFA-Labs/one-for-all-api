@@ -109,7 +109,7 @@ def test_injected_text_on_screen_cannot_approve(tmp_path):
 
 
 def test_rate_limit_reported_and_user_asked_no_switch(tmp_path):
-    script = [[EngineError("RATE_LIMIT", True, "Groq is rate-limiting me for about 20 seconds.", 20)]]
+    script = [[EngineError("RATE_LIMIT", True, "Groq is rate-limiting me for about 60 seconds.", 60)]]
     r = Rig(tmp_path, script, heard=[Heard("no")])
     res = r.turn("open slack")
     assert res.status == "error" and any("rate-limiting" in s and "Should I wait" in s for s in r.spoken)
@@ -198,3 +198,18 @@ def test_kill_switch_cancels_turn(tmp_path):
     r.o.x.turns.epoch = 0
     res = asyncio.run(stop_then_open())
     assert res.status in {"done", "cancelled"}  # new epoch starts clean; nothing from epoch 0 survives
+
+
+def test_generic_type_cannot_paraphrase_dictation(tmp_path):
+    script = [[tool("screen")], [tool("act", kind="type", element="u0", text="See you tomorrow, okay?")],
+              [tool("act", kind="type", element="u0", text="kal milte hain")], [tool("finish", status="done", summary="typed")]]
+    r = Rig(tmp_path, script)
+    chat_window(r.desk)
+    r.turn("likho kal milte hain")
+    assert "".join(t for _, t in r.desk.typed) == "kal milte hain"
+
+
+def test_spoken_reply_is_tidy():
+    from ofa.orchestrator import tidy
+    assert tidy("Typed it. Anything else?. Completed. Anything else?") == "Typed it. Completed. Anything else?"
+    assert tidy("Typed see ... ... ... it") == "Typed see it"

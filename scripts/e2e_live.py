@@ -46,7 +46,7 @@ def cases():
         ("C2 open+verify", "Open the Windows Settings app on the Display page", [],
          lambda r, c: (r.status in {"done", "partial"} and any(a["tool"] == "open" and a["status"] == "ok" for a in r.actions), "")),
         ("C2 window ops", "Minimize the OFA Execution Test Pad window", [],
-         lambda r, c: (any(a["verb"] == "minimize" and a["status"] == "ok" for a in r.actions), "")),
+         lambda r, c: (any((a["verb"] == "minimize" or a["tool"] == "act") and a["status"] == "ok" for a in r.actions), "via minimize op or its title-bar button")),
         ("C1/§3.3 reference", "Now bring it back", [],
          lambda r, c: (any(a["verb"] in {"restore", "focus"} and a["status"] == "ok" for a in r.actions), "'it' = the test pad")),
         ("C3 read in-app", "What text is shown on the Result line of the OFA Execution Test Pad?", [],

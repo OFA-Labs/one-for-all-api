@@ -44,8 +44,10 @@ def test_dates(text, delta):
 
 def test_normalize_numbers_keeps_words_and_adds_digits():
     out = normalize_numbers("do sau pachas rupaye bhejo")
-    assert out.startswith("do sau pachas (250)") and "rupaye bhejo" in out
+    assert out.startswith("do sau pachas rupaye bhejo") and "do sau pachas = 250" in out
     assert normalize_numbers("do it now") == "do it now"
+    assert normalize_numbers("likho: kal milte hain, theek hai") == "likho: kal milte hain, theek hai"
+    assert "dedh lakh = 150000" in normalize_numbers("budget dedh lakh hai")
 
 
 def test_translit_changes_script_only():
