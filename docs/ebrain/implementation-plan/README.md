@@ -19,7 +19,7 @@ This is the implementation entry point for the next coding agent. It plans the m
 
 M10 may implement candidate discovery before M11, but its authoritative answer integration checkpoint remains pending until M11 passes. M8 must provide minimal pure replay and authorization interfaces; a placeholder card must never be treated as current. M9 uses proposal primitives from M8; M11 adds complete reviewed decisions. M13 establishes company readiness; M14 is the production cutover gate.
 
-Every milestone directory contains a README with ordered tasks, concrete existing/proposed paths, checkpoints, tests, rollback and exit criteria, plus a test-case matrix. [STATUS.md](STATUS.md) tracks overall progress; [TRACEABILITY.csv](TRACEABILITY.csv) maps all 30 V3 findings to named planned tests. Future test files and commands are marked as future work.
+Every milestone directory contains a README with ordered tasks, concrete existing/proposed paths, checkpoints, tests, rollback and exit criteria. The eight milestone acceptance-case matrices are consolidated in [TEST_CASES.md](TEST_CASES.md) (one indexed section per milestone). [STATUS.md](STATUS.md) tracks overall progress; [TRACEABILITY.csv](TRACEABILITY.csv) maps all 30 V3 findings to named planned tests. Future test files and commands are marked as future work.
 
 [CHECKPOINTS.csv](CHECKPOINTS.csv) contains all **52 checkpoints**, each initialized to NOT_STARTED with evidence/blocker/resume columns. Update it together with milestone evidence; no V3 checkpoint is marked working merely because the legacy suite passes.
 
