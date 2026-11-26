@@ -1,4 +1,4 @@
-"""Hard caps on live provider calls (plan 00-INDEX). Counts persist in docs/bench/live-calls.json."""
+"""Hard caps on live provider calls (plan 00-INDEX). Counts persist in docs/ofa/bench/live-calls.json."""
 from __future__ import annotations
 
 import json
@@ -15,7 +15,7 @@ class BudgetExceeded(RuntimeError):
 
 
 def _path() -> Path:
-    default = Path(__file__).resolve().parents[2] / "docs" / "bench"
+    default = Path(__file__).resolve().parents[1] / "docs" / "ofa" / "bench"
     p = Path(os.getenv("OFA_BENCH_DIR", str(default))) / "live-calls.json"
     p.parent.mkdir(parents=True, exist_ok=True)
     return p
