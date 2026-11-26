@@ -20,4 +20,5 @@ pytest==9.2.0
 starlette==1.10.0
 typing-extensions==4.16.0
 typing-inspection==0.4.5
+tzdata==2026.6
 uvicorn==0.54.0
