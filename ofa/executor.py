@@ -36,6 +36,8 @@ class Executor:
         self.plan_approved: str | None = None
         self.effects_this_turn = 0
         self.tier2_this_turn = 0
+        self.gate = None
+        self._last_tier = 2
 
     def new_turn(self, task: str, words: str) -> None:
         self.task, self.last_user_words = task, words
@@ -78,6 +80,8 @@ class Executor:
         return result
 
     async def _run(self, action: Action) -> dict:
+        if self.gate is not None:
+            await self.gate()               # spoken "pause" holds here; "stop" changes the epoch
         epoch = self.epoch()
         self._last_tier = 2
         action = self.describe(action)
@@ -120,6 +124,8 @@ class Executor:
             for dest in action.destinations or [action.target or action.verb]:
                 self.memory.ledger_set(self.task, idem, dest, action.verb, "intent")
         elif self.epoch() != epoch:
+            return {"status": "cancelled", "reason": "SESSION_STOPPED"}
+        if self.epoch() != epoch:
             return {"status": "cancelled", "reason": "SESSION_STOPPED"}
         try:
             result = await asyncio.to_thread(self._dispatch, action)
