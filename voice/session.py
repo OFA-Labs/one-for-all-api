@@ -170,14 +170,15 @@ class Session:
             self.emit("error", {"code": "DEVICE_LOST"})
             await self.close("audio_error")
 
-    async def _respond(self, feed: ReplayFeed) -> None:
+    async def _respond(self, feed: ReplayFeed, supplied=None) -> None:
         utterance = self._utterance_id or str(uuid4())
         try:
-            final = None
-            async for result in self.stt.transcribe(feed):
-                self.emit("transcript", {"text": result.text, "final": result.final})
-                if result.final:
-                    final = result
+            final = supplied
+            if supplied is None:
+                async for result in self.stt.transcribe(feed):
+                    self.emit("transcript", {"text": result.text, "final": result.final})
+                    if result.final:
+                        final = result
             if final is None or not final.text.strip():
                 return
             self.emit("stt_final", {"utterance_id": utterance})
@@ -311,3 +312,14 @@ class Session:
                     await task
         if self.machine.state != State.IDLE:
             self.state(State.IDLE)
+
+    async def submit_text(self,text):
+        from .contracts import Transcript
+        if self.machine.state==State.IDLE or self.feed is not None:
+            self.emit("question",{"text":"Press Caps Lock to start, or finish the current utterance first."})
+            return
+        await self.interrupt()
+        if getattr(self.bridge,"pending",None):
+            self.decision_response=asyncio.create_task(self._respond(None,Transcript(text,True,None)))
+        else:
+            self.response=asyncio.create_task(self._respond(None,Transcript(text,True,None)))

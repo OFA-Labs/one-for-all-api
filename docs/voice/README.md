@@ -350,3 +350,25 @@ Account: **jvsing**. Both PRs target **staging only**; no merge, deployment or p
 Descriptions and review comments must use Hinglish and state the implemented backend-heavy
 speech-to-action-to-speech scope, the real M0 evidence and the large remaining use-case/edge-case surface.
 The workspace report will record both final PR URLs and observed CI status once created.
+
+
+## Caps Lock liquid-orb popup fix (0.2.3)
+
+The former 340x96 blue concentric-ring Tk popup was a separate native renderer,
+not PR #8's extension UI. It is replaced by the PR #8-style top-center rounded
+OFA panel, using that PR's actual liquid-orb media at 3x playback. The bundled
+240px GIF preserves aspect ratio and circle crop and scales to monitor DPI;
+there is no runtime Pillow/ffmpeg dependency or new browser extension requirement.
+
+Showing the popup does not request keyboard focus. Explicit input clicks enable
+focus; Enter submits to the already-armed native session and existing router/gate.
+Typing never silently arms an idle microphone. Close/mic stop voice, speaker
+interrupts the current response, and Open workspace opens local desktop settings.
+Caps Lock remains the native single-press activation/stop binding; copying the
+extension's double-tap Web Speech preview would create a second capture pipeline.
+The native popup does not pretend it can read the foreground webpage.
+
+A native screenshot was inspected locally (excluded from Git per workspace policy). Owned Tk
+animation/input/IDLE-hide tests passed; non-interactive voice/execution subset:
+108 passed, 3 interactive tests skipped. Final packaged/restarted-host checks are
+recorded in the UI-fix PR. Physical user speech rerun is not inferred from UI tests.
