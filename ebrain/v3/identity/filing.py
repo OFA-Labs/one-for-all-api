@@ -5,8 +5,8 @@ from dataclasses import dataclass
 from typing import Literal
 
 from ..config import V3Config
-from ..contracts import Candidate, ClaimKind, FactKey, SourceContract, WriteRequest, digest_of
-from ..errors import AmbiguousIdentity, SemanticReject
+from ..contracts import Candidate, FactKey, SourceContract, WriteRequest, digest_of
+from ..errors import SemanticReject
 from ..models.classifier import (
     DisabledClassifier,
     FilingClassifier,

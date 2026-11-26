@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..contracts import Claim, Provenance, Span, digest_of
+from ..contracts import Claim, Provenance, Span
 from ..errors import SemanticReject
 from ..sources.snapshots import SourceRegistry
 

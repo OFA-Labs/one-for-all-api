@@ -90,7 +90,7 @@ def run_voice(open_vault: bool = False, voice_enabled: bool = True) -> None:
         if voice is not None:
             hook = CapsHook(lambda: loop.call_soon_threadsafe(lambda: asyncio.ensure_future(voice.toggle()))).start()
             state["hook"] = hook
-        print(f"OFA ready. Press Caps Lock to talk." if voice else "OFA server ready.")
+        print("OFA ready. Press Caps Lock to talk." if voice else "OFA server ready.")
         print(f"Dashboard: http://127.0.0.1:3000/ofa#port={port}&token={token}")
         print(f"Vault:     http://127.0.0.1:{port}/vault#token={token}")
         if open_vault:

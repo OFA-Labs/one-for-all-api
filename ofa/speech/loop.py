@@ -10,7 +10,6 @@ import struct
 import time
 from collections import deque
 from contextlib import suppress
-from uuid import uuid4
 
 from rapidfuzz import fuzz
 
@@ -84,6 +83,7 @@ class VoiceLoop:
         self.epoch = 0
         self.mode = "command"
         self.waiters: list[asyncio.Future] = []
+        self._utterances: set[asyncio.Task] = set()   # strong refs so tasks are not garbage-collected
         self.turn: asyncio.Task | None = None
         self.listener: asyncio.Task | None = None
         self.paused = asyncio.Event()
@@ -181,7 +181,7 @@ class VoiceLoop:
     # --- capture → utterances -------------------------------------------------------------------
     async def _listen(self) -> None:
         pre: deque[bytes] = deque(maxlen=12)
-        positives, quiet, feed, started, utt_task = 0, 0, None, 0.0, None
+        positives, quiet, feed, started = 0, 0, None, 0.0
         while self.active:
             try:
                 pcm = await asyncio.wait_for(self.capture.read(), timeout=2)
@@ -208,7 +208,9 @@ class VoiceLoop:
                 for chunk in pre:
                     await feed.push(chunk)
                 quiet = 0
-                utt_task = asyncio.create_task(self._utterance(feed, started))
+                utterance = asyncio.create_task(self._utterance(feed, started))
+                self._utterances.add(utterance)
+                utterance.add_done_callback(self._utterances.discard)
             elif feed is not None:
                 await feed.push(pcm)
                 quiet = 0 if voiced else quiet + 20

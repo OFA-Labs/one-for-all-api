@@ -12,7 +12,6 @@ from ..config import V3Config
 from ..contracts import (
     Action,
     AuthorizedContext,
-    Grant,
     Principal,
     SourceContract,
     Snapshot,

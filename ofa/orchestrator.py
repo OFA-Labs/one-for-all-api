@@ -13,7 +13,6 @@ from .egress import EGRESS, LeakBlocked
 from .engine.base import Done, EngineError, TextDelta, ToolCall
 from .executor import Executor
 from .memory import Memory
-from .policy import Action
 from .policy.lexicon import classify
 from .text.hi_numbers import normalize_numbers
 from .tools import TOOLS, ToolArgError, parse_args, to_action

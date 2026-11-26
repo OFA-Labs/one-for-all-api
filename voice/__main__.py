@@ -29,7 +29,7 @@ from .config import Settings
 from .discovery import discover, app_id
 from .pairing import Pairing, LocalDevelopmentSessionPort
 from .protected_store import ProtectedStore
-from .capabilities import CapabilityDispatcher, ReasoningGate, Receipt, MissingCapability
+from .capabilities import CapabilityDispatcher, ReasoningGate
 
 
 async def serve(handoff: Any, consent: bool, overlay: Overlay,

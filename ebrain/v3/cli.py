@@ -12,8 +12,7 @@ import sys
 
 from .auth.context import DevelopmentPrincipalProvider, build_context
 from .clients.adapters import CliAdapter
-from .clients.negotiation import check_answer_compatibility, negotiate
-from .config import V3Config
+from .clients.negotiation import negotiate
 from .contracts import Action, Grant, Principal, SchemaVersion, Selector, WriteRequest
 from .errors import UnsupportedSchema, V3Error
 from .service import V3Service

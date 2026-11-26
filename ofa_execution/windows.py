@@ -9,7 +9,6 @@ import base64
 import ctypes
 import os
 import struct
-import subprocess
 import threading
 import time
 from ctypes import wintypes as wt
