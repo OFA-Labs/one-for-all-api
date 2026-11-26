@@ -2,7 +2,8 @@
 
 Backend for ONE FOR ALL.
 
-The Windows voice companion is documented in [docs/voice/README.md](docs/voice/README.md).
+The OFA voice-first assistant is documented in [docs/ofa/README.md](docs/ofa/README.md); the earlier
+Windows voice companion in [docs/voice/README.md](docs/voice/README.md). See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 For the current E-Brain baseline and the next coding agent's complete V3 work,
 start with the [implementation plan](docs/ebrain/implementation-plan/README.md).
