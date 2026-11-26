@@ -2,6 +2,8 @@
 
 Backend for ONE FOR ALL.
 
+The Windows voice companion is documented in [docs/voice/README.md](docs/voice/README.md).
+
 For the current E-Brain baseline and the next coding agent's complete V3 work,
 start with the [implementation plan](docs/ebrain/implementation-plan/README.md).
 It includes eight milestone READMEs, 52 checkpoints, named regression coverage,

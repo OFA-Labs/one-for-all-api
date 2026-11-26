@@ -22,11 +22,11 @@ class Contract(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
-Operation = Literal["app.open", "window.observe", "window.focus", "window.minimize", "window.maximize", "window.restore", "desktop.click",
+Operation = Literal["app.open", "window.observe", "window.focus", "window.minimize", "window.maximize", "window.restore", "window.close", "desktop.click",
                     "desktop.fill", "desktop.type", "desktop.scroll", "desktop.screenshot",
                     "browser.open", "browser.observe", "browser.click", "browser.fill",
                     "browser.scroll", "browser.screenshot", "browser.close",
-                    "file.read", "file.write"]
+                    "file.read", "file.write", "website.open", "slack.send_file"]
 
 
 class Target(Contract):
@@ -36,6 +36,7 @@ class Target(Contract):
     role: str | None = None
     ref: str | None = None
     path: str | None = None
+    destination: str | None = None
 
 
 class Expectation(Contract):

@@ -21,6 +21,9 @@ def main():
 
     @callback
     def procedure(hwnd, msg, wp, lp):
+        if msg == 0x0010 and '--unsaved' in sys.argv:
+            user.SetWindowTextW(controls['result'], 'Unsaved work: waiting for human')
+            return 0
         if msg == 0x0111 and (wp & 0xffff) == 102:
             value = ctypes.create_unicode_buffer(4096)
             user.GetWindowTextW(controls['edit'], value, 4096)

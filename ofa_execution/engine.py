@@ -66,7 +66,8 @@ class Engine:
 
     @staticmethod
     def _hand_key(step):
-        return "browser" if step.operation.startswith("browser.") else "files" if step.operation.startswith("file.") else "desktop"
+        return next((key for prefix, key in (("browser.", "browser"), ("file.", "files"),
+                    ("website.", "websites"), ("slack.", "slack")) if step.operation.startswith(prefix)), "desktop")
 
     def _once(self, command_id, payload, fn):
         with self._cv:
@@ -91,7 +92,10 @@ class Engine:
         if len(live) >= 4:
             raise ExecutionError("QUEUE_FULL", "One foreground and three queued tasks are supported.")
         if len(self.tasks) >= self.config.max_tasks:
-            raise ExecutionError("SESSION_LIMIT", "Bounded local session capacity reached; check outcomes and restart.")
+            oldest = next((key for key, value in self.tasks.items() if value.state in TERMINAL), None)
+            if oldest is None:
+                raise ExecutionError("SESSION_LIMIT", "All bounded task slots are active.")
+            del self.tasks[oldest]  # Deduplication tombstones remain; never replay an evicted task.
         frozen = plan.model_copy(deep=True)
         task = Task(uid(), frozen)
         self.tasks[task.id] = task
@@ -306,6 +310,28 @@ class Engine:
                 raise
             with self._cv:
                 t.observation = outcome.observation.model_dump()
+                if outcome.status == "handoff":
+                    if token:
+                        t.effects[step.id]["state"] = "unknown"
+                    t.state = "handoff"
+                    t.handoff = {"id": uid(), "reason": outcome.observation.facts.get("reason", "Human assistance required"), "continued": False}
+                    t.approval = None
+                    self._event(t, "handoff")
+                    while not t.handoff["continued"]:
+                        self._wait_active(t)
+                        self._cv.wait(0.05)
+                    t.handoff = None
+                    # A close request may have opened a save dialog. Re-observe,
+                    # never send another WM_CLOSE when the user continues.
+                    if step.operation == "window.close":
+                        reading = hand.observe(step)
+                        if not reading.facts.get("closed"):
+                            raise ExecutionError("HUMAN_REQUIRED", "Close the window yourself before continuing; no second close was sent.")
+                        t.observation = reading.model_dump()
+                        t.effects[step.id]["state"] = "verified"
+                        self._event(t, "step_verified", evidence=[{"tier":"A","kind":"window_closed_readback","reading_hash":reading.hash}])
+                        return
+                    raise ExecutionError("HUMAN_REQUIRED", "Check the application outcome before a new command.")
                 if token:
                     t.effects[step.id]["state"] = "verified" if outcome.status == "verified" else "unknown"
                 t.approval = None

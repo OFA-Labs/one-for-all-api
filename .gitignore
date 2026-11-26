@@ -6,6 +6,7 @@ __pycache__/
 .env
 .env.*
 !.env.example
+!.env.voice.example
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
@@ -13,3 +14,14 @@ __pycache__/
 .venv-local-execution/
 local-execution.local.json
 tools/local_execution/node_modules/
+
+# Local voice secrets and generated evidence
+.venv-voice/
+.env.voice
+developer_handoff.yaml
+.voice-local/
+voice-traces/
+*.wav
+build/
+dist/
+*.spec

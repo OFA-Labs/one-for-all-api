@@ -33,13 +33,17 @@ jobs:
       - name: Install pinned dependencies
         run: pip install -r requirements.txt
       - name: Legacy suite with retained CSV sources
+        # Native voice dependencies/tests run in the dedicated Windows job.
+        # Keep the existing backend coverage on Linux without importing audio.
+        env:
+          PYTEST_ADDOPTS: --ignore=tests/voice
         run: pwsh -NoProfile -File tools/ebrain/scripts/Test-CurrentBackend.ps1 -Python python
       - name: Frozen harness self-tests
         run: python -m pytest tools/ebrain/legacy/benchmark/tests -q
       - name: V3 pure and security tests
         run: python -m pytest tests/v3 --ignore=tests/v3/integration -q
       - name: Mandatory test-ID discovery
-        run: python tools/ebrain/scripts/validate_v3_gate.py --discover-only
+        run: python tools/ebrain/scripts/validate_v3_gate.py --python python --discover-only
 
   postgres-integration:
     name: Real Postgres / RLS / concurrency (NOT_RUN without secret)
@@ -88,7 +92,7 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt
       - name: Assert no mandatory case is missing or skipped
-        run: python tools/ebrain/scripts/validate_v3_gate.py
+        run: python tools/ebrain/scripts/validate_v3_gate.py --python python
       - name: Fail if any prerequisite job is not successful
         env:
           PURE: ${{ needs.pure-and-legacy.result }}

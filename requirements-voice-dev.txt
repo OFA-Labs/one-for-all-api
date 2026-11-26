@@ -1,0 +1,3 @@
+-r requirements-local-execution-dev.txt
+-r requirements-voice.lock
+pyinstaller==6.22.3

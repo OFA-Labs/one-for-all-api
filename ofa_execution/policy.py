@@ -52,6 +52,14 @@ class Gate:
                 self.url(step.url or "", plan)
             if step.operation.startswith("file."):
                 self.config.file(step.target.path or "", step.operation == "file.write")
+            if step.operation == "website.open":
+                from voice.websites import validate_url
+                try:
+                    validate_url(step.url or "")
+                except ValueError as exc:
+                    raise ExecutionError("URL_DENIED", "Only public HTTP(S) website addresses are allowed.") from exc
+            if step.operation == "slack.send_file":
+                self.config.file(step.target.path or "")
 
     def check(self, step: Step, before: Observation) -> str:
         if not before.complete:
@@ -77,7 +85,9 @@ class Gate:
                 if "whatsapp" in surface and name in {"send", "send message"}:
                     return "handoff"
         mutations = {"desktop.click", "desktop.fill", "desktop.type", "desktop.scroll",
-                     "browser.click", "browser.fill", "file.write"}
+                     "browser.click", "browser.fill", "file.write", "window.close", "slack.send_file"}
+        if step.operation == "window.close" and before.facts.get("closed"):
+            return "allow"
         # Unknown controls and autosave are never assumed harmless. Even filling
         # a field gets a card in the local milestone. No model can lower this.
         if step.operation in mutations:
