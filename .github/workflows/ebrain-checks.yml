@@ -91,9 +91,13 @@ jobs:
         run: python -m pytest tests/v3/integration -q
 
   # Web V3 checks run against one-for-all-web@staging in the job below.
-  # Observed web results are recorded in docs/ebrain/implementation-plan/evidence/M14-web-v3/.
+  # PAUSED: E-Brain work is on hold, so this job is skipped until the repo
+  # variable ENABLE_WEB_V3_CHECKS is set to 'true'. It is not a release-gate
+  # prerequisite while paused. Observed results are in
+  # docs/ebrain/implementation-plan/evidence/M14-web-v3/.
   web-v3:
     name: Web V3 typecheck, lint, build and Playwright checks
+    if: ${{ vars.ENABLE_WEB_V3_CHECKS == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -123,7 +127,7 @@ jobs:
   release-gate:
     name: Release gate (fails on any NOT_RUN mandatory case)
     runs-on: ubuntu-latest
-    needs: [pure-and-legacy, postgres-integration, web-v3]
+    needs: [pure-and-legacy, postgres-integration]
     if: always()
     services:
       postgres:
@@ -153,9 +157,7 @@ jobs:
         env:
           PURE: ${{ needs.pure-and-legacy.result }}
           PG: ${{ needs.postgres-integration.result }}
-          WEB: ${{ needs.web-v3.result }}
         run: |
           test "$PURE" = "success" || { echo "Pure/legacy job failed: release gate blocked"; exit 2; }
           test "$PG" = "success" || { echo "Postgres job NOT_RUN/FAILED: release gate blocked"; exit 2; }
-          test "$WEB" = "success" || { echo "Web V3 job NOT_RUN/FAILED: release gate blocked"; exit 2; }
-          echo "All four prerequisite checks are green; web evidence: docs/ebrain/implementation-plan/evidence/M14-web-v3/"
+          echo "Core E-Brain checks are green; Web V3 is paused (ENABLE_WEB_V3_CHECKS)."

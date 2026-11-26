@@ -26,14 +26,15 @@ def test_legacy_job_checks_out_sibling_web_repo(workflow: str) -> None:
     assert ".venv/Scripts/python.exe" in workflow
 
 
-def test_web_v3_job_exists_and_gates_release(workflow: str) -> None:
+def test_web_v3_job_is_defined_but_paused(workflow: str) -> None:
+    # E-Brain work is paused: the job stays in the workflow for later, but is
+    # skipped unless the repo variable is set and is not a release prerequisite.
     assert "  web-v3:" in workflow
-    assert "repository: OFA-Labs/one-for-all-web" in workflow
+    assert "if: ${{ vars.ENABLE_WEB_V3_CHECKS == 'true' }}" in workflow
     assert "run: npm run verify" in workflow
     assert "PLAYWRIGHT_BROWSERS_PATH: ./.cache/ms-playwright" in workflow
-    assert "needs: [pure-and-legacy, postgres-integration, web-v3]" in workflow
-    assert "WEB: ${{ needs.web-v3.result }}" in workflow
-    assert 'test "$WEB" = "success"' in workflow
+    assert "needs: [pure-and-legacy, postgres-integration]" in workflow
+    assert "needs.web-v3.result" not in workflow
 
 
 def test_postgres_jobs_prepare_real_dsns(workflow: str) -> None:
