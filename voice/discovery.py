@@ -115,9 +115,12 @@ def discover() -> list[App]:
     for row in discover_apps():
         found.append(App(name=Path(row["name"]).stem, executable=row["executable"]))
     # Alias preferences are catalog data. Newly discovered apps need no code branch.
-    preferences = {"visual studio code": ["vs code", "vscode", "code editor"],
+    preferences = {"visual studio code": ["vs code", "v s code", "vscode", "code editor"],
                    "whatsapp": ["whats app", "व्हाट्सऐप", "व्हाट्सएप"],
-                   "claude": ["claude desktop"]}
+                   "claude": ["claude desktop"],
+                   "slack": ["slack app"],
+                   "google chrome": ["chrome"],
+                   "microsoft edge": ["edge"]}
     for app in found:
         app.aliases = preferences.get(app.name.casefold(), [])
     code, host = shutil.which("claude.exe"), shutil.which("wt.exe")

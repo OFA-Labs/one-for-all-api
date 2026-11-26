@@ -34,20 +34,31 @@ class Intent:
 
 
 class Router:
+    @staticmethod
+    def _alias_variants(alias: str) -> tuple[str, ...]:
+        """Spoken aliases may split or join words; accept both spellings."""
+        clean = normalize(alias)
+        compact = clean.replace(" ", "")
+        return tuple(dict.fromkeys(filter(None, (clean, compact))))
+
     def __init__(self, aliases: Mapping[str, str] | Iterable[tuple[str, str]],
                  language: str = "auto", websites: Mapping[str, str] | None = None) -> None:
         self.language = language
         self.websites = WebsiteResolver(websites)
         pairs = list(aliases.items() if isinstance(aliases, Mapping) else aliases)
-        self.aliases = {normalize(alias): target for alias, target in pairs}
-        values = [TextSlotValue(TextChunk(text=normalize(alias)), target)
-                  for alias, target in pairs]
+        # Keep duplicates: two apps sharing an alias must stay a choice, never
+        # silently collapse into one target.
+        self.alias_pairs = [(variant, target) for alias, target in pairs
+                            for variant in self._alias_variants(alias)]
+        self.aliases = {variant: target for variant, target in self.alias_pairs}
+        values = [TextSlotValue(TextChunk(text=variant), target)
+                  for variant, target in self.alias_pairs]
         self.slots = {"targets": TextSlotList(name="targets", values=values)}
         for name in ("subject", "filename", "artifact", "destination"):
             self.slots[name] = WildcardSlotList(name=name)
         patterns = {
-            "Open": ["[please] (open|launch|start|bring up|take me to) {targets:target}",
-                     "{targets:target} (kholo|khol do|open karo|खोलो|खोल दो)"],
+            "Open": ["[please] (open|launch|start|bring up|take me to) {targets:target} [please]",
+                     "{targets:target} (kholo|khol do|open karo|खोलो|खोल दो) [please]"],
             "Focus": ["(focus|switch to|bring forward) {targets:target}"],
             "Minimize": ["minimize {targets:target}"],
             "Maximize": ["maximize {targets:target}"],
@@ -145,12 +156,18 @@ class Router:
             matches = self._matches(clause)
             if len(matches) != 1:
                 slots = {"reason": "unknown_or_ambiguous"}
-                target = re.fullmatch(r"(?:open|launch|start) (.+)", clause)
+                target = re.fullmatch(
+                    r"(?:open|launch|start|bring up|take me to) (.+)", clause, re.I)
                 if target:
-                    proposals = get_close_matches(target[1], self.aliases, n=3, cutoff=0.78)
-                    names = list(dict.fromkeys(self.aliases[alias] for alias in proposals))
-                    if names:
-                        slots["suggestions"] = ", ".join(names)
+                    spoken = normalize(target[1]).strip(".!? ")
+                    compact = spoken.replace(" ", "")
+                    names = [self.aliases[alias] for alias, _ in self.alias_pairs
+                             if alias.replace(" ", "") == compact]
+                    proposals = get_close_matches(spoken, self.aliases, n=3, cutoff=0.78)
+                    names.extend(self.aliases[alias] for alias in proposals)
+                    unique = list(dict.fromkeys(names))
+                    if unique:
+                        slots["suggestions"] = ", ".join(unique)
                 return Intent("clarify", slots, 0, lang)
             actions.append(matches[0])
         if not actions:
