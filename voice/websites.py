@@ -34,10 +34,11 @@ def validate_url(raw: str) -> str:
 class WebsiteResolver:
     def __init__(self, bookmarks: Mapping[str, str] | None = None) -> None:
         self.bookmarks = {"youtube": "https://www.youtube.com", "github": "https://github.com",
-                          "chatgpt": "https://chatgpt.com"}
+                          "chatgpt": "https://chatgpt.com", "google": "https://www.google.com"}
         self.bookmarks.update({key.casefold(): value for key, value in (bookmarks or {}).items()})
 
     def resolve(self, command: str) -> tuple[str, str] | None:
+        command = re.sub(r"\s+(?:please|kindly|kripya|ज़रा|जरा)\s*$", "", command.strip(), flags=re.I)
         search = re.fullmatch(r"search (?:for )?(.+?)(?: on google)?", command, re.I)
         if search:
             return "web.search", "https://www.google.com/search?" + urlencode({"q": search[1]})
