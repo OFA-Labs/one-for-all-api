@@ -49,3 +49,6 @@ artifacts/
 .promptible/
 /worktrees/
 .worktrees/
+
+# OFA core venv
+.venv-ofa/
