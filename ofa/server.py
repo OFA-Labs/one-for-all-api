@@ -1,5 +1,5 @@
-"""Loopback API for the web dashboard, the vault enrollment page and dry-run mock forms (§8.5).
-Bound to 127.0.0.1 only, per-process bearer token, exact CORS origins, vault bodies never logged."""
+"""Loopback server for the vault enrollment page and its dry-run mock forms (§8.5).
+Bound to 127.0.0.1 only, per-process bearer token, same-origin only, vault bodies never logged."""
 from __future__ import annotations
 
 import asyncio
@@ -8,23 +8,13 @@ import secrets
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, Field
 
-from . import live_budget
-from .speech.routing import STT_ROUTES
 from .vault.handles import HandleError
 from .vault.store import VaultError, VaultLocked
 
 UI = Path(__file__).with_name("ui")
-ORIGINS = ["http://127.0.0.1:3000", "http://localhost:3000", "http://127.0.0.1:3100"]
-
-
-class Command(BaseModel):
-    text: str = Field(min_length=1, max_length=2000)
-
-
 class Secret(BaseModel):
     data_class: str = Field(pattern=r"^D[0-3]$")
     service: str = Field(pattern=r"^[a-z0-9][a-z0-9._-]{0,63}$")
@@ -47,13 +37,10 @@ class Pref(BaseModel):
     value: object
 
 
-def create_app(core, voice=None, token: str | None = None) -> FastAPI:
+def create_app(core, token: str | None = None) -> FastAPI:
     token = token or secrets.token_urlsafe(32)
     app = FastAPI(title="OFA local", docs_url=None, redoc_url=None, openapi_url=None)
     app.state.token = token
-    app.add_middleware(CORSMiddleware, allow_origins=ORIGINS, allow_methods=["GET", "POST", "DELETE"],
-                       allow_headers=["authorization", "content-type"], allow_credentials=False)
-
     def auth(authorization: str = Header(default="")) -> None:
         given = authorization.removeprefix("Bearer ").strip()
         if not given or not hmac.compare_digest(given, token):
@@ -69,35 +56,6 @@ def create_app(core, voice=None, token: str | None = None) -> FastAPI:
     @app.get("/health")
     def health():
         return {"ok": True, "service": "ofa"}
-
-    @app.get("/status", dependencies=[Depends(auth)])
-    def status():
-        info = core.engine.info()
-        return {"session": core.state, "epoch": core.epoch_ref[0],
-                "engine": {"id": info.id, "model": info.model, "vision": info.supports_vision,
-                           "tools": info.supports_tools, "context": info.context_limit,
-                           "metrics": core.engine.metrics().summary()},
-                "keys": core.cfg.names_set(), "vault": {"unlocked": core.vault.unlocked, "items": len(core.vault.list())},
-                "voice": {"active": bool(voice and voice.active), "mode": getattr(voice, "mode", None),
-                          "stt_routes": {f"{k[0]}/{k[1]}": v for k, v in STT_ROUTES.items()}},
-                "live_calls": live_budget.used(), "events": list(core.log)[-60:]}
-
-    @app.post("/command", dependencies=[Depends(auth)])
-    async def command(cmd: Command):
-        """Typed command. Typed text can never approve Tier 2 actions (approvals are spoken)."""
-        core.event("typed", text=cmd.text)
-        res = await core.orchestrator.handle(cmd.text)
-        core.event("turn", status=res.status, spoken=res.spoken)
-        if voice is not None and voice.active and res.spoken:
-            asyncio.create_task(voice.speak(res.spoken))
-        return {"status": res.status, "spoken": res.spoken, "actions": res.actions}
-
-    @app.post("/session/toggle", dependencies=[Depends(auth)])
-    async def toggle():
-        if voice is None:
-            raise HTTPException(409, "voice is not running")
-        await voice.toggle()
-        return {"active": voice.active}
 
     # --- vault --------------------------------------------------------------------------------
     @app.get("/vault", response_class=HTMLResponse)
@@ -177,24 +135,6 @@ def create_app(core, voice=None, token: str | None = None) -> FastAPI:
         bad = core.broker.fill(hs[0]["handle"], "pw", TargetIdentity("browser", "http://localhost:8768/mock/login",
                                                                       True, field_is_password=True), Box())
         return {"verified_origin": {"ok": good.ok, "reason": good.reason}, "lookalike": {"ok": bad.ok, "reason": bad.reason}}
-
-    # --- memory & audit -----------------------------------------------------------------------
-    @app.get("/memory", dependencies=[Depends(auth)])
-    def memory():
-        return {"profile": core.memory.profile(), "mappings": core.memory.mappings(), "context": core.memory.context}
-
-    @app.delete("/memory/{key}", dependencies=[Depends(auth)])
-    def forget(key: str):
-        return {"deleted": core.memory.forget(key)}
-
-    @app.delete("/memory", dependencies=[Depends(auth)])
-    def forget_all():
-        core.memory.delete_all()
-        return {"ok": True}
-
-    @app.get("/audit", dependencies=[Depends(auth)])
-    def audit(last: int = 50):
-        return {"entries": core.audit.entries(min(last, 500)), "chain_ok": core.audit.verify_chain()}
 
     # --- mock pages for dry-run fills (§8.5) --------------------------------------------------------
     @app.get("/mock/{page}", response_class=HTMLResponse)

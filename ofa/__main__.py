@@ -1,10 +1,10 @@
 """OFA entry point.
 
-    python -m ofa [--env-file F]            voice session: Caps Lock toggles, orb top-middle, loopback API
-    python -m ofa say "open notepad"        one typed turn (typed text can never approve Tier-2 actions)
-    python -m ofa text                      typed REPL
-    python -m ofa vault                     open the vault enrollment page
-    python -m ofa doctor | audit | memory   diagnostics, audit tail, remembered mappings
+    python -m ofa --env-file .env             the assistant: your companion panel, Caps Lock, web pages
+    python -m ofa say "open notepad"          one typed turn (typed text can never approve Tier-2 actions)
+    python -m ofa text                        typed REPL
+    python -m ofa vault                       open the local vault page (only needed to add secrets)
+    python -m ofa doctor | audit | memory     diagnostics, audit tail, remembered mappings
 """
 from __future__ import annotations
 
@@ -66,61 +66,30 @@ async def repl() -> None:
         print("ofa>", res.spoken, f"[{res.status}]")
 
 
-def run_voice(open_vault: bool = False, voice_enabled: bool = True) -> None:
-    from voice.hotkey import CapsHook
-    from voice.instance import acquire
+def run_companion(env_file: str | None) -> None:
+    """Start the Windows companion (native panel, Caps Lock, pairing, web pages) with OFA as its brain."""
+    from voice.__main__ import main as companion_main
+    sys.argv = ["ofa", "--live", *(["--env-file", env_file] if env_file else [])]
+    companion_main()
 
-    from .orb import NullOrb, Orb
-    from .runtime import build_core, build_voice
+
+def run_vault() -> None:
+    from .runtime import build_core
     from .server import create_app, serve
-
-    if not acquire():
-        print("OFA is already running in this Windows session.")
-        return
     core = build_core(OfaConfig())
     token = secrets.token_urlsafe(32)
-    port = core.cfg.port
-    orb = Orb() if voice_enabled else NullOrb()
-    state: dict = {}
-
-    async def main():
-        loop = asyncio.get_running_loop()
-        voice = build_voice(core, orb.set) if voice_enabled else None
-        app = create_app(core, voice, token)
-        if voice is not None:
-            hook = CapsHook(lambda: loop.call_soon_threadsafe(lambda: asyncio.ensure_future(voice.toggle()))).start()
-            state["hook"] = hook
-        print("OFA ready. Press Caps Lock to talk." if voice else "OFA server ready.")
-        print(f"Dashboard: http://127.0.0.1:3000/ofa#port={port}&token={token}")
-        print(f"Vault:     http://127.0.0.1:{port}/vault#token={token}")
-        if open_vault:
-            webbrowser.open(f"http://127.0.0.1:{port}/vault#token={token}")
-        await serve(app, port)
-
-    def worker():
-        try:
-            asyncio.run(main())
-        except BaseException as exc:   # surface, never hang silently
-            print("OFA stopped:", type(exc).__name__, exc)
-        finally:
-            orb.close()
-    t = threading.Thread(target=worker, name="ofa-core", daemon=True)
-    t.start()
+    url = f"http://127.0.0.1:{core.cfg.port}/vault#token={token}"
+    print("Vault: " + url + "   (Ctrl+C to close)")
+    threading.Timer(1.0, webbrowser.open, (url,)).start()
     try:
-        if isinstance(orb, Orb):
-            orb.run()
-        else:
-            t.join()
+        asyncio.run(serve(create_app(core, token), core.cfg.port))
     except KeyboardInterrupt:
         pass
-    finally:
-        if state.get("hook"):
-            state["hook"].close()
 
 
 def main() -> None:
     p = argparse.ArgumentParser(prog="ofa")
-    p.add_argument("command", nargs="?", default="run", choices=["run", "say", "text", "vault", "doctor", "audit", "memory", "server"])
+    p.add_argument("command", nargs="?", default="run", choices=["run", "say", "text", "vault", "doctor", "audit", "memory"])
     p.add_argument("rest", nargs="*")
     p.add_argument("--env-file", default=os.getenv("OFA_ENV_FILE"))
     a = p.parse_args()
@@ -151,11 +120,9 @@ def main() -> None:
         else:
             print(json.dumps({"profile": core.memory.profile(), "mappings": core.memory.mappings()}, indent=1, ensure_ascii=False))
     elif a.command == "vault":
-        run_voice(open_vault=True, voice_enabled=False)
-    elif a.command == "server":
-        run_voice(voice_enabled=False)
+        run_vault()
     else:
-        run_voice()
+        run_companion(a.env_file)
 
 
 if __name__ == "__main__":
