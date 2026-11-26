@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Final, Literal, Protocol, runtime_checkable
 

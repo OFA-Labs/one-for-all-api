@@ -15,7 +15,6 @@ from ..contracts import (
     FactKey,
     IdentityEvent,
     IdentityEventKind,
-    PendingImpact,
 )
 from ..errors import AmbiguousIdentity, SemanticReject
 

@@ -10,9 +10,8 @@ import re
 from dataclasses import dataclass
 
 from ..config import V3Config
-from ..contracts import Candidate, CandidateSet, Claim, FactKey, Selector, digest_of
+from ..contracts import Candidate, Claim, Selector
 from ..models.manifest import ModelManifest
-from .selectors import missing_qualifiers
 
 _TOK = re.compile(r"[a-z0-9]+")
 

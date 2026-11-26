@@ -31,7 +31,6 @@ from ..contracts import (
     Snapshot,
     SourceContract,
     SourceRevision,
-    Span,
     UsageReservation,
     WriteRequest,
     digest_of,

@@ -8,7 +8,7 @@ from ..contracts import Answer, AnswerStatus, AuthorizedContext, Selector, Write
 from ..errors import Malformed, UnsupportedSchema
 from ..projections.answers import Delivery, clip
 from ..service import V3Service
-from .negotiation import SchemaVersion, check_answer_compatibility, negotiate
+from .negotiation import check_answer_compatibility, negotiate
 
 
 @dataclass

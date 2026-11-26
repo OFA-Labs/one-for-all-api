@@ -396,7 +396,6 @@ class PostgresLedger:
                     params.append([k.canonical() for k in keys])
                 cur.execute(base + "ORDER BY seq", tuple(params))
                 out: list[Claim] = []
-                import json
                 for r in cur.fetchall():
                     out.append(Claim(
                         claim_id=str(r[0]), knowledge_seq=int(r[1]),

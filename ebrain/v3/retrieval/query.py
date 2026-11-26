@@ -14,7 +14,6 @@ from ..contracts import (
     CandidateSet,
     Claim,
     Decision,
-    FactKey,
     IdentityEvent,
     PendingImpact,
     Selector,

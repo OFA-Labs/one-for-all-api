@@ -22,7 +22,6 @@ OUT = API / "docs/ebrain/implementation-plan/evidence/sealed-evaluation"
 
 
 def main() -> int:
-    import sys
     from ebrain.v3.auth.context import build_context
     from ebrain.v3.clocks import FakeClock
     from ebrain.v3.config import V3Config

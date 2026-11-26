@@ -4,7 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from ..contracts import AnswerItem, FactKey, FactState, Provenance, Snapshot
+from ..contracts import AnswerItem, FactKey, FactState, Provenance
 
 
 @dataclass(frozen=True)
