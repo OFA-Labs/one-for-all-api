@@ -105,6 +105,7 @@ class DesktopHand:
         self._local = threading.local()
         self.owned_processes = []
         self.active_window = None
+        self._cli_records = {}
 
     def capabilities(self):
         import importlib.util
@@ -125,26 +126,50 @@ class DesktopHand:
             self._local.automation = comtypes.client.CreateObject(module.CUIAutomation, interface=module.IUIAutomation)
         return self._local.automation, self._local.module
 
-    def _find(self, app):
+    def _find(self, app, allow_multiple=False):
+        if app.launch_kind == "interactive_command":
+            from .native_launch import descendants, process_parents, application_identity
+            record = self._cli_records.get(app.launch_identity)
+            if not record: return None
+            candidates = [w for w in windows() if w["title"] == record["title"]]
+            parents = process_parents()
+            for window in candidates:
+                package = application_identity(window["pid"]) or ""
+                if not package.startswith("Microsoft.WindowsTerminal_"): continue
+                children = [process_identity(pid) for pid in descendants(window["pid"],parents)]
+                matched = [p for p in children if p and p["started"]>=record["started"] and
+                           Path(p["executable"]).resolve()==Path(app.executable).resolve()]
+                if matched:
+                    return {**window,**matched[0],"console_pid":window["pid"],"launch_title":record["title"]}
+            return None
         matches = []
         for item in windows():
             if app.window_title and item["title"] != app.window_title:
                 continue
             identity = process_identity(item["pid"])
-            if identity and Path(identity["executable"]) == Path(app.executable).resolve():
+            if app.launch_kind == "aumid":
+                from .native_launch import application_identity
+                matched = identity and application_identity(item["pid"]) == app.launch_identity
+            else:
+                matched = identity and Path(identity["executable"]) == Path(app.executable).resolve()
+            if matched:
                 matches.append({**item, **identity})
-        if len(matches) > 1:
+        if len(matches) > 1 and not allow_multiple:
             raise ExecutionError("WINDOW_AMBIGUOUS", "More than one allowed app window matches; configure an exact window title.")
         return matches[0] if matches else None
 
     def observe(self, step):
         app = self.config.app(step.target.app or "")
-        automation, module = self._automation()
-        window = self._find(app)
+        lightweight = step.operation in {"app.open","window.focus","window.minimize","window.maximize","window.restore","window.close"}
+        window = self._find(app, allow_multiple=step.operation in {"app.open","window.focus","window.minimize","window.maximize","window.restore"})
         if not window:
-            if step.operation == "app.open":
-                return Observation(surface="desktop", identity={"app": app.name}, facts={"opened": False})
+            if step.operation in {"app.open","window.close"}:
+                return Observation(surface="desktop", identity={"app": app.name}, facts={"opened": False,"closed":True})
             raise ExecutionError("WINDOW_NOT_FOUND", "Open the allowed app before interacting with it.")
+        if lightweight:
+            return Observation(surface="desktop", identity={"app": app.name, **window},
+                               facts={"opened": True})
+        automation, module = self._automation()
         root = automation.ElementFromHandle(window["window"])
         self.active_window = window["window"]
         tree = []
@@ -219,16 +244,23 @@ class DesktopHand:
     def execute(self, step, before, checkpoint):
         app = self.config.app(step.target.app or "")
         checkpoint()
+        if step.operation == "window.close" and before.facts.get("closed"):
+            return Outcome(status="verified",observation=before,
+                evidence=[Evidence(tier="A",kind="window_closed_readback",reading_hash=before.hash)])
         if step.operation == "app.open":
-            window = self._find(app)
+            window = self._find(app, allow_multiple=True)
             if not window:
-                process = subprocess.Popen([app.executable, *app.arguments], shell=False)
-                self.owned_processes.append(process)
-                deadline = time.monotonic() + 8
+                from .native_launch import launch
+                process = launch(app)
+                if process is not None:
+                    self.owned_processes.append(process)
+                    if app.launch_kind == "interactive_command":
+                        self._cli_records[app.launch_identity] = {"title":process.ofa_console_title,"started":process.ofa_started}
+                deadline = time.monotonic() + (15 if app.launch_kind == "interactive_command" else 8)
                 while not window and time.monotonic() < deadline:
                     checkpoint()
                     time.sleep(0.05)
-                    window = self._find(app)
+                    window = self._find(app, allow_multiple=True)
             if not window:
                 raise ExecutionError("LAUNCH_NOT_VERIFIED", "No matching process/window appeared after launch.")
             checkpoint()
@@ -246,7 +278,7 @@ class DesktopHand:
                 after.frame = capture_window(after.identity["window"])
             return Outcome(status="verified", observation=after,
                            evidence=[Evidence(tier="A", kind="fresh_uia", reading_hash=after.hash)])
-        window = self._find(app)
+        window = self._find(app, allow_multiple=step.operation in {"window.focus","window.minimize","window.maximize","window.restore"})
         if not window or window != {k: before.identity[k] for k in window}:
             raise ExecutionError("WINDOW_CHANGED", "The process/window identity changed.")
         if step.operation == "window.focus":
@@ -266,6 +298,27 @@ class DesktopHand:
             after = self.observe(step)
             return Outcome(status="verified" if good else "unknown", observation=after,
                            evidence=[Evidence(tier="A", kind="window_state_readback", reading_hash=after.hash)])
+        if step.operation == "window.close":
+            # WM_CLOSE preserves the application's own save/confirmation dialog.
+            # Never terminate the process or answer a discard prompt.
+            if self.observe(step).hash != before.hash:
+                raise ExecutionError("READING_CHANGED", "The window changed after approval.")
+            checkpoint()
+            user.PostMessageW.argtypes=[wt.HWND,wt.UINT,wt.WPARAM,wt.LPARAM]
+            if not user.PostMessageW(window["window"],0x0010,0,0):
+                raise ExecutionError("CLOSE_DENIED", "Windows refused the close request.")
+            deadline=time.monotonic()+3
+            while time.monotonic()<deadline:
+                checkpoint()
+                if not user.IsWindow(window["window"]):
+                    after=Observation(surface="desktop",identity={"app":app.name},facts={"opened":False,"closed":True})
+                    return Outcome(status="verified",observation=after,
+                        evidence=[Evidence(tier="A",kind="window_closed_readback",reading_hash=after.hash)])
+                time.sleep(.05)
+            after=self.observe(step)
+            after.facts["human_required"]=True
+            after.facts["reason"]="The application needs you to resolve its save/close dialog. No data was discarded."
+            return Outcome(status="handoff",observation=after)
         if not app.writable:
             raise ExecutionError("APP_READ_ONLY", "This app was consented for view/launch only.")
         fresh = self.observe(step)

@@ -1,0 +1,11 @@
+hassil==3.13.0
+httpx==0.28.1
+numpy==2.5.5
+pydantic==2.14.4
+PyYAML==6.0.4
+scipy==1.18.1
+sounddevice==0.5.6
+unicode-rbnf==2.5.1
+websockets==17.4
+python-dotenv==1.2.2
+cryptography==50.0.2

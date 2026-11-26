@@ -8,17 +8,7 @@ from pathlib import Path
 from pydantic import Field
 
 from .contracts import Contract
-
-
-class App(Contract):
-    name: str
-    executable: str
-    aliases: list[str] = Field(default_factory=list)
-    # Arguments are operator-configured, never passed from a plan/model.
-    arguments: list[str] = Field(default_factory=list)
-    window_title: str | None = None
-    writable: bool = False
-    capture: bool = False
+from .launch_config import App
 
 
 class LocalConfig(Contract):
@@ -46,11 +36,22 @@ class LocalConfig(Contract):
                                  "Choose an explicitly allowed application.",
                                  [{"id": a.name, "label": a.name} for a in matches or self.apps])
         app = matches[0]
-        forbidden = ("password", "keepass", "1password", "bitwarden", "lastpass", "settings",
-                     "powershell", "cmd.exe", "terminal", "regedit", "credential")
-        if any(x in (app.name + " " + Path(app.executable).name).lower() for x in forbidden):
+        from .app_policy import allowed
+        if not allowed(app):
             raise ExecutionError("POLICY_DENIED", "Protected settings, password managers and shells are excluded.")
-        if not Path(app.executable).is_file():
+        if app.launch_kind == "aumid":
+            import re
+            if not re.fullmatch(r"[\w.-]+_[\w]+![\w.-]+", app.launch_identity):
+                raise ExecutionError("APP_NOT_FOUND", "Invalid installed application identity.")
+        elif app.launch_kind == "shortcut":
+            if Path(app.launch_identity).suffix.lower() != ".lnk" or not Path(app.launch_identity).is_file():
+                raise ExecutionError("APP_NOT_FOUND", "The configured shortcut is not installed.")
+        elif app.launch_kind == "interactive_command":
+            if not Path(app.executable).is_file() or Path(app.console_host).name.lower() != "wt.exe" or not Path(app.console_host).is_file():
+                raise ExecutionError("APP_NOT_FOUND", "The native Code executable or console host is unavailable.")
+        elif app.launch_kind != "exe":
+            raise ExecutionError("APP_UNSUPPORTED", "This launch mechanism is not enabled.")
+        elif not Path(app.executable).is_file():
             raise ExecutionError("APP_NOT_FOUND", "The configured executable is not installed.")
         return app
 

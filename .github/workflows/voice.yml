@@ -1,0 +1,19 @@
+name: Voice fake-provider checks
+on:
+  pull_request:
+  push:
+    branches: [feat/voice-pipeline]
+jobs:
+  voice:
+    runs-on: windows-latest
+    env:
+      VOICE_PROVIDER_MODE: fake
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-voice-dev.lock
+      - run: python -m pytest tests/voice tests/local_execution/test_core.py tests/local_execution/test_controls.py -q
+      - run: python -m voice --fake-demo
+      - run: python -m compileall -q voice scripts

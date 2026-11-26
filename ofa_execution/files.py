@@ -19,7 +19,13 @@ class FileHand:
         if step.operation == "file.read" and not path.is_file():
             raise ExecutionError("FILE_NOT_FOUND", "The allowed file does not exist.")
         try:
-            text = path.read_text(encoding="utf-8") if path.exists() else None
+            if path.exists():
+                with path.open("rb") as stream:
+                    data=stream.read(65537)
+                if len(data)>65536:
+                    raise ExecutionError("FILE_TOO_LARGE","Text exceeds 64 KiB.")
+                text=data.decode("utf-8")
+            else: text=None
         except (OSError, UnicodeError) as exc:
             raise ExecutionError("FILE_READ_FAILED", "The file could not be read as UTF-8.") from exc
         return Observation(surface="file", identity={"path": str(path)}, facts={"text": text, "exists": path.exists()})
