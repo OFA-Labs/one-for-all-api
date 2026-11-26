@@ -90,7 +90,19 @@ async def serve(handoff: Any, consent: bool, overlay: Overlay,
         elif kind=="task_update":
             session.notify_task(payload)
 
-    stt_providers = {"deepgram": DeepgramStt(settings), "gradium": GradiumStt(settings)}
+    brain = None
+    try:
+        from ofa.companion import build_brain
+        brain = build_brain()
+    except Exception as exc:      # the companion still runs its built-in commands without the OFA brain
+        print("OFA_BRAIN_UNAVAILABLE:" + type(exc).__name__, flush=True)
+    deepgram_stt = DeepgramStt(settings)
+    if brain is not None:
+        # Flux handles English, Hindi and Hinglish in one stream (docs/ofa/bench); Nova-3 mis-scripts Hinglish.
+        from ofa.speech.flux import FluxStt
+        deepgram_stt = FluxStt(settings.deepgram_key.get_secret_value(), rate=settings.input_rate,
+                               eot_timeout_ms=5000, host=settings.deepgram_host)
+    stt_providers = {"deepgram": deepgram_stt, "gradium": GradiumStt(settings)}
     tts_providers = {"deepgram": DeepgramTts(settings), "gradium": GradiumTts(settings)}
     stt_breakers = {name: Breaker(settings.cooldown_seconds) for name in stt_providers}
     tts_breakers = {name: Breaker(settings.cooldown_seconds) for name in tts_providers}
@@ -117,9 +129,11 @@ async def serve(handoff: Any, consent: bool, overlay: Overlay,
         settings, Router(aliases, settings.language, sites),
         SttChain(settings, stt_providers, stt_breakers, emit),
         Speech(settings, tts_providers, tts_breakers, emit),
-        None,  # OFA Engine is not implemented in this iteration.
-        bridge, cache, emit, dispatcher, authorize,
+        None,  # reasoning and tools come from the OFA brain below
+        bridge, cache, emit, dispatcher, authorize, brain,
     )
+    if brain is not None:
+        brain.attach(session, emit, overlay.emit)
     overlay.callbacks.update(
         stop=lambda:loop.call_soon_threadsafe(lambda:asyncio.create_task(session.close("overlay_stop"))),
         interrupt=lambda:loop.call_soon_threadsafe(lambda:asyncio.create_task(session.interrupt())),

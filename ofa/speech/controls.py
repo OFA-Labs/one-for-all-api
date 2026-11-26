@@ -1,0 +1,20 @@
+"""Spoken session controls (C1) handled without the engine."""
+from __future__ import annotations
+
+import re
+
+CONTROLS = {
+    "stop": {"stop", "cancel", "stop it", "cancel it", "cancel that", "never mind", "nevermind", "ruko", "ruk jao",
+             "bas", "band karo", "rehne do", "रुको", "बस", "रहने दो", "cancel karo"},
+    "pause": {"pause", "hold on", "wait", "ek minute", "ek second", "thoda ruko"},
+    "resume": {"resume", "continue", "go on", "carry on", "chalo", "aage badho", "continue karo"},
+}
+
+
+def control_of(text: str) -> str | None:
+    """The control a whole utterance expresses, or None when it is an ordinary request."""
+    words = re.sub(r"[^\w\sऀ-ॿ]", "", text.casefold()).strip()
+    for kind, phrases in CONTROLS.items():
+        if words in phrases:
+            return kind
+    return None

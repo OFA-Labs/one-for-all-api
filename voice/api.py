@@ -92,10 +92,10 @@ def create_app(settings: Settings, events: Events, session: Any, token: str,
             "tts_order": list(settings.tts_order),
             "deepgram_configured": bool(settings.deepgram_key.get_secret_value()),
             "gradium_configured": bool(settings.gradium_key.get_secret_value()),
-            "engine_enabled": False,
+            "engine_enabled": getattr(session, "brain", None) is not None,
         }
         return {"service": "ofa-desktop", "version": "0.2.3", "os": "windows",
-                "identity_mode": "local-development", "llm_enabled": False,
+                "identity_mode": "local-development", "llm_enabled": getattr(session, "brain", None) is not None,
                 "speech": speech}
 
     @app.post("/v1/pairing")

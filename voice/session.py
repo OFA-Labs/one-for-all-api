@@ -32,7 +32,7 @@ class Session:
                  speech: Any, llm: LlmProvider | None, bridge: ActionBridge,
                  cache: AckCache, emit: Emit,
                  dispatcher: CapabilityDispatcher | None = None,
-                 authorize=lambda: None) -> None:
+                 authorize=lambda: None, brain: Any = None) -> None:
         self.settings, self.router = settings, router
         self.stt, self.speech = stt, speech
         self.bridge, self.cache, self.emit = bridge, cache, emit
@@ -55,6 +55,8 @@ class Session:
         self._prompt_id = None
         self._speech_generation = 0
         self.playback.on_event = emit
+        self.brain = brain                     # OFA reasoning and tools (ofa.companion.OfaBrain), optional
+        self._utterance_started = 0.0
 
     def notify_task(self, payload):
         card=payload.get("approval") or payload.get("handoff") or payload.get("question")
@@ -93,6 +95,8 @@ class Session:
             return
         self._closing = False
         self.state(State.ARMED)
+        if self.brain:
+            self.brain.new_epoch()
         try:
             if hasattr(self.bridge, "resume"):
                 self.bridge.resume()
@@ -108,8 +112,10 @@ class Session:
     async def interrupt(self) -> None:
         self.emit("barge_detected",{"utterance_id":self._utterance_id})
         self.playback.interrupt()
-        if getattr(self.bridge,"pending",None):
-            return  # Approval speech must not cancel the task it is deciding.
+        if getattr(self.bridge,"pending",None) or (self.brain and self.brain.busy):
+            # Approval speech must not cancel the task it is deciding. An OFA task is cancelled only by
+            # actual words (see _brain_respond), never by background noise.
+            return
         if self.response and not self.response.done():
             self.bridge.stop()
             self.response.cancel()
@@ -147,7 +153,8 @@ class Session:
                     quiet = 0
                     self._utterance_id = str(uuid4())
                     self.emit("utterance_started", {"utterance_id": self._utterance_id})
-                    if getattr(self.bridge,"pending",None):
+                    self._utterance_started = time.monotonic() - 0.02 * len(pre)
+                    if self._deciding():
                         if self.decision_response and not self.decision_response.done(): self.decision_response.cancel()
                         self.decision_response=asyncio.create_task(self._respond(self.feed))
                     else:
@@ -155,12 +162,13 @@ class Session:
                 elif self.feed is not None:
                     await self.feed.push(pcm)
                     quiet = 0 if voiced else quiet + 20
-                    if quiet >= self.settings.silence_ms:
+                    if quiet >= (self.brain.silence_ms if self.brain else self.settings.silence_ms):
                         self.emit("speech_end", {"utterance_id": self._utterance_id})
                         await self.feed.end()
                         self.feed = None
                         pre.clear()
-                if (self.feed is None and not getattr(self.bridge,"pending",None) and self.machine.state == State.LISTENING and
+                if (self.brain is None and self.feed is None and not getattr(self.bridge,"pending",None)
+                        and self.machine.state == State.LISTENING and
                         time.monotonic() - self._last_activity > self.settings.idle_seconds):
                     await self.close("idle_timeout")
                     return
@@ -187,6 +195,9 @@ class Session:
             if intent.intent=="stop":
                 await self.close("spoken_stop")
                 return
+            if self.brain and not getattr(self.bridge, "pending", None):
+                if await self._brain_respond(final, intent, supplied is not None):
+                    return
             if self.runtime and self.bridge.pending:
                 if not self.runtime.decide_voice(final.text,final.confidence):
                     self.emit("question",{"text":"Complete the current choice or human handoff in Desktop Integration first."})
@@ -257,9 +268,48 @@ class Session:
             await self.speech.earcon(self.playback)
             self._mute_until = time.monotonic() + 0.2
         finally:
-            if asyncio.current_task() is not self.decision_response and not self._closing and self.machine.state in {State.THINKING, State.SPEAKING}:
+            if (asyncio.current_task() is not self.decision_response and not self._closing
+                    and not (self.brain and self.brain.busy and asyncio.current_task() is not self.response)
+                    and self.machine.state in {State.THINKING, State.SPEAKING}):
                 self.state(State.LISTENING)
                 self._last_activity = time.monotonic()
+
+    def _deciding(self) -> bool:
+        """An utterance now answers (or corrects) running work, so it gets its own task."""
+        return bool(getattr(self.bridge, "pending", None) or (self.brain and self.brain.busy))
+
+    async def _brain_respond(self, final, intent, typed: bool) -> bool:
+        """Route a final transcript to OFA. False leaves it to the verified companion fast path."""
+        # Typed text can never approve a consequential action; only microphone speech is admissible.
+        heard = self.brain.heard(final.text, final.confidence, "text" if typed else "mic",
+                                 time.monotonic() if typed else self._utterance_started)
+        if heard.echo:
+            return True
+        if self.brain.waiting:
+            self.brain.deliver(heard)
+            return True
+        reply = self.brain.control(final.text)
+        if reply is not None:
+            await self.brain.speak(reply)
+            return True
+        current = asyncio.current_task()
+        if self.brain.busy and self.response and self.response is not current:
+            self.playback.interrupt()                 # a new instruction replaces the running one
+            self.brain.new_epoch()
+            self.response.cancel()
+            with suppress(asyncio.CancelledError):
+                await self.response
+        self.response = current
+        if self.decision_response is current:
+            self.decision_response = None              # promoted: later noise must not cancel it
+        if intent.intent == "open_app":
+            return False                              # instant, verified launch without the engine
+        if self.machine.state == State.LISTENING:
+            self.state(State.THINKING)
+        spoken = await self.brain.turn(final.text, final.confidence)
+        if spoken and not self._closing:
+            await self.brain.speak(spoken)
+        return True
 
     async def _ack(self, language: str) -> None:
         self._speech_generation+=1
@@ -296,6 +346,8 @@ class Session:
         self._closing = True
         self.emit("voice_stopped", {"code": reason})
         self.bridge.stop()
+        if self.brain:
+            self.brain.new_epoch()                    # kill switch: pending approvals are void
         self.playback.interrupt()
         current = asyncio.current_task()
         for task in (self.listener, self.response, self.decision_response, self._prompt_task):
@@ -319,7 +371,7 @@ class Session:
             self.emit("question",{"text":"Press Caps Lock to start, or finish the current utterance first."})
             return
         await self.interrupt()
-        if getattr(self.bridge,"pending",None):
+        if self._deciding():
             self.decision_response=asyncio.create_task(self._respond(None,Transcript(text,True,None)))
         else:
             self.response=asyncio.create_task(self._respond(None,Transcript(text,True,None)))

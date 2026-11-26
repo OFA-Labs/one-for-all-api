@@ -26,7 +26,7 @@ MODELS = {
 
 class GroqEngine:
     def __init__(self, model: str = "openai/gpt-oss-120b", client: httpx.AsyncClient | None = None,
-                 timeout: float = 30.0, max_tokens: int = 2048, temperature: float = 0.2, count_budget=True):
+                 timeout: float = 30.0, max_tokens: int = 2048, temperature: float = 0.2, count_budget=False):
         self.model = model
         self._info = MODELS.get(model, EngineInfo("groq", model, True, False, False, 131072, 8192))
         self._client = client
