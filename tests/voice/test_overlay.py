@@ -45,6 +45,21 @@ def test_liquid_orb_asset_is_packaged_as_a_high_dpi_animation():
     assert meta['frames']>1 and meta['playback_rate']==3
 
 
+def test_consent_cards_use_concise_explicit_copy():
+    from voice.overlay import SCOPE_LABELS, pairing_prompt
+
+    title, lines = pairing_prompt('http://127.0.0.1:3000', 'ABC123')
+    assert title == 'Connect this computer?'
+    assert 'http://127.0.0.1:3000' in lines[0]
+    assert any('ABC123' in line for line in lines)
+    assert all(len(line) < 120 for line in lines)
+    assert set(SCOPE_LABELS) == {
+        'windows', 'read_folder', 'write_folder', 'register_app',
+        'startup_on', 'startup_off',
+    }
+    assert all(len(body) <= 2 for _, body in SCOPE_LABELS.values())
+
+
 @pytest.mark.skipif(os.getenv('OFA_INTERACTIVE_TESTS')!='1',reason='Owned Tk surface needs an interactive desktop')
 def test_native_panel_animates_handles_input_and_hides_on_idle():
     from voice.overlay import Overlay

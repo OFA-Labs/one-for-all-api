@@ -8,8 +8,45 @@ import json
 import webbrowser
 from pathlib import Path
 import tkinter as tk
-from tkinter import messagebox, filedialog
+from tkinter import filedialog
 from collections.abc import Callable
+
+
+SCOPE_LABELS = {
+    "windows": ("Allow window controls?", [
+        "Focus, minimize, maximize and restore ordinary application windows.",
+        "Closing a window needs a separate approval and never discards unsaved work.",
+    ]),
+    "read_folder": ("Allow reading a folder?", [
+        "Read bounded UTF-8 text files in a folder you select next.",
+        "Applies to this computer's paired OFA tabs until Disconnect.",
+    ]),
+    "write_folder": ("Allow writing to a folder?", [
+        "Read and write bounded UTF-8 text files in a folder you select next.",
+        "Every write still needs a separate exact-content approval.",
+    ]),
+    "register_app": ("Register an installed app?", [
+        "Choose one installed executable in the next Windows file dialog.",
+        "Shells, settings, security tools and installers stay excluded.",
+    ]),
+    "startup_on": ("Start OFA with Windows?", [
+        "The companion will launch when you sign in to Windows.",
+        "It still waits for a paired browser and a physical Caps Lock press.",
+    ]),
+    "startup_off": ("Remove OFA from startup?", [
+        "The companion will no longer launch automatically at sign-in.",
+        "You can still start it from the Windows Start Menu.",
+    ]),
+}
+
+
+def pairing_prompt(origin: str, fingerprint: str) -> tuple[str, list[str]]:
+    return ("Connect this computer?", [
+        f"{origin} wants to pair with OFA Desktop.",
+        "Approve only if you started this in your browser.",
+        f"Browser key: {fingerprint}",
+        "Local development session. No account sign-in.",
+    ])
 
 
 class Overlay:
@@ -48,6 +85,7 @@ class Overlay:
         self.frame_ms=meta["frame_ms"]
         self.frame_index=0
         self.visible=False
+        self.dialog_open=False
         self.orb=self.canvas.create_image(self.width//2,112,image=self.frames[0])
         self.label=self.canvas.create_text(self.width//2,193,text="How can I help?",width=self.width-32,
                                           fill="#c9d1d9",font=("Segoe UI",11))
@@ -103,33 +141,20 @@ class Overlay:
         self.messages.put_nowait((state, text[:120]))
 
     def pump(self) -> None:
+        if self.dialog_open:
+            return
         if not self.scope_prompts.empty():
             kind, origin, answer = self.scope_prompts.get_nowait()
-            labels={"windows":"Focus, minimize, maximize and restore ordinary application windows. Closing a window still needs a separate approval and never discards unsaved work.",
-                    "read_folder":"Read bounded UTF-8 text files in a folder you select next.",
-                    "write_folder":"Read and write bounded UTF-8 text files in a folder you select next. Each write requires a separate exact-content approval.",
-                    "register_app":"Register one installed executable selected in the next Windows file dialog. Shells, settings, security tools and installers remain excluded.",
-                    "startup_on":"Start the installed OFA companion when you sign in to Windows.",
-                    "startup_off":"Remove OFA from your Windows sign-in startup items."}
-            permitted=messagebox.askyesno("OFA desktop permission",f"{origin}\n\n{labels[kind]}\n\nApplies to this computer's paired OFA tabs until Disconnect.",parent=self.root)
-            value=permitted
-            if permitted and kind in {"read_folder","write_folder"}:
-                value=filedialog.askdirectory(title="Select OFA permitted text folder",parent=self.root,mustexist=True)
-            elif permitted and kind=="register_app":
-                value=filedialog.askopenfilename(title="Select installed application",filetypes=[("Application","*.exe")],parent=self.root)
-            answer(value)
+            title, body = SCOPE_LABELS[kind]
+            body = [*body, f"Requested by {origin}."]
+            self._confirm(title, body,
+                          lambda ok, k=kind, a=answer: self._after_scope(k, a, ok))
+            return
         if not self.prompts.empty():
             origin, fingerprint, answer = self.prompts.get_nowait()
-            permitted = messagebox.askyesno(
-                "Connect OFA desktop",
-                f"Allow {origin} to connect to this Windows computer?\n\n"
-                "This grants launching installed applications and public websites. "
-                "Pressing Caps Lock will send microphone audio to Deepgram (Gradium fallback). "
-                "Recording stops when you press Caps Lock again or after inactivity.\n\n"
-                "Connection stays paired until Disconnect. This is a local development session, "
-                f"without account sign-in.\n\nBrowser key: {fingerprint}",
-                parent=self.root)
-            answer(permitted)
+            title, body = pairing_prompt(origin, fingerprint)
+            self._confirm(title, body, answer, "Not now", "Connect")
+            return
         while not self.messages.empty():
             state, text = self.messages.get_nowait()
             if state == "SHUTDOWN":
@@ -161,9 +186,80 @@ class Overlay:
     def request_scope(self, kind, origin, answer):
         self.scope_prompts.put_nowait((kind,origin,answer))
 
-    def _rounded(self,x1,y1,x2,y2,r,fill,outline):
+    def _rounded(self,x1,y1,x2,y2,r,fill,outline,tags=None):
         points=[x1+r,y1,x2-r,y1,x2,y1,x2,y1+r,x2,y2-r,x2,y2,x2-r,y2,x1+r,y2,x1,y2,x1,y2-r,x1,y1+r,x1,y1]
-        return self.canvas.create_polygon(points,smooth=True,splinesteps=24,fill=fill,outline=outline)
+        return self.canvas.create_polygon(points,smooth=True,splinesteps=24,fill=fill,outline=outline,tags=tags)
+
+    def _after_scope(self, kind, answer, permitted) -> None:
+        value = permitted
+        if permitted and kind in {"read_folder", "write_folder"}:
+            value = filedialog.askdirectory(
+                title="Select OFA permitted text folder", parent=self.root,
+                mustexist=True)
+        elif permitted and kind == "register_app":
+            value = filedialog.askopenfilename(
+                title="Select installed application",
+                filetypes=[("Application", "*.exe")], parent=self.root)
+        answer(value)
+
+    def _confirm(self, title, lines, on_answer,
+                 cancel_label="Not now", confirm_label="Allow") -> None:
+        """A compact in-panel consent card instead of a raw native message box."""
+        self.dialog_open = True
+        tag = "dialog"
+        previous_escape = self.root.bind("<Escape>")
+
+        def finish(value: bool) -> None:
+            if not self.dialog_open:
+                return
+            self.dialog_open = False
+            self.root.bind("<Escape>", previous_escape)
+            self.root.unbind("<Return>")
+            self.canvas.delete(tag)
+            self.canvas.itemconfigure(self.entry_item, state="normal")
+            self.root.update_idletasks()
+            on_answer(bool(value))
+            if not self.dialog_open:
+                self.root.after(20, self.pump)
+
+        if not self.visible:
+            self._nonactivating()
+            self.root.deiconify()
+            self.visible = True
+        self.canvas.itemconfigure(self.entry_item, state="hidden")
+        s = self.scale
+        left, right = int(18*s), int((self.width-18)*s)
+        top, bottom = int(18*s), int(276*s)
+        self.canvas.create_rectangle(
+            0, 0, int(self.width*s), int(294*s), fill="#080a0e", tags=(tag,))
+        self._rounded(left, top, right, bottom, int(14*s),
+                      "#151920", "#303848", (tag,))
+        self.canvas.create_text(
+            left+int(16*s), top+int(20*s), text=title, anchor="nw",
+            fill="#f4f6f8", font=("Segoe UI", 12, "bold"), tags=(tag,))
+        self.canvas.create_text(
+            left+int(16*s), top+int(52*s), text="\n".join(lines), anchor="nw",
+            width=(right-left)-int(32*s), fill="#c9d1d9",
+            font=("Segoe UI", 10), tags=(tag,))
+        bh = int(32*s)
+        by = bottom-bh-int(14*s)
+        bw = ((right-left)-int(40*s))//2
+        cancel_x = left+int(16*s)
+        confirm_x = left+int(24*s)+bw
+        self._rounded(cancel_x, by, cancel_x+bw, by+bh, int(8*s),
+                      "#242932", "#454c59", (tag, "dialog-cancel"))
+        self._rounded(confirm_x, by, confirm_x+bw, by+bh, int(8*s),
+                      "#0d6f86", "#00c8ff", (tag, "dialog-confirm"))
+        for x, label, name in ((cancel_x, cancel_label, "dialog-cancel"),
+                               (confirm_x, confirm_label, "dialog-confirm")):
+            self.canvas.create_text(
+                x+bw//2, by+bh//2, text=label, fill="#f4f6f8",
+                font=("Segoe UI", 10, "bold"), tags=(tag, name))
+        self.canvas.tag_bind("dialog-cancel", "<Button-1>", lambda _: finish(False))
+        self.canvas.tag_bind("dialog-confirm", "<Button-1>", lambda _: finish(True))
+        self.root.bind("<Escape>", lambda _: finish(False))
+        self.root.bind("<Return>", lambda _: finish(True))
+        self.root.update_idletasks()
 
     def _button(self,x,y,text,label,callback):
         item=self.canvas.create_text(x,y,text=text,fill="#bfc2d0",font=("Segoe UI",12),tags=(label,))
