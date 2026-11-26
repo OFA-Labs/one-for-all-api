@@ -6,7 +6,8 @@
 one-for-all-api/
   ofa/                    voice-first assistant (Windows)
     __main__.py           command line entry
-    runtime.py            builds the core and attaches the voice front end
+    runtime.py            builds the core
+    companion.py          OfaBrain: plugs the core into the voice/ companion session and panel
     ports.py              VoicePort: the seam between the core and voice
     orchestrator.py       turn loop: user words -> engine -> tool calls -> spoken result
     tools.py              tool schemas and tool call -> Action mapping
@@ -18,10 +19,10 @@ one-for-all-api/
     vault/                encrypted store, handles, broker, password managers
     engine/               ReasoningEngine contract and adapters
     harness/              Windows UI Automation, OCR, input (and a fake for tests)
-    speech/               Flux client, voice loop, routing
+    speech/               Flux client, spoken controls, echo guard
     text/                 Hindi numbers, transliteration, dictation text
-    egress.py audit.py memory.py config.py live_budget.py orb.py server.py phone.py ui/
-  voice/                  earlier Windows companion; ofa reuses its audio, providers, hotkey, DPAPI store
+    egress.py audit.py memory.py config.py live_budget.py server.py phone.py ui/
+  voice/                  the Windows companion and user interface: panel, Caps Lock, pairing, web API, audio
   ofa_execution/          earlier execution engine; ofa reuses its Windows primitives
   ebrain/ history/ oneforall/   product backend (shared memory and history APIs)
   tests/ofa_core/         OFA tests; tests/ holds the backend, voice and execution suites
@@ -86,12 +87,15 @@ Tools: `ruff` (pyflakes rules), `vulture`, `knip`.
 | `ofa/runtime.py` `STT_ROUTES`, `stt_order` | `ofa/speech/routing.py` |
 | `ofa/runtime.py` `holder` dict, patched executor attributes | `ofa/ports.py` |
 | `tests/ofa/` | `tests/ofa_core/` |
+| `ofa/orb.py`, `ofa/speech/loop.py`, `ofa/speech/routing.py` | removed: the companion panel and session are the front end |
+| `ofa/server.py` dashboard endpoints | removed: the web app uses the companion API |
 | workspace `docs/` (outside the repo) | `docs/ofa/` |
 
 ## Remaining technical debt
 
-- Two older runtimes (`voice` companion and `ofa_execution` engine) overlap with `ofa`. The web app's desktop
-  pairing still uses them, so removing them needs a product decision and a web migration.
+- The `ofa_execution` engine overlaps with `ofa`. The companion's fast path and the web app's approval cards
+  still use it, so folding it into `ofa` needs a web change.
+- OFA approvals are spoken only; the web app shows their text but its approve buttons act on `ofa_execution` tasks.
 - `voice/` and `ofa_execution/` should eventually give their shared primitives to `ofa` as owned modules.
 - `ofa/harness/api.py` and `ofa/harness/win.py` are large; split by reading, acting and identity when next changed.
 - `ofa/orchestrator.py` builds the prompt, runs the loop and writes the report; extract the report builder.

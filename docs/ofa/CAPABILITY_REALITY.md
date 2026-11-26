@@ -5,6 +5,17 @@ Branches: `one-for-all-api@feat/ofa-core`, `one-for-all-web@feat/ofa-dashboard` 
 Rule used below: **Verified** = ran on this machine with evidence. **Built, unverified** = code + fake tests only.
 **Not built** = doesn't exist. Nothing here is rounded up.
 
+## Update: runs inside the existing companion UI
+
+`python -m ofa` now starts the companion: the original top-middle panel, Caps Lock, browser pairing and the
+web pages on `/desktop`. OFA is its brain. Verified live: engine enabled in `/v1/health`, a typed request through
+the real session typed text into the Test Pad and replied. Not verified by a person since this change: the
+microphone path, and pairing with your browser.
+
+Differences from the table below: the separate orb and `/ofa` dashboard are removed; the orb has the companion's
+states (not seven distinct colours); Caps Lock works after the browser is connected; OFA approvals show as text on
+the panel and the web page and are answered by voice (the web approve buttons only act on companion tasks).
+
 ## Bottom line
 
 - The safety core is the strongest part: tiers, spoken approvals, vault, broker, leak canaries and audit are built and heavily tested. In live runs it stopped every consequential action that wasn't approved, including one the model was tricked into trying.
