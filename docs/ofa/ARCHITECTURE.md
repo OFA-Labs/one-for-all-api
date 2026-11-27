@@ -9,12 +9,20 @@ one-for-all-api/
     runtime.py            builds the core
     companion.py          OfaBrain: plugs the core into the voice/ companion session and panel
     ports.py              VoicePort: the seam between the core and voice
-    orchestrator.py       turn loop: user words -> engine -> tool calls -> spoken result
+    graphs/               the agent as LangGraph graphs (diagrams: GRAPHS.md)
+      turn.py             one utterance -> control (pause/continue) or brain
+      brain.py            engine <-> tools loop, references to new pop-ups, spoken report
+      eyes.py             accessibility -> OCR -> vision provider, stops at the first confident answer
+      hands.py            policy gate: tier, approval, effect, ledger, audit
+      approval.py         spoken yes/no for one exact action
+      pauses.py runner.py questions are interrupt()s; runner speaks them and resumes with the answer
+      deps.py state.py report.py
+    eyes/                 scene (numbered marks), masked capture, providers (local|separate|reasoning), attention
+    settings_store.py     Eyes / Hands / Voice settings edited from the web Settings page
     tools.py              tool schemas and tool call -> Action mapping
-    executor.py           policy gate: tier, approval, ledger, audit (decides, never performs)
     action_context.py     policy inputs read from the screen
     dictation.py          verbatim dictation rules
-    effects/              what an authorised Action does (desktop, files, shell, credentials)
+    effects/              what an authorised Action does (desktop, files, shell, credentials, system)
     policy/               tiers, yes-no lexicon, approvals
     vault/                encrypted store, handles, broker, password managers
     engine/               ReasoningEngine contract and adapters
@@ -30,7 +38,14 @@ one-for-all-api/
 
 ## Dependency direction
 
-`__main__ -> runtime -> orchestrator -> executor -> effects -> harness | vault`
+`__main__ -> runtime -> graphs (turn -> brain -> eyes | hands -> approval) -> effects -> harness | vault`
+
+- Rules stay plain modules the graph nodes call (`policy`, `dictation`, `action_context`, `effects`, `eyes`), so
+  each is testable without a graph. Graphs only order them.
+- Every question to the user is a LangGraph `interrupt()`. A node that asks does nothing before asking; every
+  effect runs in its own node after approval, so resuming a saved task never repeats an action.
+- Audio stays in `voice/session.py`: graphs receive finished sentences, never audio frames.
+- Only `graphs/hands.py` runs effects and consumes approvals; `eyes/` never imports the vault.
 
 - `policy`, `egress` and `audit` import nothing from the engine, speech or harness.
 - Only `ofa/engine` talks HTTP to a model. `harness`, `speech`, `tools` and `phone` never import the vault.
@@ -81,6 +96,10 @@ Tools: `ruff` (pyflakes rules), `vulture`, `knip`.
 
 | Old | New |
 |---|---|
+| `ofa/orchestrator.py` (turn loop) | `ofa/graphs/brain.py`, `ofa/graphs/report.py` |
+| `ofa/executor.py` (policy gate) | `ofa/graphs/hands.py` |
+| `ApprovalStore.obtain` (spoken loop) | `ofa/graphs/approval.py` |
+| `OfaBrain` routing of pause / continue | `ofa/graphs/turn.py` |
 | `ofa/executor.py` effect methods | `ofa/effects/{desktop,files,shell,credentials,scopes}.py` |
 | `ofa/executor.py` `describe`, terminal list | `ofa/action_context.py` |
 | `ofa/executor.py` dictation preparation | `ofa/dictation.py` |
@@ -98,6 +117,6 @@ Tools: `ruff` (pyflakes rules), `vulture`, `knip`.
 - OFA approvals are spoken only; the web app shows their text but its approve buttons act on `ofa_execution` tasks.
 - `voice/` and `ofa_execution/` should eventually give their shared primitives to `ofa` as owned modules.
 - `ofa/harness/api.py` and `ofa/harness/win.py` are large; split by reading, acting and identity when next changed.
-- `ofa/orchestrator.py` builds the prompt, runs the loop and writes the report; extract the report builder.
 - No dependency lock file for `requirements-ofa.txt`.
+- Eyes verification after a click compares pixels near the click; it does not ask the vision model again.
 - The 30 Windows-only backend test failures and the web hotkey test need their own fixes.

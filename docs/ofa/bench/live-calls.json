@@ -1,5 +1,6 @@
 {
  "groq": 154,
  "deepgram": 225,
- "gradium": 82
+ "gradium": 82,
+ "groq_vision": 2
 }

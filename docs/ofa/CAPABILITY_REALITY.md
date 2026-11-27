@@ -16,6 +16,48 @@ Differences from the table below: the separate orb and `/ofa` dashboard are remo
 states (not seven distinct colours); Caps Lock works after the browser is connected; OFA approvals show as text on
 the panel and the web page and are answered by voice (the web approve buttons only act on companion tasks).
 
+## Update 2026-11-27: LangGraph agent, Eyes, Hands
+
+**Built and tested with fakes (all pass):**
+- The agent runs as LangGraph graphs: turn, brain, eyes, hands and approval.
+  - Every question to you is an `interrupt()`.
+  - A stopped task is checkpointed, and "continue the last task" resumes it. A spoken approval voided by the
+    kill switch cannot be reused after resuming.
+  - Diagrams: [GRAPHS.md](GRAPHS.md).
+- **Eyes** reads every visible window, not only the front one:
+  - accessibility first, OCR for windows that expose little text, then the provider chosen in Settings → Eyes;
+  - every element gets a numbered mark the hands can click;
+  - password and vault-filled fields are blacked out, and images are never stored.
+- **Hands** adds system controls (volume, media, brightness, lock, clipboard, screenshots, quick-settings pages,
+  processes). "Pick it up" presses Accept on a call window that just appeared, without a second yes; Accept
+  anywhere else still asks.
+- Safety fixes:
+  - shell commands that read credential files (`cat .env`, `type id_rsa`) need a spoken yes;
+  - "wait" and "ruko" pause instead of ending the session;
+  - dictation allows 60 s.
+
+**Verified live on this laptop:**
+- The separate eyes model (`qwen/qwen3.8-27b` on Groq) looked at the OFA Test Pad window only. It picked the
+  right mark for "the button under the text box" (Apply) and read the Result line, in about 1.5 s each.
+- Building the whole-screen scene takes 0.7 s (accessibility) to 0.8 s (with OCR). The masked, marked image takes 0.1 s.
+
+- Live run of 12 tasks on the Test Pad and Settings with simulated spoken replies: 11/12
+  (`bench/generalization-2026-11-27.md`). The failure: the model typed the Hinglish sentence with generic typing
+  instead of verbatim dictation. An earlier attempt hung on a title-bar button that never returned; actions are now
+  time-limited. The two reply bugs seen in the run (raw JSON and invisible characters read aloud) are fixed and unit
+  tested, but not re-run live.
+
+**Not verified:**
+- A real WhatsApp call: tested only with a fake call window.
+- Your voice and microphone with the new graphs.
+- The web Settings tabs against the live companion: tested against a fake companion in Playwright.
+- Vision on Electron apps beyond the Test Pad.
+
+**Known limits:**
+- A click is checked by comparing pixels around it, not by asking the vision model again.
+- Vision calls share Groq's free-tier rate limit.
+- "Same as reasoning model" only works if that model can see images (`gpt-oss-120b` cannot).
+
 ## Bottom line
 
 - The safety core is the strongest part: tiers, spoken approvals, vault, broker, leak canaries and audit are built and heavily tested. In live runs it stopped every consequential action that wasn't approved, including one the model was tricked into trying.
