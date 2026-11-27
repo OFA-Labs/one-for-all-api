@@ -111,8 +111,11 @@ class FakeDesktop:
         w, h = rect[2] - rect[0], rect[3] - rect[1]
         return b"\x10\x20\x30\xff" * (w * h), w, h
 
+    def virtual_screen(self):
+        return (0, 0, 1920, 1080)
+
     def ocr(self, bgra, w, h, origin=(0, 0)):
-        return []
+        return list(getattr(self, "ocr_lines", []))
 
     def to_png(self, bgra, w, h):
         return b"PNG" + bytes(bgra[:16])

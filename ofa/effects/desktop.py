@@ -42,7 +42,10 @@ def window_operation(h: Harness, a: Action) -> dict:
 
 def click(h: Harness, a: Action) -> dict:
     op = a.args["op"]
-    return h.click(a.args["element"], double=op == "double_click", button="right" if op == "right_click" else "left")
+    double, button = op == "double_click", "right" if op == "right_click" else "left"
+    if a.args.get("x") is not None:
+        return h.click_point(a.args["x"], a.args["y"], double=double, button=button)
+    return h.click(a.args["element"], double=double, button=button)
 
 
 def drag(h: Harness, a: Action) -> dict:

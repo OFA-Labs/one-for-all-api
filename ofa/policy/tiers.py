@@ -70,6 +70,9 @@ def classify_tier(action: Action, turns: TurnLog | None = None, epoch: int = 0) 
         tier = 1
     else:
         tier = 2
+    # A click on a bare screen point OFA cannot name could be anything: ask.
+    if verb == "click" and action.args.get("x") is not None and not action.element_label:
+        tier = 2
     # Effects hidden behind ordinary clicks/keys (§6 "any Tier 2 effect").
     if verb in {"click", "key", "select", "hover"} and action.element_label and EFFECT_WORDS.search(action.element_label):
         tier = 2

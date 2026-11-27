@@ -3,11 +3,23 @@ from __future__ import annotations
 
 import re
 
-from .harness.api import Harness, HarnessError
+from .harness.api import MARK, Harness, HarnessError
 from .policy import Action
 
 TERMINALS = {"windowsterminal.exe", "powershell.exe", "pwsh.exe", "cmd.exe", "wt.exe", "conhost.exe",
              "alacritty.exe", "wezterm-gui.exe", "mintty.exe"}
+
+
+def point_label(h: Harness, x: int, y: int) -> str | None:
+    """What OFA itself saw at a screen point: a mark containing it, or the point the eyes last chose."""
+    for el in (h.last.elements if h.last else []):
+        l, t, r, b = el.bbox
+        if l <= x < r and t <= y < b and (el.text or el.value):
+            return el.text or el.value
+    sight = h.last_sight or {}
+    if sight.get("point") and abs(sight["point"][0] - x) <= 30 and abs(sight["point"][1] - y) <= 30:
+        return sight.get("label") or None
+    return None
 
 
 def describe(h: Harness, action: Action) -> Action:
@@ -17,7 +29,7 @@ def describe(h: Harness, action: Action) -> Action:
     ctx = action.context
     if ref and snap:
         try:
-            el = snap.by_id(ref) if ref[:1] in "uo" and ref[1:].isdigit() else None
+            el = snap.by_id(ref) if MARK.match(ref) else None
             if el:
                 label, role = el.text or el.value or "", el.role
         except HarnessError:
@@ -36,5 +48,7 @@ def describe(h: Harness, action: Action) -> Action:
                 pass
             if focused is not None and focused.role in {"edit", "document"}:
                 ctx = "search" if re.search(r"search|find|address", focused.text or "", re.I) else "compose"
+    if not label and action.args.get("x") is not None:
+        label = point_label(h, action.args["x"], action.args["y"])
     return action.model_copy(update={"element_label": label or action.element_label,
                                       "element_role": role or action.element_role, "context": ctx})
