@@ -299,7 +299,28 @@ def uia_tree(hwnd: int, max_nodes: int = 2500, max_depth: int = 30, budget_s: fl
     return out, complete
 
 
+INVOKE_TIMEOUT = 4.0
+
+
 def uia_invoke(el: El) -> bool:
+    """Press an element through UI Automation, with a time limit.
+
+    The COM call is synchronous and can block for ever (a title-bar button of a minimised window, an app that
+    opens a modal dialog). After INVOKE_TIMEOUT it is reported as sent, never retried with the mouse, so nothing
+    is pressed twice; the caller verifies by looking at the screen.
+    """
+    outcome: dict[str, bool] = {}
+
+    def work():
+        outcome["done"] = _invoke(el)
+
+    worker = threading.Thread(target=work, name="ofa-uia-invoke", daemon=True)
+    worker.start()
+    worker.join(INVOKE_TIMEOUT)
+    return True if worker.is_alive() else outcome.get("done", False)
+
+
+def _invoke(el: El) -> bool:
     _, mod = automation()
     for pid, iface, call in ((10000, "IUIAutomationInvokePattern", "Invoke"),
                              (10010, "IUIAutomationSelectionItemPattern", "Select"),

@@ -214,3 +214,25 @@ def test_spoken_reply_is_tidy():
     from ofa.graphs import tidy
     assert tidy("Typed it. Anything else?. Completed. Anything else?") == "Typed it. Completed. Anything else?"
     assert tidy("Typed see ... ... ... it") == "Typed see it"
+
+
+def test_a_hung_action_times_out_and_is_not_retried(tmp_path, monkeypatch):
+    import ofa.graphs.hands as hands
+    monkeypatch.setattr(hands, "EFFECT_TIMEOUT", 0.2)
+    script = [[tool("screen")], [tool("act", kind="click", element="u1", effect="send", to=["Asha"])],
+              [tool("finish", status="done", summary="Sent")]]
+    r = Rig(tmp_path, script, heard=[Heard("yes")])
+    chat_window(r.desk)
+    r.desk.on_click["Send"] = lambda d: time.sleep(1.0)
+    result = r.turn("send it to asha")
+    assert result.status != "done" and r.desk.clicks.count("Send") == 1
+    assert result.actions[-1]["outcome"] == "unknown" and "Completed" not in result.spoken
+
+
+def test_blocked_ui_automation_call_returns(monkeypatch):
+    from ofa.harness import win
+    monkeypatch.setattr(win, "INVOKE_TIMEOUT", 0.2)
+    monkeypatch.setattr(win, "_invoke", lambda el: time.sleep(2) or True)
+    started = time.monotonic()
+    assert win.uia_invoke(El("u0", "Restore", "button", (0, 0, 1, 1))) is True
+    assert time.monotonic() - started < 1.0
