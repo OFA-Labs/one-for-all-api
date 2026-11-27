@@ -11,6 +11,13 @@ from pydantic import BaseModel, ConfigDict, Field
 
 EyesMode = Literal["local", "separate", "reasoning"]
 
+# Shown read-only in Settings → Hands. Enforced in ofa/policy/tiers.py, not by this list.
+ALWAYS_ASK = ["Sending, posting, sharing, forwarding or commenting", "Paying, buying, booking or ordering",
+              "Deleting or overwriting files", "Submitting forms or applications", "Installing or uninstalling apps",
+              "Running commands that change something, or that read secret files",
+              "Changing passwords, permissions or security settings", "Ending a program",
+              "Reading your clipboard (unless you say \"clipboard\")", "Clicking a screen point OFA cannot name"]
+
 
 class EyesSettings(BaseModel):
     model_config = ConfigDict(extra="forbid")
