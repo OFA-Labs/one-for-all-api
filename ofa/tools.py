@@ -13,6 +13,7 @@ def _fn(name, desc, props, req=()):
 
 
 S = {"type": "string"}
+I = {"type": "integer"}
 EFFECTS = ["none", "send", "post", "submit", "apply", "share", "upload", "attach", "comment", "delete", "pay",
            "purchase", "book", "order", "merge", "push", "approve", "publish", "forward", "create_account",
            "change_setting", "change_password", "install", "uninstall", "sign_out"]
@@ -22,11 +23,15 @@ TOOLS = [
     _fn("windows", "List open windows.", {}),
     _fn("screen", "Read a window's UI elements (default front). Lines: id role \"text\" =value.",
         {"window": S, "ocr": {"type": "boolean"}}),
+    _fn("look", "See the whole screen (pop-ups, calls, notifications, icons, apps screen can't read). Returns "
+        "numbered marks m1.. and, with a question, the matching mark or point.",
+        {"question": S, "scope": {"type": "string", "enum": ["screen", "window"]}, "window": S}),
     _fn("act", "One UI action. kind: click|double_click|right_click|type|replace|key|scroll_up|scroll_down|focus|close|"
         "minimize|maximize|restore|snap_left|snap_right|drag|wait_for. element=id from screen. effect+to+account for "
-        "anything outbound/destructive. Result includes a fresh short reading (now).",
+        "anything outbound/destructive. x,y: a screen point from look (unmarked icons only). Result includes a "
+        "fresh short reading (now).",
         {"kind": S, "element": S, "text": S, "keys": S, "window": S, "effect": {"type": "string", "enum": EFFECTS},
-         "to": {"type": "array", "items": S}, "account": S, "to_element": S}, ["kind"]),
+         "to": {"type": "array", "items": S}, "account": S, "to_element": S, "x": I, "y": I}, ["kind"]),
     _fn("dictate", "Type the user's exact last words (verbatim) into an element; or mode=compose with text you drafted.",
         {"element": S, "mode": {"type": "string", "enum": ["verbatim", "compose"]}, "text": S}, ["element"]),
     _fn("fill_secret", "Fill a vault/password-manager handle into a field. You never see values.",
@@ -60,6 +65,10 @@ class ToolArgError(ValueError):
     pass
 
 
+def _point(args: dict) -> bool:
+    return isinstance(args.get("x"), (int, float)) and isinstance(args.get("y"), (int, float)) and not args.get("element")
+
+
 def parse_args(raw: str) -> dict:
     try:
         data = json.loads(raw or "{}")
@@ -88,7 +97,8 @@ def to_action(name: str, args: dict, turn_id: str | None, label: str | None = No
                       destinations=to, account=args.get("account"), element_label=label, element_role=role,
                       key=args.get("keys"), context=context, authorized_by_turn=turn_id,
                       args={"op": kind, "element": args.get("element"), "window": args.get("window"),
-                            "to_element": args.get("to_element")})
+                            "to_element": args.get("to_element"),
+                            **({"x": int(args["x"]), "y": int(args["y"])} if _point(args) else {})})
     if name == "dictate":
         return Action(verb="dictate", target=args.get("element"), payload=args.get("text"), context=context,
                       authorized_by_turn=turn_id, args={"op": "dictate", "element": args.get("element"),

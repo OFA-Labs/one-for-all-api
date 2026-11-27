@@ -16,6 +16,7 @@ from .graphs.deps import Deps
 from .harness.api import Harness
 from .memory import Memory
 from .ports import VoicePort
+from .settings_store import SettingsStore
 from .policy import ApprovalStore, TurnLog
 from .vault.broker import Broker
 from .vault.pm import detect
@@ -75,10 +76,14 @@ def build_core(cfg: OfaConfig | None = None, harness: Harness | None = None, eng
             voice.display(kind, None)
 
     epoch_ref = [0]
+    settings = SettingsStore(root / "settings.json")
+    if not settings.path.exists():
+        settings.update({"voice": {"reply_language": cfg.reply_language}})
     deps = Deps(harness, approvals, turns, audit, memory, broker, engine, voice, lambda: epoch_ref[0],
-                lang=lambda: cfg.reply_language, name=lambda: memory.get("preferred_name", cfg.preferred_name),
+                lang=lambda: settings.get().voice.reply_language,
+                name=lambda: memory.get("preferred_name", cfg.preferred_name),
                 handles=lambda: [m["handle"] for m in vault.list()] + [f"session:{s}" for s in memory.get("sessions", [])],
-                show=show)
+                show=show, settings=settings)
     # Saved progress lives on disk for real use; fake-engine runs (tests) keep it in memory.
     on_disk = cfg.engine != "fake" and cfg.checkpoints == "sqlite"
     runner = Runner(deps, root / "graphs.db" if on_disk else None)

@@ -28,5 +28,16 @@ class Deps:
     handles: Callable[[], list[str]] = lambda: []
     show: Callable[..., None] = lambda *_: None          # panel captions: thinking / acting / approval
     control: Callable[[str], str | None] | None = None   # pause/resume, set by a voice front end
+    eyes: object = None                                  # ofa.eyes.Eyes
+    attention: object = None                             # ofa.eyes.attention.Attention
+    settings: object = None                              # ofa.settings_store.SettingsStore
     history: list[dict] = field(default_factory=list)    # last turns, for follow-ups like "it"
     history_turns: int = 6
+
+    def __post_init__(self) -> None:
+        from ..eyes import Eyes
+        from ..eyes.attention import Attention
+        from ..settings_store import SettingsStore
+        self.settings = self.settings or SettingsStore(None)
+        self.eyes = self.eyes or Eyes(self.settings, self.engine)
+        self.attention = self.attention or Attention(self.harness, self.memory)
