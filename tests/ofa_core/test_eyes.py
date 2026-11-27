@@ -10,7 +10,6 @@ from langgraph.checkpoint.memory import InMemorySaver
 from ofa.audit import Audit
 from ofa.engine.base import RedactedImage, TextDelta
 from ofa.engine.fake import FakeEngine, tool
-from ofa.eyes import Eyes
 from ofa.eyes.attention import Attention
 from ofa.eyes.capture import look_image
 from ofa.eyes.providers import ModelEyes

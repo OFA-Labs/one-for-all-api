@@ -121,9 +121,15 @@ def test_no_bypass_import_rules():
         rel = f.relative_to(root).as_posix()
         if "httpx" in mods:
             assert rel.startswith("engine/"), f"{rel} talks HTTP outside the engine/egress path"
-        if rel.startswith(("harness/", "speech/")) or rel in {"phone.py", "tools.py"}:
+        if rel.startswith(("harness/", "speech/", "eyes/")) or rel in {"phone.py", "tools.py"}:
             assert not any("vault" in m for m in mods), f"{rel} must not reach the vault directly"
             assert not any(m.endswith("approval") for m in mods if not rel.startswith("speech/")), f"{rel} touches approvals"
+        # the hands graph is the only path from a tool call to an effect, and the only consumer of a grant
+        text = f.read_text(encoding="utf-8")
+        if rel != "graphs/hands.py" and not rel.startswith("effects/"):
+            assert "run_effect" not in text, f"{rel} runs effects outside hands"
+        if rel not in {"graphs/hands.py", "policy/approval.py"}:
+            assert "approvals.consume(" not in text, f"{rel} consumes an approval outside hands"
     # approvals are decided only from Heard objects delivered by the speech loop
     src = Path("ofa/policy/approval.py").read_text(encoding="utf-8")
     assert "def decide(self, req_id: str, heard: Heard" in src
