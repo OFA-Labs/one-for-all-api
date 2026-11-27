@@ -27,11 +27,15 @@ TOOLS = [
         "numbered marks m1.. and, with a question, the matching mark or point.",
         {"question": S, "scope": {"type": "string", "enum": ["screen", "window"]}, "window": S}),
     _fn("act", "One UI action. kind: click|double_click|right_click|type|replace|key|scroll_up|scroll_down|focus|close|"
-        "minimize|maximize|restore|snap_left|snap_right|drag|wait_for. element=id from screen. effect+to+account for "
+        "minimize|maximize|restore|snap_left|snap_right|drag|wait_for|select_option (text=option). element=id from "
+        "screen. effect+to+account for "
         "anything outbound/destructive. x,y: a screen point from look (unmarked icons only). Result includes a "
         "fresh short reading (now).",
         {"kind": S, "element": S, "text": S, "keys": S, "window": S, "effect": {"type": "string", "enum": EFFECTS},
          "to": {"type": "array", "items": S}, "account": S, "to_element": S, "x": I, "y": I}, ["kind"]),
+    _fn("fill_form", "Fill the web form open in the browser: reads every page, answers from the user's profile, "
+        "asks only what is missing, clicks Next, asks before Submit. speed=true when the user is in a hurry.",
+        {"speed": {"type": "boolean"}, "window": S}),
     _fn("dictate", "Type the user's exact last words (verbatim) into an element; or mode=compose with text you drafted.",
         {"element": S, "mode": {"type": "string", "enum": ["verbatim", "compose"]}, "text": S}, ["element"]),
     _fn("fill_secret", "Fill a vault/password-manager handle into a field. You never see values.",
@@ -66,7 +70,8 @@ TOOL_NAMES = {t["function"]["name"] for t in TOOLS}
 KIND_TO_VERB = {"click": "click", "double_click": "click", "right_click": "click", "type": "type_text",
                 "replace": "type_text", "key": "key", "scroll_up": "scroll", "scroll_down": "scroll", "focus": "focus",
                 "close": "close", "minimize": "minimize", "maximize": "maximize", "restore": "restore",
-                "snap_left": "arrange", "snap_right": "arrange", "drag": "click", "wait_for": "wait_for"}
+                "snap_left": "arrange", "snap_right": "arrange", "drag": "click", "wait_for": "wait_for",
+                "select_option": "select"}
 
 
 class ToolArgError(ValueError):

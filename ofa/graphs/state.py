@@ -87,6 +87,16 @@ class TurnState(TypedDict, total=False):
     confidence: float | None
     result: dict | None
     route: str
+    # shared with the form graph when a form request goes straight to it
+    call: dict
+    turn_id: str
+    task: str
+    plan_approved: str | None
+    effects_this_turn: int
+    tier2_this_turn: int
+    tool_out: dict | None
+    action_info: dict | None
+    finished: list | None
 
 
 def jsonable(value: Any) -> Any:

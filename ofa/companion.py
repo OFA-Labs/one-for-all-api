@@ -49,6 +49,8 @@ class OfaBrain:
         self.paused = asyncio.Event()
         self.paused.set()
         self._waiters: list[asyncio.Future] = []
+        self._expecting = False                     # a question was asked while OFA keeps typing
+        self._early: list[Heard] = []               # answers that arrived before listen() was called
         self._emit = lambda kind, payload: None
         self._caption = lambda state, text="": None
 
@@ -59,14 +61,17 @@ class OfaBrain:
         if caption is not None:
             self._caption = caption
         self.core.voice.attach(speak=self.speak, listen=self.listen, listen_dictation=self.listen_dictation,
-                               pause_gate=self.paused.wait, display=self.display)
+                               pause_gate=self.paused.wait, display=self.display, expect=self.expect)
         self.core.deps.control = self.apply_control
         self.core.deps.attention.start()              # notices call pop-ups even before Caps Lock is pressed
 
     @property
     def waiting(self) -> bool:
         """True while OFA expects a spoken answer (approval, question or dictation)."""
-        return any(not f.done() for f in self._waiters)
+        return self._expecting or any(not f.done() for f in self._waiters)
+
+    def expect(self) -> None:
+        self._expecting = True
 
     @property
     def silence_ms(self) -> int:
@@ -81,6 +86,8 @@ class OfaBrain:
             if not waiter.done():
                 waiter.set_result(None)
         self._waiters.clear()
+        self._expecting = False
+        self._early.clear()
         self.paused.set()
         self.dictating = False
 
@@ -113,6 +120,9 @@ class OfaBrain:
             return None
         if session.machine.state in {State.SPEAKING, State.THINKING}:
             session.state(State.LISTENING)
+        self._expecting = False
+        if self._early:
+            return self._early.pop(0)
         waiter = asyncio.get_running_loop().create_future()
         self._waiters.append(waiter)
         try:
@@ -142,6 +152,9 @@ class OfaBrain:
             if not waiter.done():
                 waiter.set_result(heard)
                 return True
+        if self._expecting:
+            self._early.append(heard)
+            return True
         return False
 
     @staticmethod
