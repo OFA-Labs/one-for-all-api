@@ -94,6 +94,10 @@ def create_app(settings: Settings, events: Events, session: Any, token: str,
             "gradium_configured": bool(settings.gradium_key.get_secret_value()),
             "engine_enabled": getattr(session, "brain", None) is not None,
         }
+        brain = getattr(session, "brain", None)
+        eyes = brain.core.deps.eyes.status() if brain is not None else None
+        speech["eyes_mode"] = eyes["mode"] if eyes else None
+        speech["eyes_ready"] = bool(eyes) and (eyes["mode"] == "local" or eyes["sees_images"])
         return {"service": "ofa-desktop", "version": "0.2.3", "os": "windows",
                 "identity_mode": "local-development", "llm_enabled": getattr(session, "brain", None) is not None,
                 "speech": speech}
@@ -154,6 +158,58 @@ def create_app(settings: Settings, events: Events, session: Any, token: str,
         if runtime: runtime.revoke()
         await session.close()
         return {"connected": False}
+
+    def ofa_core():
+        brain = getattr(session, "brain", None)
+        if brain is None:
+            raise LookupError("OFA_BRAIN_OFF")
+        return brain.core
+
+    def ofa_settings_view(core) -> dict:
+        from ofa.settings_store import ALWAYS_ASK
+        return {"settings": core.deps.settings.get().model_dump(), "eyes": core.deps.eyes.status(),
+                "always_ask": ALWAYS_ASK}
+
+    @app.get("/v1/ofa/settings")
+    async def ofa_settings(request: Request):
+        auth(request)
+        try:
+            return ofa_settings_view(ofa_core())
+        except LookupError:
+            return JSONResponse({"code": "OFA_BRAIN_OFF"}, status_code=404)
+
+    @app.post("/v1/ofa/settings")
+    async def save_ofa_settings(request: Request):
+        from pydantic import ValidationError
+        auth(request)
+        try:
+            core = ofa_core()
+            core.deps.settings.update(await request.json())
+        except LookupError:
+            return JSONResponse({"code": "OFA_BRAIN_OFF"}, status_code=404)
+        except (ValidationError, ValueError, AttributeError):
+            return JSONResponse({"code": "INVALID_SETTINGS"}, status_code=400)
+        return ofa_settings_view(core)
+
+    @app.post("/v1/eyes/preview")
+    async def eyes_preview(request: Request):
+        """One masked, numbered screenshot for the paired page only. Nothing is stored or sent elsewhere."""
+        import base64
+        auth(request)
+        try:
+            core = ofa_core()
+        except LookupError:
+            return JSONResponse({"code": "OFA_BRAIN_OFF"}, status_code=404)
+        from ofa.eyes.capture import look_image
+        from ofa.eyes.scene import build_scene
+
+        def shoot():
+            scene = build_scene(core.harness, ocr=True)
+            return scene, *look_image(core.harness, scene)
+        scene, image, _ = await asyncio.to_thread(shoot)
+        return {"image": "data:image/png;base64," + base64.b64encode(image.png).decode(), "masked": image.note,
+                "marks": len(scene.marks), "windows": [w["title"][:60] for w in scene.windows],
+                "sources": scene.sources, "sent_anywhere": False}
 
     @app.get("/v1/desktop/status")
     async def desktop_status(request: Request):
