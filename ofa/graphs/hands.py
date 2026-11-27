@@ -35,6 +35,7 @@ from .state import HandsState, jsonable
 OUTBOUND = {"send", "post", "forward", "share", "publish", "submit", "apply", "upload", "attach", "comment",
             "approve", "push", "merge", "pay", "purchase", "book", "order", "phone_send"}
 READS = {"screen", "windows", "wait_for", "read_file", "files", "look"}
+EFFECT_TIMEOUT, GLANCE_TIMEOUT = 90.0, 15.0     # longer than the slowest effect (a 60 s command)
 GLANCE_AFTER = {"open", "click", "double_click", "right_click", "key", "focus", "type", "replace", "dictate",
                 "scroll_up", "scroll_down", "close"}
 
@@ -202,7 +203,11 @@ def hands_graph(deps: Deps) -> StateGraph:
             return _done({"status": "refused", "reason": "APPROVAL_STALE",
                           "detail": "The approval is too old; ask again."}, action, name, tier)
         try:
-            result = await asyncio.to_thread(run_effect, deps.harness, deps.memory, deps.broker, action)
+            result = await asyncio.wait_for(
+                asyncio.to_thread(run_effect, deps.harness, deps.memory, deps.broker, action), EFFECT_TIMEOUT)
+        except asyncio.TimeoutError:      # the outcome is unknown: say so, and never retry it blindly
+            result = {"status": "error", "reason": "TIMEOUT",
+                      "detail": "The action did not return in time; check the screen before doing anything else."}
         except HarnessError as exc:
             result = {"status": "error", "reason": exc.code, "detail": str(exc), "options": exc.options}
         except PolicyDenied as exc:
@@ -213,12 +218,16 @@ def hands_graph(deps: Deps) -> StateGraph:
             result = {"status": "error", "reason": type(exc).__name__, "detail": str(exc)[:200]}
         result.setdefault("status", "ok")
         if action.args.get("op") in GLANCE_AFTER and result["status"] != "cancelled":
-            glance = await asyncio.to_thread(deps.harness.glance)
+            try:
+                glance = await asyncio.wait_for(asyncio.to_thread(deps.harness.glance), GLANCE_TIMEOUT)
+            except asyncio.TimeoutError:
+                glance = None
             if glance:
                 result["now"] = glance
         if tier == 2:
             verified = result["status"] == "ok" and result.get("verified", result.get("screen_changed", False))
-            outcome = "done" if verified else ("failed" if result["status"] in {"error", "refused"} else "unknown")
+            failed = result["status"] in {"error", "refused"} and result.get("reason") != "TIMEOUT"
+            outcome = "done" if verified else ("failed" if failed else "unknown")
             for dest in action.destinations or [action.target or action.verb]:
                 deps.memory.ledger_set(s["task"], action.digest(), dest, action.verb, outcome)
             result["outcome"] = outcome
