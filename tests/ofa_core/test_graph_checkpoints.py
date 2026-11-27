@@ -5,6 +5,11 @@ import time
 from ofa.audit import Audit
 from ofa.engine.fake import FakeEngine, tool
 from ofa.graphs import Runner
+from ofa.graphs.approval import approval_graph
+from ofa.graphs.brain import brain_graph
+from ofa.graphs.eyes import eyes_graph
+from ofa.graphs.form import form_graph
+from ofa.graphs.hands import hands_graph
 from ofa.graphs.deps import Deps
 from ofa.graphs.turn import turn_graph
 from ofa.harness.api import Harness
@@ -91,6 +96,10 @@ def test_finished_task_is_deleted_from_the_checkpoint_store(tmp_path):
 
 def test_graph_shows_every_part(tmp_path):
     runner, *_ = rig(tmp_path, [])
-    diagram = turn_graph(runner.deps).compile().get_graph(xray=True).draw_mermaid()
-    for node in ("route", "decide", "after_tool", "classify", "approved", "effect", "listen", "dictation_listen"):
+    deps = runner.deps
+    builders = [turn_graph(deps), brain_graph(deps), eyes_graph(deps), form_graph(deps), hands_graph(deps),
+                approval_graph(deps.approvals)]
+    diagram = "".join(b.compile().get_graph().draw_mermaid() for b in builders)
+    for node in ("route", "direct_form", "decide", "after_tool", "classify", "approved", "effect", "listen",
+                 "dictation_listen", "vision", "review", "save_offer"):
         assert node in diagram

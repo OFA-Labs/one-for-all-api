@@ -301,6 +301,7 @@ class Harness:
         el = self.element(ref)
         if not el.enabled:
             raise HarnessError("DISABLED", f"{el.text or el.role} is disabled")
+        self.b.uia_scroll_into_view(el)
         before, pixels = self._fingerprint(), self._pixels(*el.center())
         if el.source == "uia" or not el.hwnd:
             self._ensure_front(el)
@@ -314,13 +315,15 @@ class Harness:
         changed = self._fingerprint() != before or (used == "mouse" and self._pixels(*el.center()) != pixels)
         return {"clicked": el.text or el.role, "method": used, "screen_changed": changed, "verified": changed}
 
-    def type_text(self, text: str, ref: str | None = None, replace: bool = False) -> dict:
+    def type_text(self, text: str, ref: str | None = None, replace: bool = False, keyboard: bool = False) -> dict:
+        """keyboard=True types real keys: web forms built with script frameworks ignore a direct value set."""
         el = self.element(ref) if ref else None
-        self._ensure_front()
+        self._ensure_front(el)
         if el is not None:
             if el.is_password:
                 raise HarnessError("PROTECTED_FIELD", "Passwords are filled only by the credential broker")
-            if replace and self.b.uia_set_value(el, text):
+            self.b.uia_scroll_into_view(el)
+            if replace and not keyboard and self.b.uia_set_value(el, text):
                 return {"typed": len(text), "method": "set_value", "readback": self.readback(ref)}
             if el.source == "uia" and not self.b.uia_focus(el):
                 self.b.click_at(*el.center())
@@ -329,7 +332,18 @@ class Harness:
             if replace:
                 self.b.press("ctrl+a")
         self.b.type_unicode(text)
-        return {"typed": len(text), "method": "keyboard", "readback": self.readback(ref) if ref else None}
+        return {"typed": len(text), "method": "keyboard", "readback": self._settled_readback(ref, text) if ref else None}
+
+    def _settled_readback(self, ref: str, text: str, wait: float = 1.0) -> str | None:
+        """Browsers draw typed keys a moment later: re-read while the field still shows only part of the text."""
+        deadline = time.monotonic() + wait
+        value = self.readback(ref)
+        want = " ".join(text.split())
+        while value is not None and time.monotonic() < deadline and " ".join(value.split()) != want \
+                and want.startswith(" ".join(value.split())[:len(want)]):
+            time.sleep(0.1)
+            value = self.readback(ref)
+        return value
 
     def readback(self, ref: str | None) -> str | None:
         el = self.element(ref) if ref else self.b.focused_element()
@@ -368,6 +382,54 @@ class Harness:
         self._ensure_front()
         self.b.drag(a, b)
         return {"dragged": True}
+
+    def dropdown_options(self, ref: str) -> list[str]:
+        """The choices of a dropdown. Browsers list them only while it is open: open, read, close. Selects nothing."""
+        el = self.element(ref)
+        self._ensure_front(el)
+        hwnd = el.hwnd or self.last.hwnd
+        before = {(e.role, e.text) for e in self.b.uia_tree(hwnd, max_nodes=3000, budget_s=2.0, offscreen=True)[0]}
+        self.b.uia_scroll_into_view(el)
+        if not self.b.uia_invoke(el):
+            self.b.click_at(*el.center())
+        time.sleep(0.5)
+        els, _ = self.b.uia_tree(hwnd, max_nodes=3000, budget_s=2.0, offscreen=True)
+        self.b.press("escape")
+        time.sleep(0.2)
+        found = [e.text.strip() for e in els if e.role in {"list item", "menu item", "option", "data item"}
+                 and e.text.strip() and (e.role, e.text) not in before]
+        return [x for x in dict.fromkeys(found) if norm(x) not in {"choose", "select", "select your answer", "--"}]
+
+    def select_option(self, ref: str, label: str) -> dict:
+        """Open a dropdown and choose the option with this label; type it when the options are not exposed."""
+        el = self.element(ref)
+        self._ensure_front(el)
+        self.b.uia_scroll_into_view(el)
+        if not self.b.uia_invoke(el):
+            self.b.click_at(*el.center())
+        time.sleep(0.4)
+        els, _ = self.b.uia_tree(el.hwnd or self.last.hwnd, max_nodes=3000, budget_s=2.0, offscreen=True)
+        wanted = norm(label)
+        option = next((e for e in els if e.role in {"list item", "menu item", "option", "data item"}
+                       and norm(e.text) == wanted), None)
+        if option is not None:
+            self.b.uia_scroll_into_view(option)
+            if not self.b.uia_invoke(option):
+                self.b.click_at(*option.center())
+            method = "option"
+        else:
+            self.b.type_unicode(label)
+            self.b.press("enter")
+            method = "typed"
+        time.sleep(0.3)
+        value = self.b.uia_value(el)
+        if option is not None and value and norm(value) != wanted:   # still open or not applied: use the keyboard
+            self.b.type_unicode(label)
+            self.b.press("enter")
+            time.sleep(0.3)
+            value = self.b.uia_value(el)
+        verified = norm(value) == wanted if value else option is not None
+        return {"selected": label, "method": method, "verified": verified}
 
     def click_point(self, x: int, y: int, double: bool = False, button: str = "left") -> dict:
         """Click a screen point the eyes chose. Verified by looking again: the pixels around it must change."""
