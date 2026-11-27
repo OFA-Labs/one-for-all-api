@@ -159,3 +159,39 @@ def test_settings_store_validates_and_persists(tmp_path):
     with pytest.raises(ValueError):
         store.update({"brain": {}})
     assert np is not None
+
+
+def test_pick_it_up_answers_the_call_without_a_second_yes(tmp_path):
+    deps, desk = make(tmp_path)
+    watcher = Attention(deps.harness, deps.memory)
+    deps.attention = watcher
+    watcher.poll()
+    answered = []
+    call = desk.add_window("WhatsApp", "whatsapp.exe", [("Accept", "button", (900, 500, 960, 540)),
+                                                       ("Decline", "button", (980, 500, 1040, 540))])
+    desk.wins[call]["rect"] = (880, 480, 1060, 560)
+    desk.on_click["Accept"] = lambda d: answered.append(True) or d.elements[call].clear()
+    watcher.poll()
+    deps.engine.script = [[tool("look", question="accept call button")], [tool("act", kind="click", element="m1")],
+                          [tool("finish", status="done", summary="Answered the call")]]
+    result = asyncio.run(Runner(deps).handle("pick it up"))
+    assert answered and result.status == "done"
+
+
+def test_accept_on_an_ordinary_window_still_asks(tmp_path):
+    deps, desk = make(tmp_path, elements=(("Accept", "button", (20, 100, 120, 135)),))
+    deps.engine.script = [[tool("look", question="Accept")], [tool("act", kind="click", element="m1")],
+                          [tool("finish", status="done", summary="ok")]]
+    result = asyncio.run(Runner(deps).handle("pick it up"))
+    assert "Accept" not in desk.clicks and result.actions[-1]["status"] == "not_approved"
+
+
+def test_answer_rule_needs_the_users_own_words():
+    from ofa.policy import TurnLog
+    turns = TurnLog()
+    turns.add("t1", "what is on my screen", 0)
+    action = Action(verb="click", element_label="Accept", context="incoming_call", authorized_by_turn="t1",
+                    args={"op": "click"})
+    assert classify_tier(action, turns, 0) == 2
+    turns.add("t2", "call utha lo", 0)
+    assert classify_tier(action.model_copy(update={"authorized_by_turn": "t2"}), turns, 0) == 1
