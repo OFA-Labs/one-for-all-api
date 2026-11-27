@@ -1,6 +1,7 @@
 """The spoken report at the end of a task. "Completed" is said only when OFA's own evidence shows the effects."""
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import asdict, dataclass, field
 
@@ -21,7 +22,25 @@ class TurnResult:
         return asdict(self)
 
 
+FINISH_TEXT = re.compile(r"\{[^{}]*\"status\"[^{}]*\"summary\"[^{}]*\}")
+INVISIBLE = re.compile("[​⁠﻿]+")     # zero-width joiners stay: Hindi spelling uses them
+
+
+def finish_in_text(reply: str) -> tuple[str, list | None]:
+    """Some models write the finish call as text. Return the text without it, and [status, summary] if found."""
+    found = FINISH_TEXT.search(reply)
+    if not found:
+        return reply, None
+    try:
+        data = json.loads(found.group(0))
+        finished = [str(data["status"]), str(data["summary"])[:300]]
+    except (ValueError, KeyError, TypeError):
+        return reply, None
+    return (reply[:found.start()] + reply[found.end():]).strip(), finished
+
+
 def tidy(text: str) -> str:
+    text = INVISIBLE.sub("", text)
     text = re.sub(r"[*_`#>]+", "", text)
     text = re.sub(r"(\s*\.\.\.)+", "", text)
     text = re.sub(r"\s+", " ", text).strip()

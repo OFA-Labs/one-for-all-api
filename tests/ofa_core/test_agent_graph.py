@@ -236,3 +236,15 @@ def test_blocked_ui_automation_call_returns(monkeypatch):
     started = time.monotonic()
     assert win.uia_invoke(El("u0", "Restore", "button", (0, 0, 1, 1))) is True
     assert time.monotonic() - started < 1.0
+
+
+def test_finish_written_as_text_is_not_read_aloud(tmp_path):
+    r = Rig(tmp_path, [[say('No.{ "status": "done", "summary": "No window has that title." }')]])
+    result = r.turn("is that window open")
+    assert result.spoken == "No window has that title." and result.status == "done"
+
+
+def test_invisible_characters_are_removed_from_replies():
+    from ofa.graphs import tidy
+    assert tidy("see you ​​​ soon") == "see you soon"
+    assert "‍" in tidy("क्‍ष ठीक है")

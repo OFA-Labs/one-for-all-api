@@ -34,7 +34,7 @@ from .deps import Deps
 from .eyes import eyes_graph
 from .hands import hands_graph
 from .pauses import ask, heard_of
-from .report import TurnResult, report
+from .report import TurnResult, finish_in_text, report
 from .state import BrainState
 
 SYSTEM = """You are OFA, a voice assistant that operates the user's Windows laptop for them. Today: {today}. User: {name}.
@@ -122,8 +122,11 @@ def brain_graph(deps: Deps) -> StateGraph:
         except Exception as exc:
             err = EngineError("ENGINE_DOWN", True, f"The reasoning engine failed ({type(exc).__name__}).")
             return {"engine_error": asdict(err), "step": s["step"] + 1, "route": "engine_error"}
-        parts = s["spoken_parts"] + ([reply.strip()] if reply.strip() else [])
+        said, written = finish_in_text(reply)
+        parts = s["spoken_parts"] + ([said.strip()] if said.strip() else [])
         if not calls:
+            if written:                       # the summary replaces any half-sentence before it
+                return {"spoken_parts": parts, "finished": written, "step": s["step"] + 1, "route": "report"}
             return {"spoken_parts": parts, "step": s["step"] + 1, "route": "report"}
         assistant = {"role": "assistant", "content": reply or None, "tool_calls": [
             {"id": c.id, "type": "function", "function": {"name": c.name, "arguments": c.args_json}} for c in calls]}
