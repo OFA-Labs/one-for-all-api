@@ -50,24 +50,27 @@ def _answers(*heard):
     return listen
 
 
-def test_stop_during_approval_keeps_the_task_and_voids_the_approval(tmp_path):
+def test_a_stopped_task_continues_after_a_restart_and_asks_again(tmp_path):
     def stop_session(epoch):
         epoch[0] += 1                      # Caps Lock: the kill switch bumps the epoch
         return None
     runner, desk, epoch, spoken = rig(tmp_path, [stop_session], db=True)
 
     async def run():
+        first = await runner.handle("send it to Asha")
+        assert first.status == "cancelled" and runner.last_thread and "Send" not in desk.clicks
+        await runner.aclose()
+        restarted = Runner(runner.deps, tmp_path / "graphs.db")       # a new process, same disk
+        runner.deps.engine.script = list(SEND)
+        runner.deps.approvals.set_epoch(epoch[0])
+        runner.deps.voice._listen = _answers(Heard("haan bhej do"))
         try:
-            first = await runner.handle("send it to Asha")
-            assert first.status == "cancelled" and runner.last_thread
-            runner.deps.approvals.set_epoch(epoch[0])
-            runner.deps.voice._listen = _answers(Heard("yes"))
-            return await runner.resume_last()     # asks again; even a yes cannot use the voided request
+            return await restarted.resume_last(), restarted.last_thread
         finally:
-            await runner.aclose()
-    resumed = asyncio.run(run())
-    assert resumed is not None and "Send" not in desk.clicks
-    assert sum("Should I go ahead" in s for s in spoken) >= 2
+            await restarted.aclose()
+    resumed, left = asyncio.run(run())
+    assert resumed.status == "done" and desk.clicks.count("Send") == 1 and left is None
+    assert sum(s.startswith("I'm about to send") for s in spoken) == 2
 
 
 def test_finished_task_is_deleted_from_the_checkpoint_store(tmp_path):

@@ -1,8 +1,8 @@
 """Runs the turn graph for the voice front end and answers its interrupts.
 
 Each task is one checkpointed thread. When a node pauses with a Question, drive() speaks it, listens, and
-resumes the thread with Command(resume=Answer). A thread that finished is deleted from the checkpoint store;
-one that was stopped or left waiting stays, so "continue the last task" can pick it up later.
+resumes the thread with Command(resume=Answer). A thread that finished is deleted from the checkpoint store.
+At most one unfinished thread is kept, so "continue the last task" can start it again, also after a restart.
 """
 from __future__ import annotations
 
@@ -54,7 +54,6 @@ async def drive(graph, payload, config: dict, io, stopped=lambda: False) -> dict
 class Runner:
     def __init__(self, deps: Deps, db_path: Path | None = None):
         self.deps, self.db_path = deps, db_path
-        self.last_thread: str | None = None
         self._graph = None
         self._loop = None
 
@@ -80,30 +79,48 @@ class Runner:
     def _config(self, thread: str) -> dict:
         return {"configurable": {"thread_id": thread}}
 
+    @property
+    def last_thread(self) -> str | None:
+        """The unfinished task, remembered on this computer so it survives a restart."""
+        return self.deps.memory.get("last_thread")
+
     async def handle(self, text: str, confidence: float | None = None) -> TurnResult:
+        await self._forget(self.last_thread)
         thread = f"{self.deps.epoch()}-{uuid4().hex[:10]}"
-        self.last_thread = thread
+        self.deps.memory.set("last_thread", thread)
         return await self._run({"text": text, "confidence": confidence}, thread)
 
     async def resume_last(self) -> TurnResult | None:
-        """Continue the most recent task that was stopped or left waiting; None when there is nothing to resume."""
-        if not self.last_thread:
+        """Start the stopped task again from the user's own words; None when there is nothing to continue.
+
+        A stop voids the old session, including any approval given in it, so the task is not replayed from the
+        middle: it reads the screen afresh, asks again before anything consequential, and the action ledger
+        still refuses to repeat a send it knows succeeded.
+        """
+        thread = self.last_thread
+        if not thread:
             return None
         graph = await self.graph()
-        snapshot = await graph.aget_state(self._config(self.last_thread))
-        if not snapshot.next:
+        snapshot = await graph.aget_state(self._config(thread))
+        text = snapshot.values.get("text")
+        if not snapshot.next or not text:
             return None
-        return await self._run(None, self.last_thread)
+        return await self.handle(text, snapshot.values.get("confidence"))
+
+    async def _forget(self, thread: str | None) -> None:
+        if not thread:
+            return
+        try:
+            await (await self.graph()).checkpointer.adelete_thread(thread)
+        except Exception:
+            log.debug("could not delete thread", exc_info=True)
 
     async def _run(self, payload, thread: str) -> TurnResult:
         graph, epoch = await self.graph(), self.deps.epoch()
         out = await drive(graph, payload, self._config(thread), self.deps.voice, lambda: self.deps.epoch() != epoch)
         if out is None or not out.get("result"):
             return TurnResult("", "cancelled")
-        try:
-            await graph.checkpointer.adelete_thread(thread)    # finished: keep no conversation on disk
-        except Exception:
-            log.debug("could not delete finished thread", exc_info=True)
+        await self._forget(thread)                     # finished: keep no conversation on disk
         if self.last_thread == thread:
-            self.last_thread = None
+            self.deps.memory.set("last_thread", None)
         return TurnResult(**out["result"])
