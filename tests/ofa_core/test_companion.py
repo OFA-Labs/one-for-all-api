@@ -239,3 +239,23 @@ def test_long_replies_are_spoken_in_sentence_chunks():
     text = " ".join(f"Step {i} is to do the thing carefully." for i in range(30))
     parts = sentences(text)
     assert len(parts) > 3 and all(len(p) <= 280 for p in parts) and " ".join(parts) == text
+
+
+def test_wait_and_ruko_pause_instead_of_closing(rig):
+    async def run():
+        for word in ("wait", "ruko"):
+            arm(rig.session)
+            await (await hear(rig, word))
+            assert rig.session.machine.state != State.IDLE and not rig.brain.paused.is_set()
+            rig.brain.paused.set()
+            rig.session.state(State.IDLE)
+        arm(rig.session)
+        await (await hear(rig, "stop"))
+        assert rig.session.machine.state == State.IDLE
+    asyncio.run(run())
+
+
+def test_dictation_allows_longer_utterances(rig):
+    assert rig.session._utterance_limit() == rig.session.settings.max_utterance_seconds
+    rig.brain.dictating = True
+    assert rig.session._utterance_limit() == 60

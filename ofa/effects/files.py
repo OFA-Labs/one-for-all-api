@@ -9,6 +9,7 @@ from pathlib import Path
 
 from ..memory import Memory
 from ..policy import Action
+from ..policy.tiers import SECRET_FILE
 from .scopes import SCOPES
 
 
@@ -43,7 +44,7 @@ def read_file(memory: Memory, path: str) -> dict:
     p = Path(path)
     if not p.is_file():
         return {"status": "error", "reason": "NOT_A_FILE"}
-    if p.suffix.lower() in {".env", ".key", ".pem", ".kdbx", ".dat"} or ".env" in p.name.lower():
+    if SECRET_FILE.search(" " + p.name):
         return {"status": "refused", "reason": "SECRET_FILE", "detail": "OFA does not read credential files"}
     data = p.read_bytes()[:8192]
     text = data.decode("utf-8", "replace")

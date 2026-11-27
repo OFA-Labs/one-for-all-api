@@ -4,9 +4,10 @@ from __future__ import annotations
 import re
 
 CONTROLS = {
-    "stop": {"stop", "cancel", "stop it", "cancel it", "cancel that", "never mind", "nevermind", "ruko", "ruk jao",
-             "bas", "band karo", "rehne do", "रुको", "बस", "रहने दो", "cancel karo"},
-    "pause": {"pause", "hold on", "wait", "ek minute", "ek second", "thoda ruko"},
+    "stop": {"stop", "cancel", "stop it", "cancel it", "cancel that", "never mind", "nevermind",
+             "bas", "band karo", "rehne do", "बस", "रहने दो", "cancel karo"},
+    # "wait" and "ruko" hold the running task; they never end the session.
+    "pause": {"pause", "hold on", "wait", "ek minute", "ek second", "thoda ruko", "ruko", "ruk", "ruk jao", "रुको", "रुक"},
     "resume": {"resume", "continue", "go on", "carry on", "chalo", "aage badho", "continue karo"},
 }
 

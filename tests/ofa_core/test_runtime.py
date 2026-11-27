@@ -77,7 +77,7 @@ def test_pages_are_served(core):
 
 
 def test_controls_and_echo_guard():
-    assert control_of("Stop.") == "stop" and control_of("ruko") == "stop" and control_of("pause") == "pause"
+    assert control_of("Stop.") == "stop" and control_of("ruko") == "pause" and control_of("bas") == "stop" and control_of("pause") == "pause"
     assert control_of("stop the music in spotify") is None
     guard = EchoGuard()
     guard.note("Completed. Anything else?")

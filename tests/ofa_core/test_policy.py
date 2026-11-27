@@ -217,3 +217,26 @@ def test_injected_approval_text_has_no_path():
     with pytest.raises(PolicyDenied) as e:
         store.consume("forged-id", a, 0)
     assert e.value.code == "NO_APPROVAL"
+
+
+@pytest.mark.parametrize("command", [r"type C:\x\.env", "cat .env", "cat .env.local", r"type C:\keys\server.pem",
+                                     "cat ~/.ssh/id_rsa", "type credentials.json"])
+def test_shell_reads_of_secret_files_need_a_spoken_yes(command):
+    assert classify_tier(Action(verb="run_command_readonly", payload=command)) == 2
+
+
+@pytest.mark.parametrize("command", ["git status", "dir", "cat notes.txt", "type readme.md"])
+def test_plain_readonly_commands_stay_tier0(command):
+    assert classify_tier(Action(verb="run_command_readonly", payload=command)) == 0
+
+
+def test_shell_refuses_ofa_data_and_file_reader_refuses_secret_names(tmp_path, monkeypatch):
+    from ofa.config import data_dir
+    from ofa.effects.files import read_file
+    from ofa.effects.shell import run_command
+    from ofa.memory import Memory
+    monkeypatch.setenv("OFA_DATA_DIR", str(tmp_path))
+    assert run_command(Action(verb="run_command", payload=f"dir {data_dir()}"))["status"] == "refused"
+    for name in (".env.production", "id_ed25519", "credentials.json"):
+        (tmp_path / name).write_text("x")
+        assert read_file(Memory(tmp_path / "m.db"), str(tmp_path / name))["status"] == "refused"

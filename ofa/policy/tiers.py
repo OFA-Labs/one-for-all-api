@@ -30,6 +30,9 @@ SEND_KEYS = {"enter", "return", "ctrl+enter", "ctrl+return", "cmd+enter", "alt+s
 READONLY_COMMANDS = re.compile(r"^\s*(ls|dir|pwd|cd|cat|type|echo|git (status|diff|log|show|branch)|"
                                r"where|which|whoami|python --version|node --version)\b[^|;&><`$]*$", re.I)
 SENSITIVE_HANDLE = re.compile(r"^vault:D2/|/totp|^pm:.*/totp", re.I)
+# Files that hold credentials. OFA never reads them by itself; a shell command naming one needs a spoken yes.
+SECRET_FILE = re.compile(r"(^|[\\/\s\"'])(\.env[\w.-]*|[\w.-]*\.(env|key|pem|pfx|p12|kdbx|dat)|credentials[\w.-]*|"
+                         r"id_(rsa|ed25519|ecdsa)[\w.-]*)(?=$|[\s\"';|&)])", re.I)
 
 
 @dataclass
@@ -59,7 +62,8 @@ def classify_tier(action: Action, turns: TurnLog | None = None, epoch: int = 0) 
     if verb in TIER2:
         tier = 2
     elif verb == "run_command_readonly":
-        tier = 0 if action.payload and READONLY_COMMANDS.match(action.payload) else 2
+        readonly = bool(action.payload) and READONLY_COMMANDS.match(action.payload) is not None
+        tier = 0 if readonly and not SECRET_FILE.search(action.payload) else 2
     elif verb in TIER0:
         tier = 0
     elif verb in TIER1:

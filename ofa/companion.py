@@ -141,6 +141,10 @@ class OfaBrain:
                 return True
         return False
 
+    @staticmethod
+    def control_kind(text: str) -> str | None:
+        return control_of(text)
+
     def control(self, text: str) -> str | None:
         """Apply pause/resume. Returns the reply to speak, or None for an ordinary request."""
         kind = control_of(text)
