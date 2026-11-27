@@ -78,7 +78,9 @@ def test_sign_in_tier1_when_asked_by_service_name():
     turns = TurnLog()
     turns.add("t", "sign in to github", 0)
     a = Action(verb="fill", handle="vault:D3/github/password#1", target="e7", authorized_by_turn="t")
-    assert classify_tier(a, turns, 0) == 1
+    assert classify_tier(a, turns, 0) == 2          # every private item is asked for, even when named
+    session = a.model_copy(update={"handle": "session:github"})
+    assert classify_tier(session, turns, 0) == 1
 
 
 def test_engine_hint_raises_never_lowers():
