@@ -1,4 +1,4 @@
-"""End-to-end with fake engine + fake desktop: S6, R4, R5, A3, A9, D1, D7, P-gate, W4, X4, loop detection."""
+"""The agent graphs end to end with a fake engine and desktop: S6, R4, R5, A3, A9, D1, D7, P-gate, W4, X4, loops."""
 import asyncio
 import time
 
@@ -8,14 +8,15 @@ from ofa.audit import Audit
 from ofa.egress import EGRESS
 from ofa.engine.base import EngineError
 from ofa.engine.fake import FakeEngine, say, tool
-from ofa.executor import Executor
+from ofa.graphs import Runner
+from ofa.graphs.deps import Deps
 from ofa.harness.api import Harness
 from ofa.harness.fake import FakeDesktop
 from ofa.harness.win import El
 from ofa.memory import Memory
-from ofa.orchestrator import Orchestrator
 from ofa.policy import ApprovalStore, TurnLog
 from ofa.policy.approval import Heard
+from ofa.ports import VoicePort
 
 
 class Rig:
@@ -26,10 +27,12 @@ class Rig:
         self.harness = Harness(self.desk)
         self.memory = Memory(tmp_path / "m.db")
         self.approvals = ApprovalStore(window=0.05)
-        self.x = Executor(self.harness, self.approvals, TurnLog(), Audit(tmp_path / "audit"), self.memory, None,
-                          self.speak, self.listen, lambda: self.epoch)
         self.engine = FakeEngine(script)
-        self.o = Orchestrator(self.engine, self.x, self.memory, self.speak, self.listen)
+        voice = VoicePort()
+        voice.attach(speak=self.speak, listen=self.listen)
+        self.deps = Deps(self.harness, self.approvals, TurnLog(), Audit(tmp_path / "audit"), self.memory, None,
+                         self.engine, voice, lambda: self.epoch)
+        self.runner = Runner(self.deps)
 
     async def speak(self, text):
         self.spoken.append(text)
@@ -40,7 +43,7 @@ class Rig:
         return self.queue.pop(0) if self.queue else None
 
     def turn(self, text):
-        return asyncio.run(self.o.handle(text))
+        return asyncio.run(self.runner.handle(text))
 
 
 def chat_window(desk):
@@ -156,9 +159,7 @@ def test_duplicate_send_not_repeated(tmp_path):
     r = Rig(tmp_path, script, heard=[Heard("yes"), Heard("yes")])
     chat_window(r.desk)
     r.turn("send hi to asha")
-    r.x.task = r.x.task  # same ledger
-    r.memory.ledger_set("other", r.x.task, "x", "y", "z")
-    asyncio.run(r.o.handle("send hi to asha again"))
+    r.turn("send hi to asha again")          # a new task: the ledger still knows this exact send happened
     assert r.desk.clicks.count("Send") == 1
 
 
@@ -194,8 +195,8 @@ def test_kill_switch_cancels_turn(tmp_path):
 
     async def stop_then_open():
         r.epoch = 1
-        return await r.o.handle("open notepad")
-    r.o.x.turns.epoch = 0
+        return await r.runner.handle("open notepad")
+    r.deps.turns.epoch = 0
     res = asyncio.run(stop_then_open())
     assert res.status in {"done", "cancelled"}  # new epoch starts clean; nothing from epoch 0 survives
 
@@ -210,6 +211,6 @@ def test_generic_type_cannot_paraphrase_dictation(tmp_path):
 
 
 def test_spoken_reply_is_tidy():
-    from ofa.orchestrator import tidy
+    from ofa.graphs import tidy
     assert tidy("Typed it. Anything else?. Completed. Anything else?") == "Typed it. Completed. Anything else?"
     assert tidy("Typed see ... ... ... it") == "Typed see it"

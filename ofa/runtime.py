@@ -1,4 +1,4 @@
-"""Builds the OFA core: engine, policy, vault, harness, executor and orchestrator.
+"""Builds the OFA core: engine, policy, vault, harness and the LangGraph agent (ofa.graphs).
 The voice front end attaches through ofa.ports (see ofa.companion)."""
 from __future__ import annotations
 
@@ -11,10 +11,10 @@ from .audit import Audit
 from .config import OfaConfig, data_dir
 from .egress import EGRESS, install_log_filter
 from .engine import get_engine
-from .executor import Executor
+from .graphs import Runner
+from .graphs.deps import Deps
 from .harness.api import Harness
 from .memory import Memory
-from .orchestrator import Orchestrator
 from .ports import VoicePort
 from .policy import ApprovalStore, TurnLog
 from .vault.broker import Broker
@@ -35,8 +35,8 @@ class Core:
     vault: Vault
     broker: Broker
     engine: object
-    executor: Executor
-    orchestrator: Orchestrator
+    deps: Deps
+    runner: Runner
     log: deque = field(default_factory=lambda: deque(maxlen=200))
     voice: VoicePort = field(default_factory=VoicePort)
     epoch_ref: list = field(default_factory=lambda: [0])
@@ -75,14 +75,14 @@ def build_core(cfg: OfaConfig | None = None, harness: Harness | None = None, eng
             voice.display(kind, None)
 
     epoch_ref = [0]
-    executor = Executor(harness, approvals, turns, audit, memory, broker, voice.speak, voice.listen,
-                        lambda: epoch_ref[0], lang=lambda: cfg.reply_language, show=show,
-                        listen_dictation=voice.listen_dictation, pause_gate=voice.pause_gate)
-    handles = lambda: [m["handle"] for m in vault.list()] + [f"session:{s}" for s in memory.get("sessions", [])]
-    orch = Orchestrator(engine, executor, memory, voice.speak, voice.listen, handles=handles,
-                        lang=lambda: cfg.reply_language, name=lambda: memory.get("preferred_name", cfg.preferred_name),
-                        show=show)
-    core = Core(cfg, harness, approvals, turns, audit, memory, vault, broker, engine, executor, orch,
+    deps = Deps(harness, approvals, turns, audit, memory, broker, engine, voice, lambda: epoch_ref[0],
+                lang=lambda: cfg.reply_language, name=lambda: memory.get("preferred_name", cfg.preferred_name),
+                handles=lambda: [m["handle"] for m in vault.list()] + [f"session:{s}" for s in memory.get("sessions", [])],
+                show=show)
+    # Saved progress lives on disk for real use; fake-engine runs (tests) keep it in memory.
+    on_disk = cfg.engine != "fake" and cfg.checkpoints == "sqlite"
+    runner = Runner(deps, root / "graphs.db" if on_disk else None)
+    core = Core(cfg, harness, approvals, turns, audit, memory, vault, broker, engine, deps, runner,
                 voice=voice, epoch_ref=epoch_ref)
     built["core"] = core
     approvals.on_event = lambda kind, req: core.event("approval_" + kind, spoken=req.spoken[:200])
