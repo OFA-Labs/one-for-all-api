@@ -36,7 +36,6 @@ SEND_CONTEXTS = {"compose", "message", "chat", "terminal", "command", "comment",
 SEND_KEYS = {"enter", "return", "ctrl+enter", "ctrl+return", "cmd+enter", "alt+s", "ctrl+shift+enter"}
 READONLY_COMMANDS = re.compile(r"^\s*(ls|dir|pwd|cd|cat|type|echo|git (status|diff|log|show|branch)|"
                                r"where|which|whoami|python --version|node --version)\b[^|;&><`$]*$", re.I)
-SENSITIVE_HANDLE = re.compile(r"^vault:D2/|/totp|^pm:.*/totp", re.I)
 # Files that hold credentials. OFA never reads them by itself; a shell command naming one needs a spoken yes.
 SECRET_FILE = re.compile(r"(^|[\\/\s\"'])(\.env[\w.-]*|[\w.-]*\.(env|key|pem|pfx|p12|kdbx|dat)|credentials[\w.-]*|"
                          r"id_(rsa|ed25519|ecdsa)[\w.-]*)(?=$|[\s\"';|&)])", re.I)
@@ -94,7 +93,8 @@ def classify_tier(action: Action, turns: TurnLog | None = None, epoch: int = 0) 
         tier = 2
     if verb in {"type_text", "paste", "dictate"} and "\n" in (action.payload or "") and (action.context or "") in {"terminal", "command", "chat", "message"}:
         tier = 2   # a newline would submit
-    if verb == "fill" and action.handle and SENSITIVE_HANDLE.search(action.handle):
+    # Every use of a private item (vault or password manager) needs a spoken yes; sessions carry no secret.
+    if verb == "fill" and action.handle and action.handle.startswith(("vault:", "pm:")):
         tier = 2
     if verb == "change_setting" or (verb == "open_settings_page" and action.context == "security"):
         tier = max(tier, 2 if verb == "change_setting" else 0)

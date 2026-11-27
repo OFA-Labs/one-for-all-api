@@ -18,6 +18,9 @@ from .events import Events
 from .pairing import GrantRevoked
 
 
+CORPUS_BYTES = 262_144      # corpus documents (a resume) are larger than any other request
+
+
 def create_app(settings: Settings, events: Events, session: Any, token: str,
                pairing=None, catalog=None, runtime=None, shutdown=None) -> FastAPI:
     if len(token) < 32:
@@ -54,7 +57,7 @@ def create_app(settings: Settings, events: Events, session: Any, token: str,
             body = bytearray()
             async for chunk in request.stream():
                 body.extend(chunk)
-                if len(body) > 8192:
+                if len(body) > (CORPUS_BYTES if request.url.path.startswith("/v1/corpus/") else 8192):
                     return finish(JSONResponse({"code": "REQUEST_TOO_LARGE"}, status_code=413),origin)
             request._body = bytes(body)
         try:
@@ -210,6 +213,9 @@ def create_app(settings: Settings, events: Events, session: Any, token: str,
         return {"image": "data:image/png;base64," + base64.b64encode(image.png).decode(), "masked": image.note,
                 "marks": len(scene.marks), "windows": [w["title"][:60] for w in scene.windows],
                 "sources": scene.sources, "sent_anywhere": False}
+
+    from .corpus_api import corpus_router
+    app.include_router(corpus_router(auth, ofa_core))
 
     @app.get("/v1/desktop/status")
     async def desktop_status(request: Request):
