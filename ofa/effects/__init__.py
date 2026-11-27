@@ -5,7 +5,7 @@ from ..harness.api import Harness, HarnessError
 from ..memory import Memory
 from ..policy import Action
 from ..vault.broker import Broker
-from . import credentials, desktop, files, shell
+from . import credentials, desktop, files, shell, system
 
 DESKTOP = {
     "open": desktop.open_target, "windows": desktop.list_windows, "screen": desktop.read_screen,
@@ -32,4 +32,6 @@ def run_effect(h: Harness, memory: Memory, broker: Broker | None, a: Action) -> 
         return files.write_file(memory, a)
     if op == "run_command":
         return shell.run_command(a)
+    if op == "system":
+        return system.run_system(h, a)
     raise HarnessError("UNKNOWN_OP", str(op))

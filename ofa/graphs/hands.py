@@ -50,6 +50,21 @@ def _done(out: dict, action: Action | None = None, name: str = "", tier: int = 2
 
 
 def hands_graph(deps: Deps) -> StateGraph:
+    def on_popup(action: Action) -> bool:
+        """Is this click aimed at the pop-up that just appeared (an incoming call)?"""
+        popup = deps.attention.latest()
+        if not popup:
+            return False
+        l, t, r, b = popup["rect"]
+        if action.args.get("x") is not None:
+            return l <= action.args["x"] < r and t <= action.args["y"] < b
+        try:
+            el = deps.harness.element(action.args.get("element") or "")
+        except HarnessError:
+            return False
+        x, y = el.center()
+        return el.hwnd == popup["hwnd"] or (l <= x < r and t <= y < b)
+
     async def hold(s: HandsState) -> dict:
         await deps.voice.pause_gate()            # spoken "pause" holds here; "stop" changes the epoch
         return {"hands_epoch": deps.epoch(), "tool_out": None, "action_info": None}
@@ -72,7 +87,13 @@ def hands_graph(deps: Deps) -> StateGraph:
         except ToolArgError as exc:
             return _done({"status": "error", "reason": "BAD_ARGS", "detail": str(exc)})
         deps.show("acting")
+        hands = deps.settings.get().hands
+        if action.args.get("op") == "system" and not hands.system_controls:
+            return _done({"status": "refused", "reason": "SYSTEM_CONTROLS_OFF",
+                          "detail": "System controls are turned off in Settings → Hands."}, action, call["name"])
         action = describe(deps.harness, action)
+        if hands.answer_calls and action.verb == "click" and on_popup(action):
+            action = action.model_copy(update={"context": "incoming_call"})
         if paraphrases_dictation(action, s["text"]):
             return _done({"status": "rejected", "reason": "VERBATIM_MISMATCH",
                           "detail": "The user dictated: type their exact words (use dictate), or mode=compose "

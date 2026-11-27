@@ -10,14 +10,21 @@ from .action import Action
 TIER0 = {"screen", "find_text", "read", "read_screen", "scroll", "navigate", "browse", "search_public",
          "wait_for", "focus", "switch", "minimize", "maximize", "restore", "arrange", "observe",
          "screenshot_local", "list_windows", "list_apps", "draft", "copy", "speak", "ask_user",
-         "open_settings_page", "read_file", "list_files", "goal_step", "remember", "hover", "select"}
+         "open_settings_page", "read_file", "list_files", "goal_step", "remember", "hover", "select",
+         "list_processes"}
 TIER1 = {"open", "close", "sign_in", "fill", "type_text", "dictate", "paste", "file_write_new", "click", "key",
-         "launch"}
+         "launch", "system_control"}
+# Tier 1 verbs that are direct device controls: the request itself is the authority, no target to name.
+NO_TARGET = {"click", "key", "type_text", "dictate", "paste", "system_control"}
 TIER2 = {"send", "post", "forward", "share", "publish", "submit", "apply", "upload", "attach", "comment",
          "approve", "push", "merge", "delete", "overwrite", "pay", "purchase", "book", "order",
          "create_account", "change_password", "change_security", "change_permission", "grant_permission",
          "run_command", "search_private", "release_otp", "file_write", "install", "uninstall", "sign_out",
-         "change_setting", "phone_send"}
+         "change_setting", "phone_send", "clipboard_read", "end_process"}
+ANSWER_LABEL = re.compile(r"\b(accept|answer|pick up|join|receive)\b", re.I)
+ANSWER_WORDS = re.compile(r"\b(pick (it |the call )?up|answer|accept|receive|join|uthao|utha lo|utha do|"
+                          r"uthaa|receive karo|call lo)\b", re.I)
+CLIPBOARD_WORDS = re.compile(r"\b(clipboard|copied|paste)\b", re.I)
 
 EFFECT_WORDS = re.compile(
     r"\b(send|post|submit|pay|purchase|buy|order|book|delete|remove|trash|discard|share|publish|merge|"
@@ -57,6 +64,13 @@ class TurnLog:
         return bool(said) and bool(tokens) and any(t in said for t in tokens)
 
 
+def said(turns: TurnLog | None, turn_id: str | None, epoch: int, pattern: re.Pattern) -> bool:
+    """Did the user's own words this turn (never tool or screen text) match?"""
+    if not turns or not turn_id or epoch != turns.epoch:
+        return False
+    return bool(pattern.search(turns.turns.get(turn_id, "")))
+
+
 def classify_tier(action: Action, turns: TurnLog | None = None, epoch: int = 0) -> int:
     verb = action.verb
     if verb in TIER2:
@@ -84,8 +98,14 @@ def classify_tier(action: Action, turns: TurnLog | None = None, epoch: int = 0) 
         tier = 2
     if verb == "change_setting" or (verb == "open_settings_page" and action.context == "security"):
         tier = max(tier, 2 if verb == "change_setting" else 0)
+    # Answering a call the user asked to pick up: the button says "Accept", but the user already said so.
+    if (verb == "click" and action.context == "incoming_call" and ANSWER_LABEL.search(action.element_label or "")
+            and said(turns, action.authorized_by_turn, epoch, ANSWER_WORDS)):
+        tier = 1
+    if verb == "clipboard_read" and said(turns, action.authorized_by_turn, epoch, CLIPBOARD_WORDS):
+        tier = 1
     # Tier 1 needs the user's own words naming the target in this epoch; otherwise ask.
-    if tier == 1 and verb not in {"click", "key", "type_text", "dictate", "paste"}:
+    if tier == 1 and verb not in NO_TARGET:
         named = turns and any(turns.names(action.authorized_by_turn, ref, epoch)
                               for ref in (action.target, action.handle.split("/", 1)[-1] if action.handle else None))
         if not named:
