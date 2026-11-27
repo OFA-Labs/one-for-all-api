@@ -18,6 +18,7 @@ from ofa.engine.fake import FakeEngine  # noqa: E402
 from ofa.graphs.approval import approval_graph  # noqa: E402
 from ofa.graphs.brain import brain_graph  # noqa: E402
 from ofa.graphs.eyes import eyes_graph  # noqa: E402
+from ofa.graphs.form import form_graph  # noqa: E402
 from ofa.graphs.hands import hands_graph  # noqa: E402
 from ofa.graphs.turn import turn_graph  # noqa: E402
 from ofa.harness.api import Harness  # noqa: E402
@@ -35,6 +36,8 @@ How they fit together and why: [ARCHITECTURE.md](ARCHITECTURE.md). Code: `ofa/gr
 - **eyes** answers "what is on screen / where is X": accessibility first, OCR for text-poor windows, then the
   vision provider chosen in Settings → Eyes (local, separate model, or the reasoning model). Every element gets a
   mark (m1, m2, …) the hands can click.
+- **form** fills a multi-page web form: read the page, one model call to map facts to questions, type through
+  hands, ask you only what is missing, Next, and a spoken yes before Submit.
 - **hands** is the policy gate. Tier 0/1 actions run straight away; Tier 2 needs a spoken yes through **approval**.
   An approved action runs in its own `effect` node, so answering a question never repeats an earlier effect.
 - **approval** speaks the exact action, listens, re-asks once, and accepts only microphone speech that is not
@@ -51,6 +54,7 @@ def main() -> None:
     deps = core.deps
     parts = [INTRO]
     for title, builder in (("turn", turn_graph(deps)), ("brain", brain_graph(deps)), ("eyes", eyes_graph(deps)),
+                           ("form", form_graph(deps)),
                            ("hands", hands_graph(deps)),
                            ("approval", approval_graph(deps.approvals, deps.lang))):
         mermaid = builder.compile().get_graph().draw_mermaid()
