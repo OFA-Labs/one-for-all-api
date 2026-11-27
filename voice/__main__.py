@@ -192,6 +192,7 @@ async def serve(handoff: Any, consent: bool, overlay: Overlay,
         await asyncio.gather(serving, waiting, maintenance, warming, return_exceptions=True)
         await asyncio.to_thread(engine.close)
         if brain is not None:
+            brain.core.deps.attention.stop()
             await brain.core.runner.aclose()
         for hand in hands.values():
             if hasattr(hand, "close"):

@@ -61,6 +61,7 @@ class OfaBrain:
         self.core.voice.attach(speak=self.speak, listen=self.listen, listen_dictation=self.listen_dictation,
                                pause_gate=self.paused.wait, display=self.display)
         self.core.deps.control = self.apply_control
+        self.core.deps.attention.start()              # notices call pop-ups even before Caps Lock is pressed
 
     @property
     def waiting(self) -> bool:

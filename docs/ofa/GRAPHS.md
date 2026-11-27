@@ -6,6 +6,9 @@ How they fit together and why: [ARCHITECTURE.md](ARCHITECTURE.md). Code: `ofa/gr
 - **turn** receives one finished sentence. `pause` / `continue` are answered at once; everything else goes to the brain.
 - **brain** loops engine → tools until the engine calls `finish`, 25 steps pass, or the same call returns the same
   result three times. `report` says "Completed" only when OFA's own evidence shows the effect.
+- **eyes** answers "what is on screen / where is X": accessibility first, OCR for text-poor windows, then the
+  vision provider chosen in Settings → Eyes (local, separate model, or the reasoning model). Every element gets a
+  mark (m1, m2, …) the hands can click.
 - **hands** is the policy gate. Tier 0/1 actions run straight away; Tier 2 needs a spoken yes through **approval**.
   An approved action runs in its own `effect` node, so resuming a saved task never repeats it.
 - **approval** speaks the exact action, listens, re-asks once, and accepts only microphone speech that is not
@@ -60,6 +63,7 @@ graph TD;
 	memory_tool(memory_tool)
 	after_tool(after_tool)
 	hands(hands)
+	eyes(eyes)
 	report(report)
 	__end__([<p>__end__</p>]):::last
 	__start__ --> start;
@@ -76,10 +80,12 @@ graph TD;
 	engine_error -.-> engine_wait;
 	engine_wait -.-> __end__;
 	engine_wait -.-> decide;
+	eyes --> after_tool;
 	finish --> after_tool;
 	hands --> after_tool;
 	memory_tool --> after_tool;
 	next_call -.-> ask_user;
+	next_call -.-> eyes;
 	next_call -.-> finish;
 	next_call -.-> hands;
 	next_call -.-> memory_tool;
@@ -87,6 +93,31 @@ graph TD;
 	remember --> after_tool;
 	start --> decide;
 	report --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
+```
+
+## eyes
+
+```mermaid
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	read(read)
+	ocr(ocr)
+	vision(vision)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> read;
+	ocr -.-> __end__;
+	ocr -.-> vision;
+	read -.-> __end__;
+	read -.-> ocr;
+	vision --> __end__;
 	classDef default fill:#f2f0ff,line-height:1.2
 	classDef first fill-opacity:0
 	classDef last fill:#bfb6fc

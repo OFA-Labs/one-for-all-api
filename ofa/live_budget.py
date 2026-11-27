@@ -6,7 +6,7 @@ import os
 import threading
 from pathlib import Path
 
-CAPS = {"groq": 900, "deepgram": 600, "gradium": 300}
+CAPS = {"groq": 900, "groq_vision": 300, "deepgram": 600, "gradium": 300}
 _lock = threading.Lock()
 
 

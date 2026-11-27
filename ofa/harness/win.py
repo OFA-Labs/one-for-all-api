@@ -45,6 +45,7 @@ class El:
     value: str | None = None
     automation_id: str = ""
     focusable: bool = False
+    hwnd: int = 0                 # owning window, set when one reading spans several windows (eyes)
     node: object = field(default=None, repr=False, compare=False)
 
     def center(self) -> tuple[int, int]:
@@ -370,6 +371,14 @@ def capture(rect: tuple[int, int, int, int]) -> tuple[bytes, int, int]:
     with mss.mss() as s:
         shot = s.grab({"left": l, "top": t, "width": max(1, r - l), "height": max(1, b - t)})
         return bytes(shot.bgra), shot.width, shot.height
+
+
+def virtual_screen() -> tuple[int, int, int, int]:
+    """The rectangle covering every monitor (left, top, right, bottom)."""
+    import mss
+    with mss.mss() as s:
+        m = s.monitors[0]
+        return m["left"], m["top"], m["left"] + m["width"], m["top"] + m["height"]
 
 
 def to_png(bgra: bytes, w: int, h: int) -> bytes:

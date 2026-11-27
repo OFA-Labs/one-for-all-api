@@ -15,6 +15,21 @@ from ..engine.base import RedactedImage
 BROWSERS = {"chrome.exe", "msedge.exe", "firefox.exe", "brave.exe", "opera.exe", "vivaldi.exe", "arc.exe"}
 ADDRESS_NAMES = ("address and search bar", "address bar", "search or enter address", "search with google or enter address")
 _REDACT_TOKEN = object()
+MARK = re.compile(r"^[uom]\d+$")
+
+
+def mask(bgra: bytes, width: int, height: int, origin: tuple[int, int], boxes) -> bytes:
+    """Black out screen rectangles (password fields, vault-filled fields) in a BGRA capture."""
+    buf = bytearray(bgra)
+    ox, oy = origin
+    for l, t, r, b in boxes:
+        x0, x1 = max(0, l - ox), min(width, r - ox)
+        if x1 <= x0:
+            continue
+        for y in range(max(0, t - oy), min(height, b - oy)):
+            row = y * width * 4
+            buf[row + x0 * 4: row + x1 * 4] = b"\x00\x00\x00\xff" * (x1 - x0)
+    return bytes(buf)
 
 
 class HarnessError(RuntimeError):
@@ -51,6 +66,7 @@ class Harness:
         self.b = backend
         self.last: Snapshot | None = None
         self.filled_refs: set[tuple[int, str]] = set()     # broker-filled fields to redact
+        self.last_sight: dict | None = None                 # what the eyes last pointed at (mark, point, label)
         self.vision_ok = False
 
     # --- windows ---------------------------------------------------------------------------
@@ -267,7 +283,7 @@ class Harness:
     def element(self, ref: str):
         if self.last is None:
             raise HarnessError("NO_READING", "Read the screen first")
-        if ref.startswith(("u", "o")) and ref[1:].isdigit():
+        if MARK.match(ref):
             return self.last.by_id(ref)
         r = self.find_text(ref)
         if r["match"] in {"exact", "contains"} and len(r["elements"]) >= 1:
@@ -275,23 +291,27 @@ class Harness:
         raise HarnessError("ELEMENT_NOT_FOUND", f"No element matching {ref!r}")
 
     # --- acting ----------------------------------------------------------------------------
-    def _ensure_front(self) -> None:
-        if self.last and self.b.foreground() != self.last.hwnd:
-            if not self.b.focus(self.last.hwnd):
+    def _ensure_front(self, el=None) -> None:
+        hwnd = (el.hwnd if el is not None and el.hwnd else None) or (self.last.hwnd if self.last else None)
+        if hwnd and self.b.foreground() != hwnd:
+            if not self.b.focus(hwnd):
                 raise HarnessError("FOCUS_FAILED", "The target window is not in front; nothing was typed")
 
     def click(self, ref: str, double: bool = False, button: str = "left") -> dict:
         el = self.element(ref)
         if not el.enabled:
             raise HarnessError("DISABLED", f"{el.text or el.role} is disabled")
-        before = self._fingerprint()
-        self._ensure_front()
+        before, pixels = self._fingerprint(), self._pixels(*el.center())
+        if el.source == "uia" or not el.hwnd:
+            self._ensure_front(el)
+        elif self.b.foreground() != el.hwnd:
+            self.b.focus(el.hwnd)              # pop-ups (calls, notifications) often refuse focus; a click still lands
         used = "uia"
         if double or button != "left" or el.source != "uia" or not self.b.uia_invoke(el):
             self.b.click_at(*el.center(), button=button, double=double)
             used = "mouse"
         time.sleep(0.35)
-        changed = self._fingerprint() != before
+        changed = self._fingerprint() != before or (used == "mouse" and self._pixels(*el.center()) != pixels)
         return {"clicked": el.text or el.role, "method": used, "screen_changed": changed, "verified": changed}
 
     def type_text(self, text: str, ref: str | None = None, replace: bool = False) -> dict:
@@ -349,6 +369,31 @@ class Harness:
         self.b.drag(a, b)
         return {"dragged": True}
 
+    def click_point(self, x: int, y: int, double: bool = False, button: str = "left") -> dict:
+        """Click a screen point the eyes chose. Verified by looking again: the pixels around it must change."""
+        left, top, right, bottom = self.b.virtual_screen()
+        if not (left <= x < right and top <= y < bottom):
+            raise HarnessError("OFF_SCREEN", "That point is not on any screen")
+        before = self._pixels(x, y)
+        self.b.click_at(x, y, button=button, double=double)
+        time.sleep(0.45)
+        changed = self._pixels(x, y) != before
+        return {"clicked": f"point {x},{y}", "method": "mouse", "screen_changed": changed, "verified": changed}
+
+    def _pixels(self, x: int, y: int, half: tuple[int, int] = (120, 70)) -> bytes:
+        """A small capture around a point, compared before and after a click."""
+        try:
+            bgra, _, _ = self.b.capture((x - half[0], y - half[1], x + half[0], y + half[1]))
+            return bytes(bgra)
+        except Exception:
+            return b""
+
+    def redact_capture(self, bgra: bytes, width: int, height: int, origin: tuple[int, int], boxes,
+                       note: str = "") -> RedactedImage:
+        """The only way to turn a capture into an image an engine may receive."""
+        masked = mask(bgra, width, height, origin, boxes)
+        return RedactedImage(self.b.to_png(masked, width, height), note or f"{len(boxes)} regions masked", _REDACT_TOKEN)
+
     def _fingerprint(self) -> str:
         if not self.last:
             return ""
@@ -385,15 +430,7 @@ class Harness:
     def redacted_screenshot(self, window=None, extra_regions: list | None = None) -> RedactedImage:
         w = self.resolve_window(window)
         bgra, width, height = self.b.capture(w["rect"])
-        buf = bytearray(bgra)
         els, _ = self.b.uia_tree(w["hwnd"])
         boxes = [e.bbox for e in els if e.is_password or (w["hwnd"], e.id) in self.filled_refs]
         boxes += list(extra_regions or [])
-        ox, oy = w["rect"][0], w["rect"][1]
-        for l, t, r, b in boxes:
-            for y in range(max(0, t - oy), min(height, b - oy)):
-                row = y * width * 4
-                x0, x1 = max(0, l - ox), min(width, r - ox)
-                if x1 > x0:
-                    buf[row + x0 * 4: row + x1 * 4] = b"\x00\x00\x00\xff" * (x1 - x0)
-        return RedactedImage(self.b.to_png(bytes(buf), width, height), f"{len(boxes)} regions masked", _REDACT_TOKEN)
+        return self.redact_capture(bgra, width, height, (w["rect"][0], w["rect"][1]), boxes)
