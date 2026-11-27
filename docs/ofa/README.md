@@ -38,8 +38,9 @@ npm run dev                                   # http://127.0.0.1:3000/desktop
      OFA always tries accessibility and on-device OCR first; a masked screenshot goes to a model only when needed.
      **Test eyes** shows what OFA sees, on the page only.
    - **Hands** switches system controls and call answering on or off, and lists what always needs your spoken yes.
-5. Say "wait" or "ruko" to pause a task and "continue" to go on; "stop" or Caps Lock ends it. A stopped task is
-   saved: "continue the last task" picks it up and asks again before anything consequential.
+5. Say "wait" or "ruko" to pause a task and "continue" to go on; "stop" or Caps Lock ends it. The last stopped task is
+   saved, also across a restart: "continue the last task" starts it again from your words and asks again before
+   anything consequential.
 
 Plain "open <app>" commands run on the companion's verified fast path without the model. Everything else goes
 to OFA. Without a Groq key the companion runs only its built-in commands.

@@ -36,13 +36,13 @@ How they fit together and why: [ARCHITECTURE.md](ARCHITECTURE.md). Code: `ofa/gr
   vision provider chosen in Settings → Eyes (local, separate model, or the reasoning model). Every element gets a
   mark (m1, m2, …) the hands can click.
 - **hands** is the policy gate. Tier 0/1 actions run straight away; Tier 2 needs a spoken yes through **approval**.
-  An approved action runs in its own `effect` node, so resuming a saved task never repeats it.
+  An approved action runs in its own `effect` node, so answering a question never repeats an earlier effect.
 - **approval** speaks the exact action, listens, re-asks once, and accepts only microphone speech that is not
   OFA's own voice.
 
 Nodes that ask you something pause with `interrupt()`; `ofa/graphs/runner.py` speaks the question and resumes
 the graph with your answer. A finished task is deleted from the checkpoint store (`%LOCALAPPDATA%/OFA/graphs.db`);
-a stopped one stays so "continue the last task" can pick it up.
+the last stopped one stays so "continue the last task" can start it again.
 """
 
 

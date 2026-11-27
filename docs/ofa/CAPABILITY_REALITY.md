@@ -21,8 +21,8 @@ the panel and the web page and are answered by voice (the web approve buttons on
 **Built and tested with fakes (all pass):**
 - The agent runs as LangGraph graphs: turn, brain, eyes, hands and approval.
   - Every question to you is an `interrupt()`.
-  - A stopped task is checkpointed, and "continue the last task" resumes it. A spoken approval voided by the
-    kill switch cannot be reused after resuming.
+  - The last stopped task is checkpointed, also across a restart. "Continue the last task" starts it again from
+    your words; it does not replay from the middle, and a voided approval is never reused.
   - Diagrams: [GRAPHS.md](GRAPHS.md).
 - **Eyes** reads every visible window, not only the front one:
   - accessibility first, OCR for windows that expose little text, then the provider chosen in Settings → Eyes;
