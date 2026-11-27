@@ -42,6 +42,14 @@ TOOLS = [
     _fn("write_file", "Create or overwrite a text file.", {"path": S, "text": S}, ["path", "text"]),
     _fn("run_command", "Run a shell command (PowerShell). Read-only commands run directly; others need approval.",
         {"command": S, "cwd": S}, ["command"]),
+    _fn("system", "Control the computer. value: percent for volume_set/brightness_set, text for clipboard_write, "
+        "path for screenshot_save, page (wifi|bluetooth|airplane_mode|display|sound|battery|notifications|"
+        "night_light) for settings_page, process name for end_process.",
+        {"control": {"type": "string", "enum": ["volume_up", "volume_down", "mute", "volume_set", "play_pause",
+                                                "next_track", "previous_track", "brightness_set", "lock",
+                                                "clipboard_read", "clipboard_write", "screenshot_save",
+                                                "settings_page", "processes", "end_process"]}, "value": S},
+        ["control"]),
     _fn("ask_user", "Ask the user a short spoken question and get their answer.", {"question": S}, ["question"]),
     _fn("propose_plan", "For complex tasks: speak a numbered plan and get approval before acting.",
         {"steps": {"type": "array", "items": S}}, ["steps"]),
@@ -120,6 +128,14 @@ def to_action(name: str, args: dict, turn_id: str | None, label: str | None = No
     if name == "run_command":
         return Action(verb="run_command_readonly", payload=args.get("command"), target=args.get("cwd"),
                       args={"op": "run_command"})
+    if name == "system":
+        from .effects.system import CONTROLS
+        control = str(args.get("control", ""))
+        if control not in CONTROLS:
+            raise ToolArgError(f"unknown control {control!r}")
+        value = args.get("value")
+        return Action(verb=CONTROLS[control], target=control, payload=None if value is None else str(value)[:2000],
+                      authorized_by_turn=turn_id, args={"op": "system"})
     if name in {"screen", "windows"}:
         return Action(verb="screen", target=args.get("window"), args={"op": name, "ocr": args.get("ocr")})
     raise ToolArgError(f"{name} is not an action tool")
