@@ -254,7 +254,9 @@ INTERESTING = {"button", "edit", "document", "hyperlink", "link", "list item", "
                "toolbar", "group", "list", "heading", "image", "pane", "cell", "header item", "toggle button"}
 
 
-def uia_tree(hwnd: int, max_nodes: int = 2500, max_depth: int = 30, budget_s: float = 2.5) -> tuple[list[El], bool]:
+def uia_tree(hwnd: int, max_nodes: int = 2500, max_depth: int = 30, budget_s: float = 2.5,
+             offscreen: bool = False) -> tuple[list[El], bool]:
+    """Elements in document order. offscreen=True keeps elements scrolled out of view (long web forms)."""
     uia, mod = automation()
     root = uia.ElementFromHandle(hwnd)
     walker = uia.ControlViewWalker
@@ -281,8 +283,10 @@ def uia_tree(hwnd: int, max_nodes: int = 2500, max_depth: int = 30, budget_s: fl
                         value = str(pat.QueryInterface(mod.IUIAutomationValuePattern).CurrentValue)[:2000]
                 except Exception:
                     pass
-            visible = bbox[2] > bbox[0] and bbox[3] > bbox[1] and not node.CurrentIsOffscreen
-            if visible and (name or value or role in {"edit", "document"}) and role in INTERESTING:
+            if role in {"radio button", "check box"}:
+                value = _checked(node, mod)
+            visible = bbox[2] > bbox[0] and bbox[3] > bbox[1] and (offscreen or not node.CurrentIsOffscreen)
+            if visible and (name or value or role in {"edit", "document", "combo box"}) and role in INTERESTING:
                 out.append(El(id=f"u{len(out)}", text=name, role=role, bbox=bbox, enabled=bool(node.CurrentIsEnabled),
                               is_password=pw, value=None if pw else value,
                               automation_id=str(node.CurrentAutomationId or ""),
@@ -300,6 +304,32 @@ def uia_tree(hwnd: int, max_nodes: int = 2500, max_depth: int = 30, budget_s: fl
 
 
 INVOKE_TIMEOUT = 4.0
+
+
+def _checked(node, mod) -> str | None:
+    """'checked' / 'unchecked' for radio buttons (SelectionItem) and check boxes (Toggle)."""
+    try:
+        pat = node.GetCurrentPattern(10010)
+        if pat:
+            return "checked" if pat.QueryInterface(mod.IUIAutomationSelectionItemPattern).CurrentIsSelected else "unchecked"
+        pat = node.GetCurrentPattern(10015)
+        if pat:
+            return "checked" if pat.QueryInterface(mod.IUIAutomationTogglePattern).CurrentToggleState == 1 else "unchecked"
+    except Exception:
+        pass
+    return None
+
+
+def uia_scroll_into_view(el: El) -> bool:
+    _, mod = automation()
+    try:
+        pat = el.node.GetCurrentPattern(10017)     # ScrollItem
+        if pat:
+            pat.QueryInterface(mod.IUIAutomationScrollItemPattern).ScrollIntoView()
+            return True
+    except Exception:
+        pass
+    return False
 
 
 def uia_invoke(el: El) -> bool:

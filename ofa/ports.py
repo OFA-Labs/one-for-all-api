@@ -21,12 +21,20 @@ class VoicePort:
         self._listen_dictation: Listen | None = None
         self._pause_gate: Callable[[], Awaitable] | None = None
         self._display: Callable[[str, str | None], None] | None = None
+        self._expect: Callable[[], None] | None = None
 
     def attach(self, *, speak: Speak, listen: Listen, listen_dictation: Listen | None = None,
                pause_gate: Callable[[], Awaitable] | None = None,
-               display: Callable[[str, str | None], None] | None = None) -> None:
+               display: Callable[[str, str | None], None] | None = None,
+               expect: Callable[[], None] | None = None) -> None:
         self._speak, self._listen = speak, listen
         self._listen_dictation, self._pause_gate, self._display = listen_dictation, pause_gate, display
+        self._expect = expect
+
+    def expect(self) -> None:
+        """An answer is coming while OFA keeps working: hold what is heard for the next listen()."""
+        if self._expect:
+            self._expect()
 
     async def speak(self, text: str) -> float:
         if self._speak is None:

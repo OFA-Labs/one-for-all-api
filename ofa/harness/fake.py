@@ -60,6 +60,9 @@ class FakeDesktop:
     def work_area(self):
         return (0, 0, 1920, 1080)
 
+    def uia_scroll_into_view(self, el):
+        return True
+
     def uia_tree(self, hwnd, **_):
         return [El(e.id, e.text, e.role, e.bbox, e.source, e.enabled, e.is_password, e.value, node=e)
                 for e in self.elements.get(hwnd, [])], True

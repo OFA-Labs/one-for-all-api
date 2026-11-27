@@ -32,6 +32,7 @@ from ..text.hi_numbers import normalize_numbers
 from ..tools import TOOLS, ToolArgError, parse_args
 from .deps import Deps
 from .eyes import eyes_graph
+from .form import form_graph
 from .hands import hands_graph
 from .pauses import ask, heard_of
 from .report import TurnResult, finish_in_text, report
@@ -46,6 +47,7 @@ Rules:
 - Typing is not sending. When an action sends/posts/submits/deletes/pays/books etc, set effect and to/account. OFA asks the user aloud; you never ask for that confirmation yourself.
 - For tasks with several dependent steps across apps or any consequential effect, call propose_plan first.
 - Dictation: use dictate with the user's exact words (verbatim), or mode=compose only if they asked you to write/draft.
+- To fill a web form that is open in the browser, call fill_form once; it handles every page and asks before Submit.
 - Searching until a goal is met: keep going (scroll/next page) until every stated criterion is matched, results run out, or you're blocked. A near match is not a match. Store candidates with results.
 - Secrets: use fill_secret with a handle from the handle list; you never see values.
 - Finish every task with finish(status, summary). status=done only if you saw evidence the result happened.
@@ -55,7 +57,7 @@ Remembered mappings: {mappings}"""
 
 MAX_STEPS = 25
 LOCAL_TOOLS = {"finish": "finish", "ask_user": "ask_user", "remember": "remember", "resolve": "memory_tool",
-               "results": "memory_tool", "look": "eyes"}
+               "results": "memory_tool", "look": "eyes", "fill_form": "form"}
 REFERS = re.compile(r"\b(it|this|that|call|pick( it)? up|answer|accept|decline|reject|notification|popup|pop-up|"
                     r"uthao|utha lo|kaat do|band karo)\b", re.I)
 
@@ -231,6 +233,7 @@ def brain_graph(deps: Deps) -> StateGraph:
         g.add_node(node.__name__, node)
     g.add_node("hands", hands_graph(deps).compile())
     g.add_node("eyes", eyes_graph(deps).compile())
+    g.add_node("form", form_graph(deps).compile())
     g.add_node("report", report_node)
     by_route = lambda s: END if s.get("route") == "end" else s["route"]
     g.add_edge(START, "start")

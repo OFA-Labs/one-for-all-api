@@ -21,7 +21,7 @@ from .report import TurnResult
 from .turn import turn_graph
 
 log = logging.getLogger("ofa.graphs")
-RECURSION_LIMIT = 600            # supersteps per task: 25 engine steps × a few nodes per tool call
+RECURSION_LIMIT = 3000           # supersteps per task: a 20-page form runs a few nodes per field
 
 
 class CallbackIO:

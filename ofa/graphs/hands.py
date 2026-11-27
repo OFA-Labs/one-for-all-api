@@ -66,6 +66,20 @@ def hands_graph(deps: Deps) -> StateGraph:
         x, y = el.center()
         return el.hwnd == popup["hwnd"] or (l <= x < r and t <= y < b)
 
+    def private_fill_request(action: Action) -> tuple[Action, str]:
+        """Every use of a private item is asked in detail: which secret, where, which field, which account."""
+        name = (action.handle or "").split("/", 1)[-1].split("#")[0].replace("/", " ")
+        last = deps.harness.last
+        identity = deps.harness.browser_identity(last.hwnd) if last else None
+        url = (identity or {}).get("url") or ""
+        where = "/".join(url.split("/")[:3]) or (last.title[:60] if last else "this app")
+        secure = "" if not url else (", a secure page" if identity.get("tls_ok") else ", NOT a secure page")
+        field = (action.element_label or "the selected field")[:60]
+        detailed = action.model_copy(update={"destinations": [where], "account": name})
+        spoken = (f"I'm about to use your private item {name}. It will be typed into the field {field} on {where}"
+                  f"{secure}. I never see its value. Should I go ahead?")
+        return detailed, spoken
+
     async def hold(s: HandsState) -> dict:
         await deps.voice.pause_gate()            # spoken "pause" holds here; "stop" changes the epoch
         return {"hands_epoch": deps.epoch(), "tool_out": None, "action_info": None}
@@ -88,6 +102,11 @@ def hands_graph(deps: Deps) -> StateGraph:
         except ToolArgError as exc:
             return _done({"status": "error", "reason": "BAD_ARGS", "detail": str(exc)})
         deps.show("acting")
+        if call.get("form"):
+            # Set by the form graph, never by the model: real keystrokes into web fields, and the form's own
+            # address in the action, so approvals and the ledger are specific to this form.
+            action = action.model_copy(update={"args": {**action.args, "keyboard": True, "compose": True,
+                                                        "form": call["form"]}})
         hands = deps.settings.get().hands
         if action.args.get("op") == "system" and not hands.system_controls:
             return _done({"status": "refused", "reason": "SYSTEM_CONTROLS_OFF",
@@ -100,7 +119,10 @@ def hands_graph(deps: Deps) -> StateGraph:
                           "detail": "The user dictated: type their exact words (use dictate), or mode=compose "
                                     "only if they asked you to write it."}, action, call["name"])
         route = "dictation" if action.verb == "dictate" else "classify"
-        return {"action": action.model_dump(), "spoken": None, "route": route}
+        spoken = None
+        if action.verb == "fill" and action.handle:
+            action, spoken = private_fill_request(action)
+        return {"action": action.model_dump(), "spoken": spoken, "route": route}
 
     # --- dictation (C4): the user's exact words, or a draft they asked for -------------------------------
     def dictation(s: HandsState) -> dict:
@@ -217,7 +239,8 @@ def hands_graph(deps: Deps) -> StateGraph:
         except Exception as exc:   # report honestly; never claim success
             result = {"status": "error", "reason": type(exc).__name__, "detail": str(exc)[:200]}
         result.setdefault("status", "ok")
-        if action.args.get("op") in GLANCE_AFTER and result["status"] != "cancelled":
+        glance_wanted = not s["call"].get("form")      # a glance would replace the form reading the hands act on
+        if action.args.get("op") in GLANCE_AFTER and result["status"] != "cancelled" and glance_wanted:
             try:
                 glance = await asyncio.wait_for(asyncio.to_thread(deps.harness.glance), GLANCE_TIMEOUT)
             except asyncio.TimeoutError:

@@ -48,6 +48,10 @@ def click(h: Harness, a: Action) -> dict:
     return h.click(a.args["element"], double=double, button=button)
 
 
+def select_option(h: Harness, a: Action) -> dict:
+    return h.select_option(a.args["element"], a.payload or "")
+
+
 def drag(h: Harness, a: Action) -> dict:
     return h.drag(a.args["element"], a.args.get("to_element"))
 
@@ -68,7 +72,7 @@ def type_into(h: Harness, a: Action, replace: bool) -> dict:
     text = a.payload or ""
     if not text:
         return {"status": "error", "reason": "NOTHING_TO_TYPE"}
-    r = h.type_text(text, a.args.get("element"), replace=replace)
+    r = h.type_text(text, a.args.get("element"), replace=replace, keyboard=bool(a.args.get("keyboard")))
     rb = r.get("readback")
     if rb is not None:
         r["verified"] = " ".join(text.split()) in " ".join(rb.split())

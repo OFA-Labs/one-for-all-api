@@ -11,7 +11,7 @@ DESKTOP = {
     "open": desktop.open_target, "windows": desktop.list_windows, "screen": desktop.read_screen,
     "focus": desktop.focus_window, "click": desktop.click, "double_click": desktop.click,
     "right_click": desktop.click, "drag": desktop.drag, "key": desktop.press_key, "scroll_up": desktop.scroll,
-    "scroll_down": desktop.scroll, "wait_for": desktop.wait_for,
+    "scroll_down": desktop.scroll, "wait_for": desktop.wait_for, "select_option": desktop.select_option,
     **{op: desktop.window_operation for op in ("close", "minimize", "maximize", "restore", "snap_left", "snap_right")},
 }
 
