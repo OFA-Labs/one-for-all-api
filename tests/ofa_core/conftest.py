@@ -10,6 +10,12 @@ if sys.platform != "win32" or any(importlib.util.find_spec(name) is None for nam
     collect_ignore_glob = ["test_*.py"]
 
 
+@pytest.fixture(autouse=True)
+def _isolated_data_dir(tmp_path_factory, monkeypatch):
+    """No test may read or write the real vault, corpus or memory."""
+    monkeypatch.setenv("OFA_DATA_DIR", str(tmp_path_factory.mktemp("ofa-data")))
+
+
 def pytest_configure(config):
     config.addinivalue_line("markers", "windows: real Windows desktop test (launches only its own disposable windows)")
     config.addinivalue_line("markers", "live: calls a live provider; opt in with OFA_LIVE=1")

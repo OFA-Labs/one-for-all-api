@@ -31,13 +31,17 @@ class Deps:
     eyes: object = None                                  # ofa.eyes.Eyes
     attention: object = None                             # ofa.eyes.attention.Attention
     settings: object = None                              # ofa.settings_store.SettingsStore
+    corpus: object = None                                # ofa.corpus.OpenCorpus ("Use without consent")
     history: list[dict] = field(default_factory=list)    # last turns, for follow-ups like "it"
     history_turns: int = 6
 
     def __post_init__(self) -> None:
+        from ..config import data_dir
+        from ..corpus import OpenCorpus
         from ..eyes import Eyes
         from ..eyes.attention import Attention
         from ..settings_store import SettingsStore
         self.settings = self.settings or SettingsStore(None)
         self.eyes = self.eyes or Eyes(self.settings, self.engine)
         self.attention = self.attention or Attention(self.harness, self.memory)
+        self.corpus = self.corpus or OpenCorpus(data_dir() / "corpus" / "open")
