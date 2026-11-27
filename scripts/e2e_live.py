@@ -98,13 +98,14 @@ async def main(out_path: Path):
             replies[:] = list(reply)
             spoken.clear()
             t0 = time.monotonic()
-            res = await core.orchestrator.handle(text)
+            res = await core.runner.handle(text)
             ok, note = check(res, core)
             rows.append({"cat": cat, "request": text, "status": res.status, "pass": ok, "secs": round(time.monotonic() - t0, 1),
                          "spoken": res.spoken[:160], "asked": [s[:120] for s in spoken if "?" in s][:2], "note": note,
                          "tools": [f"{a['tool']}:{a['verb']}:{a['status']}" for a in res.actions][:8]})
             print(json.dumps(rows[-1], ensure_ascii=False))
     finally:
+        await core.runner.aclose()
         proc.kill()
         from ofa.harness.api import Harness
         for w in Harness().b.list_windows():

@@ -1,8 +1,9 @@
 """OFA as the brain of the existing Windows companion (voice/): its panel, Caps Lock, pairing and web
-pages stay as they are; this adapter gives its Session the reasoning, tools and spoken approvals.
+pages stay as they are; this adapter connects its Session to the OFA graphs (ofa.graphs).
 
-The Session keeps owning audio, the state machine and the panel. OfaBrain only needs it to speak,
-to open the microphone while OFA waits for an answer, and to show a caption.
+The Session keeps owning audio, the state machine and the panel. When a graph pauses with a question,
+the runner calls speak() and listen() here; the next utterance the Session hears is delivered to that
+listen(). OfaBrain itself makes no decisions.
 """
 from __future__ import annotations
 
@@ -59,6 +60,7 @@ class OfaBrain:
             self._caption = caption
         self.core.voice.attach(speak=self.speak, listen=self.listen, listen_dictation=self.listen_dictation,
                                pause_gate=self.paused.wait, display=self.display)
+        self.core.deps.control = self.apply_control
 
     @property
     def waiting(self) -> bool:
@@ -147,7 +149,9 @@ class OfaBrain:
 
     def control(self, text: str) -> str | None:
         """Apply pause/resume. Returns the reply to speak, or None for an ordinary request."""
-        kind = control_of(text)
+        return self.apply_control(control_of(text))
+
+    def apply_control(self, kind: str | None) -> str | None:
         if kind == "pause":
             self.paused.clear()
             return "Paused. Say continue when you're ready."
@@ -162,7 +166,12 @@ class OfaBrain:
         self.paused.set()
         try:
             self.core.event("heard", text=text)
-            result = await self.core.orchestrator.handle(text, confidence)
+            if control_of(text) == "resume_task":
+                result = await self.core.runner.resume_last()
+                if result is None:
+                    return "There is no stopped task to continue."
+            else:
+                result = await self.core.runner.handle(text, confidence)
             self.core.event("turn", status=result.status, spoken=result.spoken)
             return result.spoken
         except asyncio.CancelledError:

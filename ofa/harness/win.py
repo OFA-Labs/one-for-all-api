@@ -1,5 +1,5 @@
 """Windows primitives: windows, processes, UIA tree, input (SendInput), capture (mss), OCR (WinRT).
-No elevation. Every call here is reached only through ofa.executor (policy first)."""
+No elevation. Every call here is reached only through the hands graph (policy first)."""
 from __future__ import annotations
 
 import ctypes
@@ -453,4 +453,4 @@ def launch(app: dict) -> None:
 
 
 def open_uri(uri: str) -> None:
-    os.startfile(uri)  # noqa: S606 — URIs/paths validated by the executor before this call
+    os.startfile(uri)  # noqa: S606 — URIs/paths validated by the hands graph before this call

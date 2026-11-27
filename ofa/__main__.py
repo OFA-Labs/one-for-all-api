@@ -51,19 +51,25 @@ def importable(name: str) -> bool:
 
 async def one_turn(text: str) -> None:
     core = _core()
-    res = await core.orchestrator.handle(text)
+    try:
+        res = await core.runner.handle(text)
+    finally:
+        await core.runner.aclose()
     print(json.dumps({"status": res.status, "spoken": res.spoken, "actions": res.actions}, ensure_ascii=False, indent=1))
 
 
 async def repl() -> None:
     core = _core()
     print("OFA typed mode. Consequential actions need a spoken yes, so they will not run here. Ctrl+C to quit.")
-    while True:
-        text = await asyncio.to_thread(input, "you> ")
-        if not text.strip():
-            continue
-        res = await core.orchestrator.handle(text)
-        print("ofa>", res.spoken, f"[{res.status}]")
+    try:
+        while True:
+            text = await asyncio.to_thread(input, "you> ")
+            if not text.strip():
+                continue
+            res = await core.runner.handle(text)
+            print("ofa>", res.spoken, f"[{res.status}]")
+    finally:
+        await core.runner.aclose()
 
 
 def run_companion(env_file: str | None) -> None:

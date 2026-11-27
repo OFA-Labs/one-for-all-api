@@ -1,6 +1,6 @@
 """Optional phone surface (§10.2 Option 1, Android over adb only — the host is Windows, so iPhone Mirroring
 is impossible). Reimplemented from the Phone Harness design idea; no third-party code copied, no cloud,
-no telemetry, no stealth. Every call goes through ofa.executor policy like desktop actions."""
+no telemetry, no stealth. Every call goes through the hands graph policy like desktop actions."""
 from __future__ import annotations
 
 import re

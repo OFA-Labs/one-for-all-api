@@ -9,6 +9,9 @@ CONTROLS = {
     # "wait" and "ruko" hold the running task; they never end the session.
     "pause": {"pause", "hold on", "wait", "ek minute", "ek second", "thoda ruko", "ruko", "ruk", "ruk jao", "रुको", "रुक"},
     "resume": {"resume", "continue", "go on", "carry on", "chalo", "aage badho", "continue karo"},
+    # a task stopped earlier (Caps Lock, a restart) is saved by the graph checkpointer
+    "resume_task": {"continue the last task", "resume the last task", "continue my last task",
+                    "pichla kaam continue karo", "pichla kaam karo"},
 }
 
 

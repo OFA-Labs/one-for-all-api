@@ -1,5 +1,5 @@
 """Desktop harness (§10.1): one small helper API; backends accessibility → OCR → vision.
-Results returned to the engine are untrusted data. Every call arrives via ofa.executor."""
+Results returned to the engine are untrusted data. Every call arrives via the hands graph (ofa.graphs.hands)."""
 from __future__ import annotations
 
 import os

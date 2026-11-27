@@ -1,4 +1,4 @@
-"""Effects: what an already-authorised Action does. Only ofa.executor may call run_effect."""
+"""Effects: what an already-authorised Action does. Only the hands graph (ofa.graphs.hands) calls run_effect."""
 from __future__ import annotations
 
 from ..harness.api import Harness, HarnessError

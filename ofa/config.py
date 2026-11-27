@@ -68,6 +68,7 @@ class OfaConfig:
     preferred_name: str = field(default_factory=lambda: os.getenv("OFA_PREFERRED_NAME", ""))
     reply_language: str = field(default_factory=lambda: os.getenv("OFA_REPLY_LANGUAGE", "en"))
     script: str = field(default_factory=lambda: os.getenv("OFA_SCRIPT", "roman"))
+    checkpoints: str = field(default_factory=lambda: os.getenv("OFA_CHECKPOINTS", "sqlite"))   # sqlite | memory
     fake: bool = False
 
     def names_set(self) -> dict[str, bool]:

@@ -5,7 +5,6 @@ transcript (not echo) that the lexicon classifies YES inside the window opened f
 """
 from __future__ import annotations
 
-import asyncio
 import threading
 import time
 from dataclasses import dataclass, field
@@ -179,7 +178,7 @@ class ApprovalStore:
             if req and req.state == ApprovalState.PENDING:
                 req.state = ApprovalState.EXPIRED
 
-    # --- enforcement (executor, immediately before the effect) -------------------------------
+    # --- enforcement (hands graph, immediately before the effect) -------------------------------
     def consume(self, req_id: str, action: Action, epoch: int) -> None:
         with self._lock:
             req = self._requests.get(req_id)
@@ -201,34 +200,9 @@ class ApprovalStore:
             req.state = ApprovalState.CONSUMED
         self._emit("consumed", req)
 
-    # --- spoken flow ---------------------------------------------------------------------------
-    async def obtain(self, action: Action, speak: Speak, listen: Listen, lang: str = "en",
-                     spoken: str | None = None) -> ApprovalRequest:
-        req = self.ask(action, lang, spoken)
-        prompts = [req.spoken, "Should I go ahead? Please say yes or no." if lang != "hi"
-                   else "Haan ya nahi boliye."]
-        for prompt in prompts:
-            if req.state != ApprovalState.PENDING:
-                break
-            tts_end = await speak(prompt)
-            deadline = time.monotonic() + self.window
-            while req.state == ApprovalState.PENDING and time.monotonic() < deadline:
-                heard = await listen(max(0.1, deadline - time.monotonic()))
-                if heard is None:
-                    break
-                self.decide(req.id, heard, tts_end)
-        if req.state == ApprovalState.PENDING:
-            self.expire(req.id)
-        return req
-
     def _emit(self, kind: str, req: ApprovalRequest) -> None:
         if self.on_event:
             try:
                 self.on_event(kind, req)
             except Exception:
                 pass
-
-
-async def no_listen(_: float) -> None:
-    await asyncio.sleep(0)
-    return None
