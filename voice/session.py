@@ -15,11 +15,13 @@ from .audio import Capture, Playback
 from .capabilities import CapabilityDispatcher, MissingCapability, ReasoningGate
 from .config import Settings
 from .contracts import ActionBridge, Emit, LlmProvider
-from .intent import Action, Router
+from .intent import Action, Intent, Router
 from .language import acknowledgement
 from .replay import ReplayFeed
 from .state import Machine, State
 from .tts.ack_cache import AckCache
+
+DICTATION_SECONDS = 60
 
 
 def rms(pcm: bytes) -> float:
@@ -147,7 +149,7 @@ class Session:
                     self._last_activity = time.monotonic()
                 if self.feed is None and positives >= 3:
                     await self.interrupt()
-                    self.feed = ReplayFeed(int(self.settings.max_utterance_seconds * 48000))
+                    self.feed = ReplayFeed(int(self._utterance_limit() * 48000))
                     for chunk in pre:
                         await self.feed.push(chunk)
                     quiet = 0
@@ -192,6 +194,8 @@ class Session:
             self.emit("stt_final", {"utterance_id": utterance})
             self.authorize()
             intent = self.router.route(final.text)
+            if self.brain and intent.intent == "stop" and self.brain.control_kind(final.text) == "pause":
+                intent = Intent("pause", {}, 1.0, intent.language)   # "wait" / "ruko" holds the task, never ends the session
             if intent.intent=="stop":
                 await self.close("spoken_stop")
                 return
@@ -273,6 +277,10 @@ class Session:
                     and self.machine.state in {State.THINKING, State.SPEAKING}):
                 self.state(State.LISTENING)
                 self._last_activity = time.monotonic()
+
+    def _utterance_limit(self) -> float:
+        """Dictation needs longer utterances than commands; 24 kHz 16-bit mono is 48,000 bytes per second."""
+        return DICTATION_SECONDS if self.brain and self.brain.dictating else self.settings.max_utterance_seconds
 
     def _deciding(self) -> bool:
         """An utterance now answers (or corrects) running work, so it gets its own task."""
