@@ -9,6 +9,8 @@ How they fit together and why: [ARCHITECTURE.md](ARCHITECTURE.md). Code: `ofa/gr
 - **eyes** answers "what is on screen / where is X": accessibility first, OCR for text-poor windows, then the
   vision provider chosen in Settings → Eyes (local, separate model, or the reasoning model). Every element gets a
   mark (m1, m2, …) the hands can click.
+- **form** fills a multi-page web form: read the page, one model call to map facts to questions, type through
+  hands, ask you only what is missing, Next, and a spoken yes before Submit.
 - **hands** is the policy gate. Tier 0/1 actions run straight away; Tier 2 needs a spoken yes through **approval**.
   An approved action runs in its own `effect` node, so answering a question never repeats an earlier effect.
 - **approval** speaks the exact action, listens, re-asks once, and accepts only microphone speech that is not
@@ -31,12 +33,19 @@ graph TD;
 	route(route)
 	control(control)
 	brain(brain)
+	form_start(form_start)
+	direct_form(direct_form)
+	form_report(form_report)
 	__end__([<p>__end__</p>]):::last
 	__start__ --> route;
+	direct_form --> form_report;
+	form_start --> direct_form;
 	route -.-> brain;
 	route -.-> control;
+	route -.-> form_start;
 	brain --> __end__;
 	control --> __end__;
+	form_report --> __end__;
 	classDef default fill:#f2f0ff,line-height:1.2
 	classDef first fill-opacity:0
 	classDef last fill:#bfb6fc
@@ -64,6 +73,7 @@ graph TD;
 	after_tool(after_tool)
 	hands(hands)
 	eyes(eyes)
+	form(form)
 	report(report)
 	__end__([<p>__end__</p>]):::last
 	__start__ --> start;
@@ -82,11 +92,13 @@ graph TD;
 	engine_wait -.-> decide;
 	eyes --> after_tool;
 	finish --> after_tool;
+	form --> after_tool;
 	hands --> after_tool;
 	memory_tool --> after_tool;
 	next_call -.-> ask_user;
 	next_call -.-> eyes;
 	next_call -.-> finish;
+	next_call -.-> form;
 	next_call -.-> hands;
 	next_call -.-> memory_tool;
 	next_call -.-> remember;
@@ -118,6 +130,73 @@ graph TD;
 	read -.-> __end__;
 	read -.-> ocr;
 	vision --> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
+```
+
+## form
+
+```mermaid
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	start(start)
+	scan(scan)
+	map(map)
+	queue(queue)
+	speech_done(speech_done)
+	ask(ask)
+	private(private)
+	check(check)
+	turned(turned)
+	review(review)
+	confirm(confirm)
+	save_offer(save_offer)
+	handoff(handoff)
+	after_act(after_act)
+	act(act)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> start;
+	act --> after_act;
+	after_act -.-> __end__;
+	after_act -.-> confirm;
+	after_act -.-> queue;
+	after_act -.-> turned;
+	ask -.-> __end__;
+	ask -.-> private;
+	ask -.-> queue;
+	check -.-> __end__;
+	check -.-> map;
+	check -.-> queue;
+	check -.-> review;
+	confirm -.-> __end__;
+	confirm -.-> save_offer;
+	handoff -.-> __end__;
+	handoff -.-> scan;
+	map -.-> __end__;
+	map -.-> queue;
+	private -.-> __end__;
+	private -.-> queue;
+	queue -.-> __end__;
+	queue -.-> act;
+	queue -.-> check;
+	queue -.-> speech_done;
+	review -.-> __end__;
+	review -.-> queue;
+	scan -.-> __end__;
+	scan -.-> handoff;
+	scan -.-> map;
+	speech_done --> ask;
+	start --> scan;
+	turned -.-> __end__;
+	turned -.-> map;
+	turned -.-> scan;
+	save_offer --> __end__;
 	classDef default fill:#f2f0ff,line-height:1.2
 	classDef first fill-opacity:0
 	classDef last fill:#bfb6fc

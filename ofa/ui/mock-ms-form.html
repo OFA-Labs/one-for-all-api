@@ -1,0 +1,99 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>OFA Test Research Form</title>
+<style>
+body{font:15px "Segoe UI",sans-serif;background:#eef3f8;margin:0}
+main{max-width:760px;margin:0 auto;background:#f8fafc;padding:24px 40px 60px}
+.q{margin:26px 0 54px}.t{font-size:16px}.h{font-style:italic;color:#555;margin:4px 0 10px 16px}
+input[type=text],textarea,select{width:100%;box-sizing:border-box;padding:10px;border:1px solid #ccd;border-radius:4px}
+textarea{height:78px}.err{color:#b10e1c;font-size:13px;margin-top:6px}.page{display:none}.page.on{display:block}
+button{padding:10px 26px;margin-right:12px}label.o{display:block;margin:6px 0}
+</style></head><body><main>
+<h1>Test Research and Technologies — Student Application (test form)</h1>
+<form id="f" novalidate></form>
+<div id="nav"><button id="back" type="button">Back</button><button id="next" type="button">Next</button><button id="submit" type="button">Submit</button></div>
+<div id="counter"></div>
+</main>
+<script>
+const PAGES = [
+ [{id:"name",q:"Full Name",type:"text",req:1},{id:"email",q:"Email Address",type:"text",req:1,check:/^[^@\s]+@[^@\s]+\.[a-z]+$/i,msg:"Please enter a valid email address"},
+  {id:"phone",q:"Mobile Number",h:"10 digits, with or without +91.",type:"text",req:1,check:/^(\+?91[\s-]?)?\d{5}[\s-]?\d{5}$/,msg:"Please enter a valid 10-digit mobile number"},
+  {id:"city",q:"Current Location",type:"text",req:1}],
+ [{id:"university",q:"University / College Name",type:"text",req:1},{id:"degree",q:"Degree and Specialisation",type:"text",req:1},
+  {id:"year",q:"Current Year of Study",type:"radio",req:1,options:["First year","Second year","Third year","Final year"]},
+  {id:"passing",q:"Year of Passing",type:"select",req:1,options:["2025","2026","2027","2028"]}],
+ [{id:"certs",q:"Certifications & Professional Learning",h:"What relevant technical or professional certifications have you pursued? Mention the certification name and issuing organisation, if applicable.",type:"long",req:1},
+  {id:"intern",q:"Internship & Industry Exposure",h:"Have you gained any practical industry exposure through internships or live projects? Briefly mention the organisation, duration and your role.",type:"long",req:1},
+  {id:"projects",q:"Academic Projects & Achievements",h:"Which of your projects or achievements best demonstrate your technical capabilities? Briefly explain your contribution and the outcome.",type:"long",req:1},
+  {id:"language",q:"Foreign Language Proficiency",h:"Which foreign languages (other than English) are you proficient in? If you do not know any foreign language, please enter \"Nil\".",type:"text",req:1}],
+ [{id:"skills",q:"Programming Languages you know",type:"check",req:1,options:["Python","Java","C++","TypeScript","SQL","Ruby"]},
+  {id:"interning",q:"Are you currently doing an internship?",type:"radio",req:1,options:["Yes","No"]},
+  {id:"company",q:"Current Internship Organisation",type:"text",req:1,when:["interning","Yes"]}],
+ [{id:"linkedin",q:"LinkedIn Profile URL",type:"text",req:1},{id:"github",q:"GitHub Profile URL",type:"text",req:1},
+  {id:"why",q:"Why should we consider you for a research role?",h:"Answer in at most 400 characters.",type:"long",req:1},
+  {id:"relocate",q:"Are you willing to relocate to Pune?",type:"radio",req:1,options:["Yes","No"]}],
+ [{id:"declare",q:"I declare that the information provided above is true",type:"declare",req:1}]
+];
+const values = {}; let at = 0;
+const f = document.getElementById("f");
+function shown(x){return !x.when || values[x.when[0]] === x.when[1]}
+function render(errors={}){
+  f.innerHTML = "";
+  for (const x of PAGES[at].filter(shown)) {
+    const d = document.createElement("div"); d.className = "q";
+    const title = document.createElement("div"); title.className = "t"; title.id = "l-" + x.id;
+    if (x.type !== "declare") { title.textContent = x.q + (x.req ? " *" : ""); d.appendChild(title); }
+    if (x.h) { const h = document.createElement("div"); h.className = "h"; h.textContent = x.h; d.appendChild(h); }
+    if (x.type === "text" || x.type === "long") {
+      const i = document.createElement(x.type === "long" ? "textarea" : "input");
+      if (x.type === "text") i.type = "text";
+      i.placeholder = "Enter your answer"; i.setAttribute("aria-labelledby", title.id); i.value = values[x.id] || "";
+      i.addEventListener("input", () => values[x.id] = i.value); d.appendChild(i);
+    } else if (x.type === "select") {
+      const s = document.createElement("select"); s.setAttribute("aria-labelledby", title.id);
+      for (const o of ["Select your answer", ...x.options]) s.add(new Option(o, o));
+      s.value = values[x.id] || "Select your answer";
+      s.addEventListener("change", () => values[x.id] = s.value === "Select your answer" ? "" : s.value); d.appendChild(s);
+    } else if (x.type === "radio" || x.type === "check") {
+      const g = document.createElement("div"); g.setAttribute("role", x.type === "radio" ? "radiogroup" : "group");
+      g.setAttribute("aria-labelledby", title.id);
+      for (const o of x.options) {
+        const l = document.createElement("label"); l.className = "o";
+        const i = document.createElement("input"); i.type = x.type === "radio" ? "radio" : "checkbox"; i.name = x.id; i.value = o;
+        const cur = values[x.id] || (x.type === "check" ? [] : "");
+        i.checked = x.type === "check" ? cur.includes(o) : cur === o;
+        i.addEventListener("change", () => {
+          if (x.type === "radio") { values[x.id] = o; if (PAGES[at].some(y => y.when && y.when[0] === x.id)) render(); }
+          else { const set = new Set(values[x.id] || []); i.checked ? set.add(o) : set.delete(o); values[x.id] = [...set]; }
+        });
+        l.appendChild(i); l.appendChild(document.createTextNode(" " + o)); g.appendChild(l);
+      }
+      d.appendChild(g);
+    } else {
+      const l = document.createElement("label"); const i = document.createElement("input"); i.type = "checkbox"; i.checked = !!values[x.id];
+      i.addEventListener("change", () => values[x.id] = i.checked); l.appendChild(i); l.appendChild(document.createTextNode(" " + x.q)); d.appendChild(l);
+    }
+    if (errors[x.id]) { const e = document.createElement("div"); e.className = "err"; e.textContent = errors[x.id]; d.appendChild(e); }
+    f.appendChild(d);
+  }
+  document.getElementById("back").hidden = at === 0;
+  document.getElementById("next").hidden = at === PAGES.length - 1;
+  document.getElementById("submit").hidden = at !== PAGES.length - 1;
+  document.getElementById("counter").textContent = `Page ${at + 1} of ${PAGES.length}`;
+}
+function validate(){
+  const errors = {};
+  for (const x of PAGES[at].filter(shown)) {
+    const v = values[x.id];
+    if (x.req && (!v || (Array.isArray(v) && !v.length))) errors[x.id] = "This question is required.";
+    else if (x.check && !x.check.test(v.trim())) errors[x.id] = x.msg;
+  }
+  return errors;
+}
+document.getElementById("next").onclick = () => { const e = validate(); if (Object.keys(e).length) return render(e); at++; render(); scrollTo(0, 0); };
+document.getElementById("back").onclick = () => { at--; render(); };
+document.getElementById("submit").onclick = async () => {
+  const e = validate(); if (Object.keys(e).length) return render(e);
+  try { await fetch("/submit", {method: "POST", body: JSON.stringify(values)}); } catch (_) {}
+  document.querySelector("main").innerHTML = "<h2>Your response has been recorded.</h2>";
+};
+render();
+</script></body></html>

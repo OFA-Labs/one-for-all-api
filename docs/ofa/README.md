@@ -38,7 +38,11 @@ npm run dev                                   # http://127.0.0.1:3000/desktop
      OFA always tries accessibility and on-device OCR first; a masked screenshot goes to a model only when needed.
      **Test eyes** shows what OFA sees, on the page only.
    - **Hands** switches system controls and call answering on or off, and lists what always needs your spoken yes.
-5. Say "wait" or "ruko" to pause a task and "continue" to go on; "stop" or Caps Lock ends it. The last stopped task is
+5. **Forms:** open the form in your browser, press Caps Lock and say "fill this form" (or "I'm running out of time,
+   fill it quickly"). Add your resume and details first under **E-Brain → Info corpus**. OFA asks only what it cannot
+   answer and always waits for your yes before Submit. Try it without your voice:
+   `.venv-ofa/Scripts/python.exe scripts/e2e_form.py --env-file .env`.
+6. Say "wait" or "ruko" to pause a task and "continue" to go on; "stop" or Caps Lock ends it. The last stopped task is
    saved, also across a restart: "continue the last task" starts it again from your words and asks again before
    anything consequential.
 
@@ -78,6 +82,7 @@ Live-call counts are capped in `ofa/live_budget.py` and recorded in `../docs/ofa
 | `ofa/eyes/` | screen scene with numbered marks, masked capture, local/separate/reasoning providers, pop-up attention |
 | `ofa/effects/`, `ofa/tools.py` | what an approved action does (desktop, files, shell, credentials, system) and the tool schemas |
 | `ofa/settings_store.py` | Eyes / Hands / Voice settings from the web Settings page |
+| `ofa/corpus/`, `ofa/forms.py`, `ofa/graphs/form.py`, `ofa/eyes/form.py` | info corpus and the multi-page form filler |
 | `ofa/companion.py`, `ofa/speech/` | brain adapter for the companion session; Flux STT, spoken controls, echo guard |
 | `ofa/server.py`, `ofa/ui/` | local vault page and mock forms |
 | `ofa/phone.py` | optional Android-over-adb surface |
