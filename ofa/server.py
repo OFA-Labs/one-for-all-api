@@ -22,6 +22,7 @@ class Secret(BaseModel):
     value: str = Field(min_length=1, max_length=4096)
     allowed_targets: list[str] = Field(default_factory=list, max_length=20)
     description: str = Field(default="", max_length=200)
+    expected_account: str = Field(default="", max_length=200)
 
     def __repr__(self) -> str:          # never render the value
         return f"Secret({self.data_class}/{self.service}/{self.label})"
@@ -82,7 +83,8 @@ def create_app(core, token: str | None = None) -> FastAPI:
     def put(item: Secret):
         try:
             h = core.vault.put(item.data_class, item.service, item.label, item.value,
-                               allowed_targets=item.allowed_targets, description=item.description)
+                               allowed_targets=item.allowed_targets, description=item.description,
+                               expected_account=item.expected_account)
         except VaultLocked:
             raise HTTPException(423, "vault locked")
         except (VaultError, HandleError) as exc:
