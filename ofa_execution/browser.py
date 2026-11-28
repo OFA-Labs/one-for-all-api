@@ -100,7 +100,8 @@ ACT = r"""(unused, arg) => {
 }"""
 
 
-# Would a person's click land on this element? Two box readings 50 ms apart, then
+# Would a person's click land on this element? Two box readings at least 50 ms and
+# two drawn frames apart (a busy browser may draw nothing in 50 ms), then
 # a composed-tree hit test at its centre. Scroll positions are put back, so the
 # approved reading and the readback after dispatch stay comparable.
 PREFLIGHT = r"""async (unused, arg) => {
@@ -108,7 +109,10 @@ PREFLIGHT = r"""async (unused, arg) => {
   if(!el||!el.isConnected) return {found:false};
   const box=()=>{const r=el.getBoundingClientRect();return [r.left,r.top,r.width,r.height].map(Math.round).join()};
   const first=box();
+  const frames=new Promise(done=>requestAnimationFrame(()=>requestAnimationFrame(done)));
   await new Promise(done=>setTimeout(done,50));
+  // A background tab draws no frames at all; do not wait for them for ever.
+  await Promise.race([frames,new Promise(done=>setTimeout(done,500))]);
   const stable=el.isConnected&&first===box();
   const saved=[], views=[];
   for(let n=el;n;){
