@@ -21,6 +21,9 @@ class LocalConfig(Contract):
     fixture_origins: list[str] = Field(default_factory=list)
     approval_seconds: int = Field(default=60, ge=1, le=300)
     max_tasks: int = Field(default=40, ge=1, le=200)
+    # Launchers fill this in; "off" disables it. None keeps state in memory only.
+    ledger_dir: str | None = None
+    unknown_block_hours: int = Field(default=24, ge=1, le=8760)
 
     @classmethod
     def load(cls, path: str | None):

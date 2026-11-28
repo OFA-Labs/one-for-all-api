@@ -8,6 +8,7 @@ from collections import deque
 from dataclasses import dataclass, field
 
 from .contracts import ExecutionError, Plan, digest, uid
+from .ledger import Ledger, effect_key
 from .policy import Gate
 
 
@@ -40,6 +41,8 @@ class Engine:
     def __init__(self, config, hands, planner):
         self.config, self.hands, self.planner = config, hands, planner
         self.gate = Gate(config)
+        self.ledger = (Ledger(config.ledger_dir, config.unknown_block_hours * 3600)
+                       if config.ledger_dir and config.ledger_dir.casefold() != "off" else None)
         self.session_id = uid()
         self.tasks: dict[str, Task] = {}
         self._commands: dict[str, tuple[str, object]] = {}
@@ -55,7 +58,7 @@ class Engine:
                 "planner": "deterministic_only", "voice": "future_integration",
                 "hands": {k: h.capabilities() for k, h in self.hands.items()},
                 "apps": [a.name for a in self.config.apps], "queue_limit": 3,
-                "history": "bounded_in_memory", "stopped": self._stopped,
+                "history": "local_ledger" if self.ledger else "bounded_in_memory", "stopped": self._stopped,
                 "local_controls": self.runtime_capabilities}
 
     def _event(self, task, kind, **payload):
@@ -65,6 +68,12 @@ class Engine:
                             "attempt": 1, "session_id": self.session_id, "hand_id": self._hand_key(task.plan.steps[min(task.step, len(task.plan.steps)-1)]),
                             "approval_id": task.approval["id"] if task.approval else None,
                             "timestamp": time.time(), "type": kind, "payload": payload})
+        if self.ledger:
+            try:
+                self.ledger.event(task.events[-1])
+            except ExecutionError:
+                # History only. Dispatch is guarded by the effect records, which fail closed.
+                pass
         self._cv.notify_all()
 
     @staticmethod
@@ -72,7 +81,11 @@ class Engine:
         return next((key for prefix, key in (("browser.", "browser"), ("file.", "files"),
                     ("website.", "websites"), ("slack.", "slack")) if step.operation.startswith(prefix)), "desktop")
 
-    def _once(self, command_id, payload, fn):
+    def _record(self, key, state, task, step):
+        if self.ledger and key:
+            self.ledger.effect(key, state, session_id=self.session_id, task_id=task.id, step_id=step.id)
+
+    def _once(self, command_id, payload, fn, durable=False):
         with self._cv:
             hashed = digest(payload)
             if command_id in self._commands:
@@ -80,10 +93,18 @@ class Engine:
                 if old_hash != hashed:
                     raise ExecutionError("COMMAND_ID_CONFLICT", "This command ID was used for a different request.")
                 return copy.deepcopy(result)
+            if durable and self.ledger and command_id in self.ledger.commands:
+                # Submitted before a restart: answer as before, never run it again.
+                old_hash, result = self.ledger.commands[command_id]
+                if old_hash != hashed:
+                    raise ExecutionError("COMMAND_ID_CONFLICT", "This command ID was used for a different request.")
+                return copy.deepcopy(result)
             if len(self._commands) >= 1000:
                 raise ExecutionError("SESSION_LIMIT", "Restart the local session after checking pending work.")
             result = fn()
             self._commands[command_id] = (hashed, copy.deepcopy(result))
+            if durable and self.ledger:
+                self.ledger.command(command_id, hashed, result)
             return result
 
     def _create_task(self, plan: Plan):
@@ -110,7 +131,7 @@ class Engine:
         # screening a proposed plan; stop is rechecked at the insertion boundary.
         self.gate.screen(plan)
         return self._once(command_id, {"kind": "plan", "plan": plan.model_dump()},
-                          lambda: self._create_task(plan))
+                          lambda: self._create_task(plan), durable=True)
 
     def command(self, command):
         plan = self.planner.plan(command, self.capabilities())
@@ -119,7 +140,7 @@ class Engine:
         # command input, not those new plan IDs, so a retry returns one task.
         return self._once(command.command_id,
                           {"kind": "command", **command.model_dump(exclude={"command_id"})},
-                          lambda: self._create_task(plan))
+                          lambda: self._create_task(plan), durable=True)
 
     def _task(self, task_id):
         if task_id not in self.tasks:
@@ -269,8 +290,11 @@ class Engine:
                 if hasattr(hand, "after_handoff"):
                     hand.after_handoff(step)
                 continue  # Must read and check the surface again, no old command replay.
-            token = None
+            token = key = None
             if decision == "approval":
+                if self.ledger:
+                    key = effect_key(step, before)
+                    self.ledger.check(key, step.id)
                 try:
                     approved_epoch = self._wait_approval(t, step, before)
                 except ExecutionError as exc:
@@ -298,6 +322,8 @@ class Engine:
                 t.state = "running"
                 if token:
                     self.gate.consume(token, t.id, step, before, t.epoch)
+                    # On disk before dispatch: a crash from here on reads as unknown.
+                    self._record(key, "intent", t, step)
                     t.effects[step.id] = {"state": "intent", "reading_hash": before.hash,
                                           "approval_id": t.approval["id"]}
                     self._event(t, "commit_authorised", reading_hash=before.hash)
@@ -307,6 +333,7 @@ class Engine:
                 if token:
                     with self._cv:
                         t.effects[step.id]["state"] = "unknown"
+                        self._record(key, "unknown", t, step)
                         self._event(t, "outcome_unknown", reason="dispatch_boundary_interrupted_no_retry")
                 elif exc.code == "HELD":
                     continue
@@ -316,6 +343,7 @@ class Engine:
                 if outcome.status == "handoff":
                     if token:
                         t.effects[step.id]["state"] = "unknown"
+                        self._record(key, "unknown", t, step)
                     t.state = "handoff"
                     t.handoff = {"id": uid(), "reason": outcome.observation.facts.get("reason", "Human assistance required"), "continued": False}
                     t.approval = None
@@ -332,6 +360,7 @@ class Engine:
                             raise ExecutionError("HUMAN_REQUIRED", "Close the window yourself before continuing; no second close was sent.")
                         t.observation = reading.model_dump()
                         t.effects[step.id]["state"] = "verified"
+                        self._record(key, "verified", t, step)
                         self._event(t, "step_verified", evidence=[{"tier":"A","kind":"window_closed_readback","reading_hash":reading.hash}])
                         return
                     raise ExecutionError("HUMAN_REQUIRED", "Check the application outcome before a new command.")
@@ -341,6 +370,7 @@ class Engine:
                 t.receipt_only |= dispatched
                 if token:
                     t.effects[step.id]["state"] = "verified" if verified else "dispatched" if dispatched else "unknown"
+                    self._record(key, t.effects[step.id]["state"], t, step)
                 t.approval = None
                 if not verified and not dispatched:
                     raise ExecutionError("VERIFICATION_FAILED", "The actual outcome could not be verified; no action will be retried.")
@@ -384,7 +414,7 @@ class Engine:
             except ExecutionError as exc:
                 with self._cv:
                     uncertain = any(e["state"] == "unknown" for e in task.effects.values())
-                    task.state = "unknown" if uncertain or exc.code == "VERIFICATION_FAILED" else "cancelled" if exc.code == "CANCELLED" else "failed"
+                    task.state = "unknown" if uncertain or exc.code in {"VERIFICATION_FAILED", "OUTCOME_UNKNOWN"} else "cancelled" if exc.code == "CANCELLED" else "failed"
                     task.error = {"code": exc.code, "message": exc.message}
                     task.approval = None
                     self._event(task, task.state, **task.error)
