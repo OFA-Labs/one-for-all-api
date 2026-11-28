@@ -1,6 +1,6 @@
 # OFA capability status
 
-Last updated: 2026-11-27. Branch: `feat/info-corpus`. Requirements: [MASTER_PROMPT.md](MASTER_PROMPT.md) §5.
+Last updated: 2026-11-28. Branch: `staging`. Requirements: [MASTER_PROMPT.md](MASTER_PROMPT.md) §5.
 
 | Mark | Meaning |
 |---|---|
@@ -14,8 +14,8 @@ Each ✅ row ends with its label and the commands or tests that back it.
 
 | Label | Meaning |
 |---|---|
-| `live-local` | Ran on the Windows laptop, as recorded on 2026-11-27 at `5cecce2`. **Not re-run since**, so later changes are not covered. |
-| `offline-test` | Passes against fakes only. Re-run on 2026-11-28 with the browser and trust fixes of that date. |
+| `live-local` | Ran on the Windows laptop. Recorded on 2026-11-27 at `5cecce2` unless the row gives another date. The 2026-11-27 runs were **not re-run** after the 2026-11-28 changes. |
+| `offline-test` | Passes against fakes, or in a headless browser on local test pages. Run on 2026-11-28. Not proof of a real run. |
 | `source-inspected` | Read in the code, never run. Used for no ✅ row. |
 
 | Ref | Reproduce command (from the repo root, `.venv-ofa/Scripts/python.exe`) |
@@ -26,21 +26,27 @@ Each ✅ row ends with its label and the commands or tests that back it.
 | tests/… | `python -m pytest <ref> -q` (fakes only; it supports the row but is not the live run) |
 | none recorded | Reported as run on the laptop; no command or test reference was written down. Treat as the weakest evidence. |
 
+## Older browser engine
+
+Rows marked **(engine)** belong to `ofa_execution/`, which the voice companion uses. The `ofa/` brain does not use it:
+it works your browser through Windows. The browser rows also need the `browse` tool to be configured, and it has not
+been run against these changes.
+
 ## Summary
 
 | Category | ✅ | 🟡 | ❌ |
 |---|---|---|---|
 | [C1 Voice session and presence](#c1) | 6 | 10 | 5 |
-| [C2 App, website and system control](#c2) | 5 | 13 | 3 |
-| [C3 In-app navigation and interaction](#c3) | 8 | 11 | 2 |
+| [C2 App, website and system control](#c2) | 5 | 14 | 3 |
+| [C3 In-app navigation and interaction](#c3) | 8 | 14 | 3 |
 | [C4 Dictation, writing and outbound messages](#c4) | 3 | 9 | 3 |
 | [C5 Goal-driven search and browsing](#c5) | 2 | 7 | 3 |
-| [C6 Identity, sign-in and credentials](#c6) | 0 | 13 | 6 |
-| [C7 Personal data and form filling](#c7) | 9 | 11 | 6 |
-| [C8 Files and documents](#c8) | 2 | 7 | 7 |
+| [C6 Identity, sign-in and credentials](#c6) | 1 | 15 | 8 |
+| [C7 Personal data and form filling](#c7) | 8 | 14 | 6 |
+| [C8 Files and documents](#c8) | 2 | 8 | 7 |
 | [C9 Multi-app workflows](#c9) | 0 | 9 | 3 |
-| [C10 Complex tasks: plan, approve, execute](#c10) | 4 | 2 | 3 |
-| **Total** | **39** | **92** | **41** |
+| [C10 Complex tasks: plan, approve, execute](#c10) | 4 | 4 | 3 |
+| **Total** | **39** | **104** | **44** |
 
 <a id="c1"></a>
 
@@ -107,6 +113,7 @@ Code: `ofa/harness/, ofa/effects/desktop.py, ofa/effects/system.py`
 - List and end programs
 - Open Wi-Fi, Bluetooth and airplane mode pages
 - Handle: app not installed, several matches, slow loading, unexpected dialog
+- Report an opened website as sent, not as verified **(engine)** — `offline-test`: tests/local_execution/test_evidence_tiers.py
 
 ### ❌ Not done
 
@@ -144,11 +151,15 @@ Code: `ofa/eyes/, ofa/graphs/eyes.py, ofa/graphs/hands.py`
 - Code editors, AI coding tools and terminals
 - Browsers and unknown apps
 - Check a click by looking for a screen change
+- Refuse to click or type when the element is covered or moving **(engine)** — `offline-test`: tests/local_execution/test_browser_preflight.py; tests/local_execution/test_browser_pages.py
+- Read inside same-origin frames and open shadow roots, up to 1,000 elements **(engine)** — `offline-test`: tests/local_execution/test_browser_pages.py
+- Name page elements from their accessible labels **(engine)** — `offline-test`: tests/local_execution/test_browser_pages.py::test_accessible_names_and_their_source
 
 ### ❌ Not done
 
 - App-specific adapters
 - Vision model re-checking the result of a click
+- Read inside closed shadow roots, or detect that one was missed **(engine)**
 
 <a id="c4"></a>
 
@@ -215,7 +226,7 @@ Code: `ofa/vault/, ofa/effects/credentials.py`
 
 ### ✅ Done
 
-- None
+- Take the page address only from the browser's own address bar (Edge and Chrome windows, local test page) — `live-local`: 2026-11-28, results in [API pull request 38](https://github.com/OFA-Labs/one-for-all-api/pull/38); tests/ofa_core/test_browser_identity.py
 
 ### 🟡 Implemented, not verified
 
@@ -232,6 +243,8 @@ Code: `ofa/vault/, ofa/effects/credentials.py`
 - Fill a login on a real site
 - Ask which account
 - Approval for account or password changes
+- Refuse to fill a private item when the page shows another account — `offline-test`: tests/ofa_core/test_expected_account.py
+- Set that account from E-Brain → Info corpus → Private — `offline-test`: web repo `tests/info-corpus.spec.ts` (fake companion)
 
 ### ❌ Not done
 
@@ -241,6 +254,8 @@ Code: `ofa/vault/, ofa/effects/credentials.py`
 - One-time code from email
 - One-time code from phone messages
 - Windows Hello unlock on this laptop
+- Fill private items where no address bar can be read, such as Edge in full screen (refused on purpose)
+- Check the address-bar rule in Firefox
 
 <a id="c7"></a>
 
@@ -258,7 +273,6 @@ Code: `ofa/graphs/form.py, ofa/forms.py, ofa/eyes/form.py, ofa/corpus/`
 - Ask for missing answers and personal decisions by voice — `live-local`: B; tests/ofa_core/test_form_graph.py::test_personal_decisions_are_always_asked
 - Never tick a declaration without a spoken yes — `live-local`: B; tests/ofa_core/test_form_graph.py::test_declaration_is_always_asked_and_never_ticked_on_no
 - Speak a summary and wait for a spoken yes before submitting — `live-local`: B; tests/ofa_core/test_form_graph.py::test_not_submitted_without_a_spoken_yes
-- Confirm the “response recorded” page — `offline-test`: tests/ofa_core/test_form_graph.py::test_a_confirmation_address_proves_submission_without_the_phrase; tests/ofa_core/test_form_graph.py::test_the_phrase_alone_is_not_proof_and_is_never_resubmitted
 
 ### 🟡 Implemented, not verified
 
@@ -273,6 +287,9 @@ Code: `ofa/graphs/form.py, ofa/forms.py, ofa/eyes/form.py, ofa/corpus/`
 - Keep going and ask you when the model is unavailable
 - Block invented numbers and assumed “Nil” or “No” answers
 - Store private personal fields in the vault
+- Confirm submission from the page address, not the “response recorded” wording alone — `offline-test`: tests/ofa_core/test_form_graph.py::test_a_confirmation_address_proves_submission_without_the_phrase; tests/ofa_core/test_form_graph.py::test_the_phrase_alone_is_not_proof_and_is_never_resubmitted; tests/ofa_core/test_form_graph.py::test_an_error_page_at_a_new_address_is_not_proof
+- Read every filled value back before Next or Submit, and stop on a mismatch — `offline-test`: tests/ofa_core/test_form_graph.py::test_a_value_the_page_changes_is_not_reported_as_filled; tests/ofa_core/test_form_graph.py::test_an_option_that_does_not_tick_is_not_submitted; tests/ofa_core/test_form_graph.py::test_a_private_value_is_never_read_back_or_stored
+- Ask for each field when a page repeats the same question — `offline-test`: tests/ofa_core/test_form_graph.py::test_two_fields_with_the_same_question_are_asked_not_guessed
 
 ### ❌ Not done
 
@@ -303,6 +320,7 @@ Code: `ofa/effects/files.py`
 - Refuse to read credential files
 - Cloud drives and email attachments through their screens
 - Spoken yes before upload, attach or share
+- Check a written file against its exact expected content **(engine)** — `offline-test`: tests/local_execution/test_evidence_tiers.py::test_file_text_is_checked_by_verify
 
 ### ❌ Not done
 
@@ -359,6 +377,8 @@ Code: `ofa/graphs/hands.py`
 
 - Read the plan aloud
 - Change the plan by voice and ask again
+- Remember sent actions across a restart; keep unknown outcomes blocked for 24 hours **(engine)** — `offline-test`: tests/local_execution/test_ledger.py
+- Count a step as complete only after reading its result back **(engine)** — `offline-test`: tests/local_execution/test_evidence_tiers.py
 
 ### ❌ Not done
 
