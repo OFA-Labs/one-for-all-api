@@ -182,7 +182,21 @@ def needs_user(f: Field) -> str | None:
         return "file"
     if DECISION.search(f.question):
         return "decision"
+    if f.same > 1:
+        return "ambiguous"
     return None
+
+
+def shows(f: Field, value: str) -> bool:
+    """Does a fresh reading of the field show exactly what was meant to be entered?"""
+    if f.kind == "declare":
+        return f.value == "checked"
+    if f.kind in {"radio", "check"}:
+        return ({norm(o.label) for o in f.options if o.checked}
+                == {norm(v) for v in value.split(";") if v.strip()})
+    if f.kind == "select":
+        return norm(f.value) == norm(value)
+    return " ".join(f.value.split()) == " ".join(value.split())
 
 
 def unanswered(f: Field) -> bool:
@@ -199,6 +213,8 @@ def question_prompt(f: Field, reason: str, speed: bool) -> str:
     if reason == "error":
         return f"The form says: {f.error[:100].rstrip('. ')}. What should I put for {f.question[:120]}?"
     prompt = f.question[:160].rstrip(" ?.:") + "?"
+    if f.same > 1:
+        prompt = f"Number {f.nth} of {f.same} fields called {prompt}"
     if f.options:
         prompt += " Options: " + ", ".join(o.label for o in f.options[:8]) + "."
     return prompt if speed else "I need your answer. " + prompt
