@@ -104,3 +104,21 @@ def test_a_failed_dispatch_is_never_retried(tmp_path):
         assert any(e["payload"].get("reason") == "dispatch_boundary_interrupted_no_retry" for e in done["events"])
     finally:
         engine.close()
+
+
+def test_the_configured_element_cap_reaches_the_collector():
+    seen = []
+
+    class Recording(FakeMcp):
+        def call(self, name, arguments):
+            seen.append(arguments.get("arg"))
+            return super().call(name, arguments)
+
+    for config, cap in ((LocalConfig(), 300), (LocalConfig(max_elements=1000), 1000)):
+        hand = BrowserHand(config, Recording([GOOD]))
+        hand.tabs, hand.last_tab = {"1": ORIGIN}, "1"
+        hand.observe(Step(operation="browser.observe"))
+        assert seen[-1] == {"max_elements": cap}
+    for bad in (0, 1001):
+        with pytest.raises(ValueError):
+            LocalConfig(max_elements=bad)

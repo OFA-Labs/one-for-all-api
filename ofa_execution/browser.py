@@ -13,22 +13,57 @@ from .contracts import Evidence, ExecutionError, NotDispatched, Observation, Out
 from .verification import verify
 
 
-COLLECT = r"""async () => {
+# Reads the page, open shadow roots and same-origin frames. Frames from another
+# origin are never entered; they make the reading incomplete. A closed shadow root
+# cannot be detected from a page script.
+COLLECT = r"""async (unused, arg) => {
+  const max=Math.min(Math.max(Number(arg?.max_elements)||300,1),1000);
   const state = globalThis.__ofaLocalRead ||= {doc:crypto.randomUUID(), ids:new WeakMap(), nodes:new Map(), next:0};
-  if(!state.listening){
-    for(const name of ['pointerdown','keydown'])document.addEventListener(name,e=>{if(e.isTrusted)state.userDriving=true;},true);
-    state.listening=true;
-  }
-  const all=[...document.querySelectorAll('a,button,input,textarea,select,[role],h1,h2,p,label')];
+  state.listening ||= new WeakSet();
+  const all=[];
+  let frames=0, skipped=false, captcha=false;
+  const walk=(root,prefix,dx,dy)=>{
+    const doc=root.nodeType===9?root:null;
+    if(doc&&!state.listening.has(doc)){
+      for(const name of ['pointerdown','keydown'])doc.addEventListener(name,e=>{if(e.isTrusted)state.userDriving=true;},true);
+      state.listening.add(doc);
+    }
+    captcha ||= !!root.querySelector('[class*=captcha],[id*=captcha]');
+    for(const el of root.querySelectorAll('*')){
+      if(el.matches('a,button,input,textarea,select,[role],h1,h2,p,label')) all.push({el,prefix,dx,dy});
+      if(el.shadowRoot) walk(el.shadowRoot,prefix,dx,dy);
+      if(el.tagName==='IFRAME'||el.tagName==='FRAME'){
+        let inner=null;
+        try{inner=el.contentDocument;}catch{}
+        if(inner&&inner.documentElement){
+          const r=el.getBoundingClientRect();
+          walk(inner,prefix+'frame:'+(++frames)+'/',dx+r.left+el.clientLeft,dy+r.top+el.clientTop);
+        } else skipped=true;
+      }
+    }
+  };
+  walk(document,'',0,0);
+  const clean=text=>String(text||'').replace(/\s+/g,' ').trim();
+  const accessibleName=el=>{
+    const scope=el.getRootNode();
+    const referenced=clean((el.getAttribute('aria-labelledby')||'').split(/\s+/).filter(Boolean)
+      .map(id=>scope.getElementById?.(id)?.textContent||'').join(' '));
+    if(referenced) return [referenced,'aria-labelledby'];
+    for(const [source,text] of [['aria-label',el.getAttribute('aria-label')],
+        ['label',[...(el.labels||[])].map(l=>l.textContent).join(' ')],['content',el.innerText],['name-attribute',el.name]])
+      if(clean(text)) return [clean(text),source];
+    return ['','none'];
+  };
   const elements=[];
-  for(const el of all.slice(0,300)) {
+  for(const {el,prefix,dx,dy} of all.slice(0,max)) {
     const protectedField=el.type==='password'||el.autocomplete==='one-time-code';
     const sensitive=protectedField||/token|csrf|secret|auth/i.test(el.name||'');
     let id=state.ids.get(el); if(!id){id=state.doc+':'+(++state.next);state.ids.set(el,id);}
-    state.nodes.set(id,el);
+    const ref=prefix+id;
+    state.nodes.set(ref,el);
     const role=el.getAttribute('role')||(el.tagName==='A'?'link':el.tagName==='BUTTON'?'button':
       /INPUT|TEXTAREA/.test(el.tagName)?'edit':el.tagName.toLowerCase());
-    const name=el.getAttribute('aria-label')||el.labels?.[0]?.textContent||el.innerText||el.name||'';
+    const [name,nameSource]=accessibleName(el);
     let value=protectedField?null:('value' in el?String(el.value):null);
     let commitment=null;
     if(sensitive && !protectedField && value!==null) {
@@ -36,14 +71,15 @@ COLLECT = r"""async () => {
       value='[masked security metadata]';
     }
     const r=el.getBoundingClientRect();
-    elements.push({ref:id,name:protectedField?'[protected]':name.trim().slice(0,500),role,
+    elements.push({ref,name:protectedField?'[protected]':name.slice(0,500),role,
       value:value===null?null:value.slice(0,16384),protected:protectedField,enabled:!el.disabled,
-      bounds:[Math.round(r.left),Math.round(r.top),Math.round(r.right),Math.round(r.bottom)],
-      extra:{href:el.href||null,hidden:el.type==='hidden',type:el.type||null,commitment}});
+      bounds:[Math.round(r.left+dx),Math.round(r.top+dy),Math.round(r.right+dx),Math.round(r.bottom+dy)],
+      extra:{href:el.href||null,hidden:el.type==='hidden',type:el.type||null,commitment,
+        name_source:protectedField?'protected':nameSource}});
   }
   return {surface:'browser',identity:{document:state.doc},elements,
-    complete:all.length<=300&&!document.querySelector('iframe')&&![...document.querySelectorAll('*')].some(e=>e.shadowRoot),
-    facts:{url:location.href,title:document.title,user_driving:!!state.userDriving,human_required:!!state.userDriving||elements.some(e=>e.protected)||!!document.querySelector('[class*=captcha],[id*=captcha]')}};
+    complete:all.length<=max&&!skipped,
+    facts:{url:location.href,title:document.title,user_driving:!!state.userDriving,human_required:!!state.userDriving||elements.some(e=>e.protected)||captcha}};
 }"""
 
 ACT = r"""(unused, arg) => {
@@ -54,9 +90,10 @@ ACT = r"""(unused, arg) => {
   if(arg.operation==='browser.click') {el.click();return true;}
   if(arg.operation==='browser.fill') {
     if(!/INPUT|TEXTAREA/.test(el.tagName)||el.type==='hidden')throw new Error('UNSUPPORTED_CONTROL');
-    const proto=el.tagName==='INPUT'?HTMLInputElement.prototype:HTMLTextAreaElement.prototype;
+    const view=el.ownerDocument.defaultView;
+    const proto=el.tagName==='INPUT'?view.HTMLInputElement.prototype:view.HTMLTextAreaElement.prototype;
     Object.getOwnPropertyDescriptor(proto,'value').set.call(el,arg.text);
-    el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}));return true;
+    el.dispatchEvent(new view.Event('input',{bubbles:true}));el.dispatchEvent(new view.Event('change',{bubbles:true}));return true;
   }
   if(arg.operation==='browser.scroll'){el.scrollBy(0,arg.direction==='up'?-300:300);return true;}
   throw new Error('UNSUPPORTED_OPERATION');
@@ -73,20 +110,34 @@ PREFLIGHT = r"""async (unused, arg) => {
   const first=box();
   await new Promise(done=>setTimeout(done,50));
   const stable=el.isConnected&&first===box();
-  const view=el.ownerDocument.defaultView, saved=[];
-  for(let n=el;n;n=n.parentNode||n.host) if(n.nodeType===1) saved.push([n,n.scrollLeft,n.scrollTop]);
-  const x0=view.scrollX, y0=view.scrollY;
+  const saved=[], views=[];
+  for(let n=el;n;){
+    if(n.nodeType===1) saved.push([n,n.scrollLeft,n.scrollTop]);
+    if(n.nodeType===9){const view=n.defaultView;views.push([view,view.scrollX,view.scrollY]);n=view.frameElement;}
+    else n=n.parentNode||n.host;
+  }
   el.scrollIntoView({block:'center',inline:'center',behavior:'instant'});
+  const lands=(target,x,y)=>{
+    let top=target.ownerDocument.elementFromPoint(x,y);
+    while(top&&top.shadowRoot){const inner=top.shadowRoot.elementFromPoint(x,y);if(!inner||inner===top)break;top=inner;}
+    for(let n=top;n;n=n.assignedSlot||n.parentNode||n.host) if(n===target||(n.tagName==='LABEL'&&n.control===target))return true;
+    return false;
+  };
   const r=el.getClientRects()[0];
   let hit=false;
   if(r&&r.width>0&&r.height>0){
-    const x=r.left+r.width/2, y=r.top+r.height/2;
-    let top=el.ownerDocument.elementFromPoint(x,y);
-    while(top&&top.shadowRoot){const inner=top.shadowRoot.elementFromPoint(x,y);if(!inner||inner===top)break;top=inner;}
-    for(let n=top;n;n=n.assignedSlot||n.parentNode||n.host) if(n===el||(n.tagName==='LABEL'&&n.control===el)){hit=true;break;}
+    let x=r.left+r.width/2, y=r.top+r.height/2, target=el;
+    hit=lands(target,x,y);
+    while(hit){
+      const frame=target.ownerDocument.defaultView.frameElement;
+      if(!frame)break;
+      const box=frame.getBoundingClientRect();
+      x+=box.left+frame.clientLeft; y+=box.top+frame.clientTop; target=frame;
+      hit=lands(target,x,y);
+    }
   }
   for(const [n,left,top] of saved) if(n.scrollLeft!==left||n.scrollTop!==top) n.scrollTo({left,top,behavior:'instant'});
-  view.scrollTo({left:x0,top:y0,behavior:'instant'});
+  for(const [view,left,top] of views) view.scrollTo({left,top,behavior:'instant'});
   return {found:true,stable,hit_target:hit};
 }"""
 
@@ -135,7 +186,8 @@ class BrowserHand:
         if step.operation == "browser.open":
             return Observation(surface="browser", identity={"new_tab": True}, facts={"url": step.url})
         tab = self._tab(step)
-        result = self._unwrap(self._client().call("eval", {"tab": self._tool_tab(tab), "expression": COLLECT}))
+        result = self._unwrap(self._client().call("eval", {"tab": self._tool_tab(tab), "expression": COLLECT,
+                                                           "arg": {"max_elements": self.config.max_elements}}))
         if not isinstance(result, dict) or result.get("surface") != "browser":
             raise ExecutionError("BROWSER_SCHEMA_CHANGED", "Browser collector did not return the expected reading.")
         reading = Observation.model_validate(result)
