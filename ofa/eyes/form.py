@@ -10,6 +10,7 @@ from __future__ import annotations
 import re
 import time
 from dataclasses import asdict, dataclass, field
+from urllib.parse import urlsplit
 
 from ..harness.api import BROWSERS, Harness, HarnessError, Snapshot, norm
 
@@ -19,6 +20,8 @@ ERROR = re.compile(r"(this (is a )?required (question|field)|this question is re
 CLOSED = re.compile(r"(no longer accepting responses|form is closed|this form is no longer|deadline has passed)", re.I)
 DONE = re.compile(r"(your response has been recorded|thanks for (your )?(response|submitting)|response (was )?submitted|"
                   r"thank you for (your )?submission)", re.I)
+# Address of a confirmation page, e.g. Google Forms' /formResponse.
+CONFIRM_URL = re.compile(r"(formresponse|thank[-_]?you|thanks|success|confirm|submitted|complete)", re.I)
 DECLARE = re.compile(r"\b(i (hereby )?(declare|confirm|certify|agree|accept|acknowledge|consent)|terms and conditions)", re.I)
 SENSITIVE = re.compile(r"\b(password|passcode|otp|one[- ]time|pin\b|cvv|card number|bank account|ifsc|aadhaa?r|pan( card)?\b|"
                        r"passport number|social security|ssn)\b", re.I)
@@ -86,6 +89,21 @@ class FormPage:
 
     def as_state(self) -> dict:
         return asdict(self)
+
+
+def submission_readback(submitted_url: str | None, page: FormPage) -> str | None:
+    """What a fresh reading proves after Submit was pressed.
+
+    "verified": the form is gone and the browser moved to a different address that is a confirmation page, or
+    that also says the response was recorded. "inferred": only the wording says so, which any page can print.
+    None: nothing shows it.
+    """
+    gone = not page.fields and not page.nav and not page.errors
+    if gone and submitted_url and page.url and page.url != submitted_url:
+        moved = urlsplit(page.url)
+        if page.done or CONFIRM_URL.search(f"{moved.path}#{moved.fragment}"):
+            return "verified"
+    return "inferred" if page.done else None
 
 
 def _browser_window(h: Harness, window) -> dict:
