@@ -7,7 +7,7 @@ import time
 from collections import deque
 from dataclasses import dataclass, field
 
-from .contracts import ExecutionError, Plan, digest, uid
+from .contracts import ExecutionError, NotDispatched, Plan, digest, uid
 from .ledger import Ledger, effect_key
 from .policy import Gate
 
@@ -329,6 +329,13 @@ class Engine:
                     self._event(t, "commit_authorised", reading_hash=before.hash)
             try:
                 outcome = hand.execute(step, before, lambda: self._checkpoint(t))
+            except NotDispatched as exc:
+                if token:
+                    with self._cv:
+                        t.effects[step.id]["state"] = "not_dispatched"
+                        self._record(key, "not_dispatched", t, step)
+                        self._event(t, "not_dispatched", code=exc.code)
+                raise
             except ExecutionError as exc:
                 if token:
                     with self._cv:

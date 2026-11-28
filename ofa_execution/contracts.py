@@ -161,6 +161,10 @@ class ExecutionError(Exception):
         self.code, self.message, self.options = code, message, options or []
 
 
+class NotDispatched(ExecutionError):
+    """The hand stopped before sending anything, so the effect is known not to have happened."""
+
+
 class PlannerAdapter(Protocol):
     """Future provider authenticates elsewhere; returns a plan, never tool access."""
     def plan(self, command: Command, capabilities: dict) -> Plan: ...
