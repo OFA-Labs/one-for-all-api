@@ -14,6 +14,7 @@ from .config import App, LocalConfig
 from .engine import Engine
 from .files import FileHand
 from .hotkey import StopHotkey
+from .ledger import default_dir
 from .planner import DeterministicPlanner
 from .windows import DesktopHand, discover_apps
 from .takeover import TakeoverMonitor
@@ -38,6 +39,7 @@ def main():
     token = os.environ.get("OFA_LOCAL_TOKEN") or secrets.token_urlsafe(48)
     if args.no_browser and not os.environ.get("OFA_LOCAL_TOKEN"):
         parser.error("Set OFA_LOCAL_TOKEN in the local process environment for --no-browser; never paste it into chat.")
+    config.ledger_dir = default_dir("local", config.ledger_dir)
     hands = {"desktop": DesktopHand(config), "browser": BrowserHand(config), "files": FileHand(config)}
     engine = Engine(config, hands, DeterministicPlanner(config))
     hotkey = StopHotkey(engine.emergency_stop).start()
@@ -48,7 +50,8 @@ def main():
     listener.listen(128)
     origin = f"http://127.0.0.1:{listener.getsockname()[1]}"
     print(f"OFA local control: {origin}; planner=deterministic; hotkey={'Alt+Shift+J' if hotkey.available else 'unavailable (use Stop/console)'}")
-    print("State is volatile. Restart invalidates approvals; check actual effects before repeating any action.")
+    print("Tasks and approvals end on restart. Actions with an unknown outcome stay blocked; "
+          "check actual effects before repeating any action.")
     if not args.no_browser:
         # Fragment is not sent to HTTP/access logs; no secret is printed.
         webbrowser.open(origin + "/#" + token)

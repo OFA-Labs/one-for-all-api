@@ -39,6 +39,7 @@ async def serve(handoff: Any, consent: bool, overlay: Overlay,
     from ofa_execution.engine import Engine
     from ofa_execution.files import FileHand
     from ofa_execution.hotkey import StopHotkey
+    from ofa_execution.ledger import default_dir
     from ofa_execution.planner import DeterministicPlanner
     from ofa_execution.windows import DesktopHand
     from ofa_execution.websites import WebsiteHand
@@ -55,6 +56,7 @@ async def serve(handoff: Any, consent: bool, overlay: Overlay,
         allowed_origins=handoff.execution.get("allowed_origins", []) if handoff else [origin.strip() for origin in os.getenv("OFA_BROWSER_ORIGINS","").split(",") if origin.strip()],
         read_roots=handoff.execution.get("read_roots", []) if handoff else [],
         write_roots=handoff.execution.get("write_roots", []) if handoff else [],
+        ledger_dir=default_dir("voice", os.getenv("OFA_EXECUTION_LEDGER")),
     )
     valid = []
     for app in config.apps:

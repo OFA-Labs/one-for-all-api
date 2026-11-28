@@ -14,6 +14,8 @@ The launcher opens a local authenticated control page and consents only to a dis
 
 The local credential is generated per process, passed to the opened page via a fragment, and never printed. Do not paste credentials into chat or documents. Reloading the page loses the in-memory browser credential; rerun the launcher to open a new authorised page. Restart discards tasks and invalidates approvals. Inspect actual app/file state before resubmitting an interrupted effect.
 
+The launchers keep a ledger of dispatched actions in `%LOCALAPPDATA%\OFA\execution-ledger` (identifiers and hashes only). After a restart, a step that was verified is not replayed, a repeated submit command ID runs nothing, and an action whose outcome is unknown stays blocked for `unknown_block_hours` (default 24). Check the application yourself; to lift a block sooner, delete that ledger folder. Set `ledger_dir` (companion: `OFA_EXECUTION_LEDGER`) to `off` to disable it.
+
 Tier A evidence means the goal was read back. `website.open` cannot read the page, so its task ends as `dispatched` with a tier D `dispatch_receipt`, never `completed`. A reading that did not match is kept as tier B.
 
 For custom permissions, copy `ofa_execution/config.example.json` to the ignored `local-execution.local.json`, then add only discovered approved app identities, folder roots and exact allowed origins. `python -m ofa_execution --discover` lists App Paths metadata without granting permissions. Run `python -m ofa_execution --config local-execution.local.json`. Do not provide a shell, generated executable path or unchecked model-provided launch arguments. Additional app compatibility is measured, not assumed.
