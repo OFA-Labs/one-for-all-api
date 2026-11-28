@@ -20,6 +20,8 @@ class LocalConfig(Contract):
     # Explicit fixture-only exception; never automatically enable localhost browsing.
     fixture_origins: list[str] = Field(default_factory=list)
     approval_seconds: int = Field(default=60, ge=1, le=300)
+    # Elements per browser reading. A page with more is reported incomplete.
+    max_elements: int = Field(default=300, ge=1, le=1000)
     max_tasks: int = Field(default=40, ge=1, le=200)
     # Launchers fill this in; "off" disables it. None keeps state in memory only.
     ledger_dir: str | None = None
