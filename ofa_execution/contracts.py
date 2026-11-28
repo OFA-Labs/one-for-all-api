@@ -140,9 +140,19 @@ class Evidence(Contract):
 
 
 class Outcome(Contract):
-    status: Literal["verified", "unknown", "handoff"]
+    # "dispatched": the request left OFA but nothing was read back.
+    status: Literal["verified", "unknown", "handoff", "dispatched"]
     observation: Observation
     evidence: list[Evidence] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def tier_a_needs_a_verified_outcome(self):
+        # Tier A means the goal was read back. A reading that did not match stays
+        # on record, but one tier lower, for every hand.
+        if self.status != "verified":
+            self.evidence = [e.model_copy(update={"tier": "B", "detail": {**e.detail, "assertion_matched": False}})
+                             if e.tier == "A" else e for e in self.evidence]
+        return self
 
 
 class ExecutionError(Exception):

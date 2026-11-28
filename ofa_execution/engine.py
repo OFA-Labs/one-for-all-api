@@ -11,7 +11,9 @@ from .contracts import ExecutionError, Plan, digest, uid
 from .policy import Gate
 
 
-TERMINAL = {"completed", "failed", "cancelled", "unknown"}
+TERMINAL = {"completed", "dispatched", "failed", "cancelled", "unknown"}
+# Operations with no surface OFA can read back; they may only end as "dispatched".
+DISPATCH_ONLY = {"website.open"}
 
 
 @dataclass
@@ -29,6 +31,7 @@ class Task:
     observation: dict | None = None
     error: dict | None = None
     effects: dict = field(default_factory=dict)
+    receipt_only: bool = False
     events: deque = field(default_factory=lambda: deque(maxlen=500))
     sequence: int = 0
 
@@ -332,12 +335,17 @@ class Engine:
                         self._event(t, "step_verified", evidence=[{"tier":"A","kind":"window_closed_readback","reading_hash":reading.hash}])
                         return
                     raise ExecutionError("HUMAN_REQUIRED", "Check the application outcome before a new command.")
+                dispatched = outcome.status == "dispatched" and step.operation in DISPATCH_ONLY
+                verified = outcome.status == "verified" and any(
+                    e.tier == "A" and e.detail.get("assertion_matched", True) for e in outcome.evidence)
+                t.receipt_only |= dispatched
                 if token:
-                    t.effects[step.id]["state"] = "verified" if outcome.status == "verified" else "unknown"
+                    t.effects[step.id]["state"] = "verified" if verified else "dispatched" if dispatched else "unknown"
                 t.approval = None
-                if outcome.status != "verified" or not any(e.tier == "A" for e in outcome.evidence):
+                if not verified and not dispatched:
                     raise ExecutionError("VERIFICATION_FAILED", "The actual outcome could not be verified; no action will be retried.")
-                self._event(t, "step_verified", evidence=[e.model_dump() for e in outcome.evidence])
+                self._event(t, "step_verified" if verified else "step_dispatched",
+                            evidence=[e.model_dump() for e in outcome.evidence])
             return
 
     def _work(self):
@@ -370,8 +378,9 @@ class Engine:
                         else:
                             raise
                 with self._cv:
-                    task.state = "completed"
-                    self._event(task, "completed")
+                    # One unread step means the task as a whole was not read back.
+                    task.state = "dispatched" if task.receipt_only else "completed"
+                    self._event(task, task.state)
             except ExecutionError as exc:
                 with self._cv:
                     uncertain = any(e["state"] == "unknown" for e in task.effects.values())
