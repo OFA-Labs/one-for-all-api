@@ -25,6 +25,8 @@ class PrivateItem(BaseModel):
     value: str = Field(min_length=1, max_length=4096)
     site: str = Field(pattern=r"^https://(\*\.)?[a-z0-9.-]{3,200}(:\d{1,5})?$|^app:.{3,200}$")
     sensitive: bool = False           # D2 (ID, bank, health) rather than D3 (password)
+    # Optional: refuse to fill unless the page shows this account.
+    account: str = Field(default="", max_length=200)
 
     def __repr__(self) -> str:        # never render the value
         return f"PrivateItem({self.service}/{self.label})"
@@ -87,7 +89,7 @@ def corpus_router(auth, core_of) -> APIRouter:
             return bad("INVALID_DOCUMENT")
 
     def private_view(c) -> dict:
-        keys = ("handle", "class", "service", "label", "allowed_targets", "revoked")
+        keys = ("handle", "class", "service", "label", "allowed_targets", "revoked", "expected_account")
         return {"unlocked": c.vault.unlocked,
                 "items": [{k: m[k] for k in keys if k in m} for m in c.vault.list(include_revoked=True)]}
 
@@ -112,7 +114,7 @@ def corpus_router(auth, core_of) -> APIRouter:
             elif action == "add":
                 item = PrivateItem.model_validate(body)
                 handle = c.vault.put("D2" if item.sensitive else "D3", item.service, item.label, item.value,
-                                     allowed_targets=[item.site])
+                                     allowed_targets=[item.site], expected_account=item.account)
                 c.audit.write("vault_put", handle_ids=[handle], result="ok")
             elif action in {"revoke", "delete"}:
                 handle = Handle.model_validate(body).handle

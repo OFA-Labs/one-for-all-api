@@ -13,7 +13,8 @@ from rapidfuzz import fuzz, process
 from ..engine.base import RedactedImage
 
 BROWSERS = {"chrome.exe", "msedge.exe", "firefox.exe", "brave.exe", "opera.exe", "vivaldi.exe", "arc.exe"}
-ADDRESS_NAMES = ("address and search bar", "address bar", "search or enter address", "search with google or enter address")
+ADDRESS_NAMES = ("address and search bar", "address bar", "address field", "search or enter address")
+FIREFOX_ADDRESS = re.compile(r"search with .{1,40} or enter address")
 _REDACT_TOKEN = object()
 MARK = re.compile(r"^[uom]\d+$")
 
@@ -477,13 +478,18 @@ class Harness:
                 return None
             w = wins[0]
         els, _ = self.b.uia_tree(w["hwnd"], max_nodes=900, budget_s=1.2)
-        url, insecure = None, False
+        found, in_page, insecure = set(), False, False
         for e in els:
             name = norm(e.text)
-            if e.role in {"edit", "combo box"} and (name in ADDRESS_NAMES or "address" in name) and e.value:
-                url = e.value.strip()
+            in_page = in_page or e.role == "document"
+            # Only the browser's own address bar: its full name, and listed before the page. Everything from the
+            # document on can be page content, which may copy that name (full screen can omit the real bar).
+            bar = name in ADDRESS_NAMES or FIREFOX_ADDRESS.fullmatch(name)
+            if bar and not in_page and e.role in {"edit", "combo box"} and e.value:
+                found.add(e.value.strip())
             if name in {"not secure", "your connection is not private", "dangerous"}:
                 insecure = True
+        url = found.pop() if len(found) == 1 else None        # two different answers: trust neither
         if url and "://" not in url:
             url = "https://" + url
         return {"url": url, "tls_ok": bool(url) and url.startswith("https://") and not insecure,

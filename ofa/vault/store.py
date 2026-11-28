@@ -102,7 +102,7 @@ class Vault:
 
     # --- items -----------------------------------------------------------------------------
     def put(self, data_class: str, service: str, label: str, value: str, *, allowed_targets: list[str] | None = None,
-            ops: list[str] | None = None, description: str = "") -> str:
+            ops: list[str] | None = None, description: str = "", expected_account: str = "") -> str:
         with self._lock:
             aes = self._aes()
             base = f"vault:{data_class}/{service.lower()}/{label.lower()}"
@@ -111,7 +111,8 @@ class Vault:
             handle = format_vault(data_class, service, label, version)
             nonce = secrets.token_bytes(12)
             ct = aes.encrypt(nonce, value.encode(), handle.encode())
-            meta = {"allowed_targets": allowed_targets or [], "ops": ops or ["fill-field"], "description": description}
+            meta = {"allowed_targets": allowed_targets or [], "ops": ops or ["fill-field"], "description": description,
+                    "expected_account": expected_account.strip()}
             now = time.time()
             self.db.execute("UPDATE items SET revoked=1 WHERE base=?", (base,))
             self.db.execute("INSERT INTO items VALUES(?,?,?,?,?,?,?,?,?,?,?,0)",
@@ -179,11 +180,13 @@ class Vault:
     def rotate(self, handle: str, new_value: str) -> str:
         m = self.meta(handle)
         return self.put(m["class"], m["service"], m["label"], new_value, allowed_targets=m["allowed_targets"],
-                        ops=m["ops"], description=m.get("description", ""))
+                        ops=m["ops"], description=m.get("description", ""),
+                        expected_account=m.get("expected_account", ""))
 
     def set_targets(self, handle: str, targets: list[str]) -> None:
         m = self.meta(handle)
-        meta = {"allowed_targets": targets, "ops": m["ops"], "description": m.get("description", "")}
+        meta = {"allowed_targets": targets, "ops": m["ops"], "description": m.get("description", ""),
+                "expected_account": m.get("expected_account", "")}
         self.db.execute("UPDATE items SET meta=? WHERE handle=?", (json.dumps(meta), handle))
         self.db.commit()
 

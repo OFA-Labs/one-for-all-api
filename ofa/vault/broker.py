@@ -28,6 +28,7 @@ class TargetIdentity:
     exe_path: str | None = None
     publisher: str | None = None
     field_is_password: bool = False
+    account: str | None = None     # the one account the page shows, when it shows exactly one
 
 
 class Injector(Protocol):
@@ -156,6 +157,10 @@ class Broker:
             verdict = check_origin(identity, allowed) if identity.kind == "browser" else check_app(identity, allowed)
             if verdict != "ok":
                 return self._done(handle, FillResult(False, verdict))
+            # An item saved for one account is never typed while the page shows another, or none.
+            expected = str(self.vault.meta(handle).get("expected_account") or "") if h.kind == "vault" else ""
+            if expected and (identity.account or "").strip().casefold() != expected.strip().casefold():
+                return self._done(handle, FillResult(False, "ACCOUNT_MISMATCH"))
             if h.data_class == "D3" and h.label.endswith("password") and identity.kind == "browser" \
                     and not identity.field_is_password:
                 return self._done(handle, FillResult(False, "NOT_A_PASSWORD_FIELD"))
