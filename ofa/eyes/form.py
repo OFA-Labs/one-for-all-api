@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import re
 import time
+from collections import Counter
 from dataclasses import asdict, dataclass, field
 from urllib.parse import urlsplit
 
@@ -51,9 +52,12 @@ class Field:
     options: list[Option] = field(default_factory=list)
     error: str = ""
     sensitive: bool = False
+    nth: int = 1                 # position among the fields on this page that carry the same question
+    same: int = 1                # how many fields on this page carry that question
 
     def key(self) -> str:
-        return norm(self.question)[:120] or self.id
+        base = norm(self.question)[:120] or self.id
+        return base if self.nth == 1 else f"{base} #{self.nth}"
 
     def public(self) -> dict:
         data = {"id": self.id, "question": self.question, "kind": self.kind, "required": self.required}
@@ -209,6 +213,13 @@ def read_form(h: Harness, window=None) -> FormPage:
         f.question = f.question.replace(" *", "").strip()
         if f.kind in {"radio", "check"}:
             f.value = ", ".join(o.label for o in f.options if o.checked)
+    # A question that appears twice cannot be matched to one field by its text.
+    total = Counter(f.key() for f in fields)
+    seen: Counter = Counter()
+    for f in fields:
+        base = f.key()
+        seen[base] += 1
+        f.nth, f.same = seen[base], total[base]
     # Hands act on the latest reading: form element ids become clickable and typeable.
     for e in doc:
         e.hwnd = w["hwnd"]

@@ -395,3 +395,68 @@ def test_the_phrase_alone_is_not_proof_and_is_never_resubmitted(tmp_path):
 def test_an_error_page_at_a_new_address_is_not_proof(tmp_path):
     _, result = submit_run(tmp_path, [e(950, "Something went wrong.", "text")], "https://forms.example.test/error")
     assert result.status == "partial" and "could not see a confirmation" in result.spoken
+
+
+def one_page(*elements):
+    return [[*elements, *nav("Submit")], DONE]
+
+
+def test_a_value_the_page_changes_is_not_reported_as_filled(tmp_path):
+    class Truncating:
+        """A field that silently keeps only the first three characters."""
+        def __init__(self):
+            self.text = None
+
+    box = e(2, "Roll number *", "edit")
+    r = Rig(tmp_path, one_page(e(1, "Roll number *", "text"), box), [answers(("u2", "known", "AB-123456"))],
+            heard=[Heard("yes")])
+    r.corpus.write("codes", "# Codes\n- Roll: AB-123456\n")
+    real = r.deps.harness.type_text
+
+    def truncate(text, *args, **kwargs):
+        result = real(text, *args, **kwargs)
+        box.value = box.value[:3]
+        return result
+    r.deps.harness.type_text = truncate
+    result = r.fill()
+    assert result.status == "partial" and "does not show what I entered" in result.spoken
+    assert "Submit" not in r.desk.clicks
+
+
+def test_an_option_that_does_not_tick_is_not_submitted(tmp_path):
+    third, final = e(2, "Third year", "radio button"), e(3, "Final year", "radio button")
+    r = Rig(tmp_path, one_page(e(1, "Year of study *", "text"), third, final),
+            [answers(("u2", "known", "Final year"))], heard=[Heard("yes")])
+    r.corpus.write("study", "# Study\n- Year: Final year\n")
+    result = r.fill()                                             # clicking changes nothing on this page
+    assert r.desk.clicks.count("Final year") == 3                 # tried, then two bounded retries
+    assert result.status == "partial" and "Submit" not in r.desk.clicks
+
+
+def test_two_fields_with_the_same_question_are_asked_not_guessed(tmp_path):
+    first, second = e(2, "Reference name *", "edit"), e(4, "Reference name *", "edit")
+    page = one_page(e(1, "Reference name *", "text"), first, e(3, "Reference name *", "text"), second)
+    r = Rig(tmp_path, page, [], heard=[Heard("Meera"), Heard("Kabir"), Heard("yes"), Heard("no")])
+    result = r.fill()
+    assert (first.value, second.value) == ("Meera", "Kabir")
+    assert r.engine.requests == [] and result.status == "done"
+    assert any("Number 1 of 2" in s for s in r.spoken) and any("Number 2 of 2" in s for s in r.spoken)
+
+
+def test_a_private_value_is_never_read_back_or_stored(tmp_path, monkeypatch):
+    import ofa.vault.store as store
+    from ofa.vault.broker import Broker
+    from ofa.vault.store import Vault
+    monkeypatch.setattr(store, "dpapi_wrap", lambda k: k[::-1])
+    monkeypatch.setattr(store, "dpapi_unwrap", lambda k: k[::-1])
+    vault = Vault(tmp_path / "vault", type("Y", (), {"verify": lambda self, r: True})())
+    vault._wrap, vault._unwrap = (lambda k: k[::-1]), (lambda k: k[::-1])
+    vault.unlock()
+    vault.put("D3", "college", "password", "Zx-Secret-778899", allowed_targets=["https://forms.example.test"])
+    secret = e(2, "College password *", "edit", password=True)
+    r = Rig(tmp_path, one_page(e(1, "College password *", "text"), secret), [],
+            heard=[Heard("yes"), Heard("yes"), Heard("no")], broker=Broker(vault, {}, None))
+    assert r.fill().status == "done"
+    kept = json.dumps(r.deps.audit.entries(100)) + r.model_text() + " ".join(r.spoken)
+    kept += "\n".join(r.deps.memory.db.iterdump())
+    assert secret.value == "Zx-Secret-778899" and "Zx-Secret-778899" not in kept

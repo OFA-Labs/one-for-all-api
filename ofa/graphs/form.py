@@ -26,7 +26,8 @@ from ..egress import EGRESS, LeakBlocked
 from ..engine.base import EngineError, TextDelta, ToolCall
 from ..eyes.form import Field, FormPage, Option, read_form, submission_readback
 from ..forms import (CAPTCHA, SKIP, SPEED, entries_in, local_answers, match_option, model_messages,
-                     needs_user, parse_answers, question_prompt, unanswered)
+                     needs_user, parse_answers, question_prompt, shows,
+                     unanswered)
 from ..harness.api import HarnessError, norm
 from ..policy import classify
 from ..text.dictation import verbatim
@@ -69,6 +70,7 @@ class FormState(TypedDict, total=False):
     told: str                  # field key whose question is already being spoken while OFA types
     answered: dict             # field key -> {question, value, source}
     skipped: list[str]
+    expect: dict               # field key -> value that must be read back from this page
     current: dict | None       # the action running in hands
     after: str                 # where to go when the queue is empty
     route: str
@@ -96,7 +98,7 @@ def form_graph(deps: Deps) -> StateGraph:
             args = {}
         speed = bool(args.get("speed")) or bool(SPEED.search(s.get("text", "")))
         return {"form_call": s["call"], "window": args.get("window"), "speed": speed, "pages": 0, "rounds": 0,
-                "queue": [], "asks": [], "asked": [], "told": "", "answered": {}, "skipped": [], "current": None,
+                "queue": [], "asks": [], "asked": [], "told": "", "answered": {}, "skipped": [], "current": None, "expect": {},
                 "plan_approved": s.get("plan_approved"), "action_info": None}
 
     async def scan(s: FormState) -> dict:
@@ -115,7 +117,7 @@ def form_graph(deps: Deps) -> StateGraph:
         data = page.as_state()
         captcha = CAPTCHA.search(" ".join([page.title, *(f.question for f in page.fields)]))
         update = {"page": data, "window": page.hwnd, "pages": s["pages"] + 1, "rounds": 0, "asked": [], "asks": [],
-                  "queue": [], "told": ""}
+                  "queue": [], "told": "", "expect": {}}
         if captcha:
             return {**update, "route": "handoff"}
         if not page.fields and not page.nav:
@@ -165,13 +167,14 @@ def form_graph(deps: Deps) -> StateGraph:
                 await say(f"{str(exc)[:120]} I'll ask you what I can't fill from your profile.")
         queue, asks, skipped = list(s["queue"]), [], list(s["skipped"])
         answered = dict(s["answered"])
+        expect = dict(s.get("expect") or {})
         for f, reason in mine:
             a = answers.get(f.id, {"status": "missing"})
             if reason in {"sensitive", "file"}:
                 asks.append({"field": f.id, "reason": reason, "say": ""})
             elif reason == "declare":
                 asks.append({"field": f.id, "reason": "declare", "say": question_prompt(f, "declare", s["speed"])})
-            elif reason == "decision":          # your choice, never the model's
+            elif reason in {"decision", "ambiguous"}:     # your choice, never the model's
                 if f.required or f.error:
                     asks.append({"field": f.id, "reason": "missing", "say": question_prompt(f, "missing", s["speed"])})
                 else:
@@ -186,8 +189,10 @@ def form_graph(deps: Deps) -> StateGraph:
                 queue += actions_for(f, a["value"])
                 answered[f.key()] = {"question": f.question[:160], "value": a["value"],
                                      "source": a.get("source") or "facts"}
+                expect[f.key()] = a["value"]
         keys = {f.id: f.key() for f in fields}
         update = {"page": data, "queue": queue, "asks": asks, "answered": answered, "skipped": skipped, "after": "check",
+                  "expect": expect,
                   "asked": s["asked"] + [keys[a_["field"]] for a_ in asks]}
         # Ask the first question while the known answers are being typed.
         first = next((a_ for a_ in asks if a_["say"]), None)
@@ -274,7 +279,8 @@ def form_graph(deps: Deps) -> StateGraph:
         if item["reason"] == "declare":
             if classify(heard.text, heard.confidence) != "YES":
                 return {**update, "skipped": s["skipped"] + [f.question[:80]]}
-            return {**update, "queue": s["queue"] + actions_for(f, "yes")}
+            return {**update, "queue": s["queue"] + actions_for(f, "yes"),
+                    "expect": {**(s.get("expect") or {}), f.key(): "yes"}}
         if f.options:
             picked = match_option(heard.text, [o.label for o in f.options])
             if picked is None:
@@ -286,7 +292,8 @@ def form_graph(deps: Deps) -> StateGraph:
         else:
             value = verbatim(apply_script(heard.text, deps.memory.get("script", "roman"))).replace("\n", " ")
         answered = {**s["answered"], f.key(): {"question": f.question[:160], "value": value, "source": "you"}}
-        return {**update, "answered": answered, "queue": s["queue"] + actions_for(f, value)}
+        return {**update, "answered": answered, "queue": s["queue"] + actions_for(f, value),
+                "expect": {**(s.get("expect") or {}), f.key(): value}}
 
     def private(s: FormState) -> dict:
         """Passwords, ID or bank numbers and uploads: a saved private item (asked again in detail by hands),
@@ -328,14 +335,23 @@ def form_graph(deps: Deps) -> StateGraph:
         data = page.as_state()
         known = set(s["asked"]) | set(s["answered"])
         new = [f for f in page.fields if f.key() not in known and unanswered(f)]
-        wrong = [f for f in page.fields if f.key() in s["answered"] and unanswered(f)]
+        expect = s.get("expect") or {}
+        mismatched = [f for f in page.fields
+                      if not f.sensitive and f.key() in expect and not shows(f, expect[f.key()])]
+        wrong = mismatched + [f for f in page.fields if f not in mismatched
+                              and f.key() in s["answered"] and unanswered(f)]
         if (new or wrong) and s["rounds"] < ROUNDS:
             retry = []
             for f in wrong:
-                retry += actions_for(f, s["answered"][f.key()]["value"])
+                retry += actions_for(f, expect.get(f.key()) or s["answered"][f.key()]["value"])
             if wrong and not new:
                 return {"page": data, "rounds": s["rounds"] + 1, "queue": retry, "route": "queue"}
             return {"page": data, "rounds": s["rounds"] + 1, "queue": retry, "route": "map"}
+        if mismatched:
+            names = ", ".join(f.question[:60] for f in mismatched[:4])
+            return done(s, "partial", f"I could not confirm {names}: the page does not show what I entered. "
+                                      "I did not press Next or Submit.",
+                        {"reason": "VERIFICATION_FAILED", "unverified": [f.question[:80] for f in mismatched]})
         if "next" in page.nav:
             return {"page": data, "queue": [{"kind": "click", "element": page.nav["next"], "next": True}],
                     "asks": [], "route": "queue"}
