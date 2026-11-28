@@ -40,3 +40,13 @@ def test_a_field_copying_the_address_bar_name_is_not_trusted(order, url):
     hwnd = desk.add_window("Sign in - Microsoft Edge", "msedge.exe", [])
     desk.elements[hwnd] = [parts[name] for name in order]
     assert Harness(desk).browser_identity(hwnd)["url"] == url
+
+
+def test_a_full_screen_page_with_no_address_bar_cannot_supply_one():
+    """Seen in real Chrome full screen: the tree held the page and its fields, but no browser bar."""
+    desk = FakeDesktop()
+    hwnd = desk.add_window("Sign in - Google Chrome", "chrome.exe", [])
+    desk.elements[hwnd] = [el(1, "Sign in", "document", "http://evil.example/login"),
+                           el(2, "Address and search bar", "edit", "https://github.com/login")]
+    identity = Harness(desk).browser_identity(hwnd)
+    assert (identity["url"], identity["tls_ok"]) == (None, False)

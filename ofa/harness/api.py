@@ -478,18 +478,17 @@ class Harness:
                 return None
             w = wins[0]
         els, _ = self.b.uia_tree(w["hwnd"], max_nodes=900, budget_s=1.2)
-        before_page, anywhere, in_page, insecure = set(), set(), False, False
+        found, in_page, insecure = set(), False, False
         for e in els:
             name = norm(e.text)
             in_page = in_page or e.role == "document"
-            # Only the browser's own address bar, by its full name: a page can label its fields "Email address".
-            if e.role in {"edit", "combo box"} and e.value and                     (name in ADDRESS_NAMES or FIREFOX_ADDRESS.fullmatch(name)):
-                anywhere.add(e.value.strip())
-                if not in_page:
-                    before_page.add(e.value.strip())
+            # Only the browser's own address bar: its full name, and listed before the page. Everything from the
+            # document on can be page content, which may copy that name (full screen can omit the real bar).
+            bar = name in ADDRESS_NAMES or FIREFOX_ADDRESS.fullmatch(name)
+            if bar and not in_page and e.role in {"edit", "combo box"} and e.value:
+                found.add(e.value.strip())
             if name in {"not secure", "your connection is not private", "dangerous"}:
                 insecure = True
-        found = before_page or anywhere
         url = found.pop() if len(found) == 1 else None        # two different answers: trust neither
         if url and "://" not in url:
             url = "https://" + url
