@@ -6,9 +6,10 @@ Production extension-side policy/pairing hardening remains a separate milestone.
 """
 from __future__ import annotations
 
+import time
 from urllib.parse import urlsplit
 
-from .contracts import Evidence, ExecutionError, Observation, Outcome
+from .contracts import Evidence, ExecutionError, NotDispatched, Observation, Outcome
 from .verification import verify
 
 
@@ -60,6 +61,42 @@ ACT = r"""(unused, arg) => {
   if(arg.operation==='browser.scroll'){el.scrollBy(0,arg.direction==='up'?-300:300);return true;}
   throw new Error('UNSUPPORTED_OPERATION');
 }"""
+
+
+# Would a person's click land on this element? Two box readings at least 50 ms and
+# two drawn frames apart (a busy browser may draw nothing in 50 ms), then
+# a composed-tree hit test at its centre. Scroll positions are put back, so the
+# approved reading and the readback after dispatch stay comparable.
+PREFLIGHT = r"""async (unused, arg) => {
+  const el=globalThis.__ofaLocalRead?.nodes.get(arg.ref);
+  if(!el||!el.isConnected) return {found:false};
+  const box=()=>{const r=el.getBoundingClientRect();return [r.left,r.top,r.width,r.height].map(Math.round).join()};
+  const first=box();
+  const frames=new Promise(done=>requestAnimationFrame(()=>requestAnimationFrame(done)));
+  await new Promise(done=>setTimeout(done,50));
+  // A background tab draws no frames at all; do not wait for them for ever.
+  await Promise.race([frames,new Promise(done=>setTimeout(done,500))]);
+  const stable=el.isConnected&&first===box();
+  const view=el.ownerDocument.defaultView, saved=[];
+  for(let n=el;n;n=n.parentNode||n.host) if(n.nodeType===1) saved.push([n,n.scrollLeft,n.scrollTop]);
+  const x0=view.scrollX, y0=view.scrollY;
+  el.scrollIntoView({block:'center',inline:'center',behavior:'instant'});
+  const r=el.getClientRects()[0];
+  let hit=false;
+  if(r&&r.width>0&&r.height>0){
+    const x=r.left+r.width/2, y=r.top+r.height/2;
+    let top=el.ownerDocument.elementFromPoint(x,y);
+    while(top&&top.shadowRoot){const inner=top.shadowRoot.elementFromPoint(x,y);if(!inner||inner===top)break;top=inner;}
+    for(let n=top;n;n=n.assignedSlot||n.parentNode||n.host) if(n===el||(n.tagName==='LABEL'&&n.control===el)){hit=true;break;}
+  }
+  for(const [n,left,top] of saved) if(n.scrollLeft!==left||n.scrollTop!==top) n.scrollTo({left,top,behavior:'instant'});
+  view.scrollTo({left:x0,top:y0,behavior:'instant'});
+  return {found:true,stable,hit_target:hit};
+}"""
+
+# Seconds before each pre-dispatch attempt. The dispatch itself is never repeated.
+RETRY_WAITS = (0, 0.02, 0.1, 0.1, 0.5)
+RETRYABLE = {"HIT_TARGET_INTERCEPTED", "ELEMENT_UNSTABLE"}
 
 
 class BrowserHand:
@@ -171,16 +208,45 @@ class BrowserHand:
                 raise ExecutionError("SCREENSHOT_REDACTION_REQUIRED", "Browser frames are unavailable until local masking is configured; structural observations work.")
             return Outcome(status="verified", observation=after,
                            evidence=[Evidence(tier="A", kind="fresh_dom", reading_hash=after.hash)])
-        fresh = self.observe(step)
-        if fresh.hash != before.hash:
-            raise ExecutionError("READING_CHANGED", "Browser state changed after approval.")
-        element = self._target(step, fresh)
+        element = self._ready(step, before, checkpoint)
         checkpoint()
         # One fixed synchronous operation; no queued human-paced type macro.
         client.call("eval", {"tab": self._tool_tab(tab), "expression": ACT,
                              "arg": {"operation": step.operation, "ref": element.ref,
                                      "text": step.text, "direction": step.direction}})
         return verify(step, before, self.observe(step))
+
+    def _ready(self, step, before, checkpoint):
+        """Everything that happens before dispatch; only this part may be retried."""
+        for attempt, wait in enumerate(RETRY_WAITS, 1):
+            time.sleep(wait)
+            checkpoint()
+            try:
+                fresh = self.observe(step)
+                if fresh.hash != before.hash:
+                    raise ExecutionError("READING_CHANGED", "Browser state changed after approval.")
+                element = self._target(step, fresh)
+                if step.operation in {"browser.click", "browser.fill"}:
+                    self._preflight(step, element)
+                return element
+            except ExecutionError as exc:
+                if exc.code in {"HELD", "CANCELLED"}:
+                    raise
+                if exc.code not in RETRYABLE or attempt == len(RETRY_WAITS):
+                    raise NotDispatched(exc.code, exc.message, exc.options) from exc
+
+    def _preflight(self, step, element):
+        result = self._unwrap(self._client().call("eval", {"tab": self._tool_tab(self._tab(step)),
+                                                           "expression": PREFLIGHT, "arg": {"ref": element.ref}}))
+        if not isinstance(result, dict) or "found" not in result:
+            raise ExecutionError("BROWSER_SCHEMA_CHANGED", "Browser pre-flight did not return the expected reading.")
+        if not result["found"]:
+            raise ExecutionError("TARGET_NOT_FOUND", "The element left the page before it could be used.")
+        if result.get("stable") is not True:
+            raise ExecutionError("ELEMENT_UNSTABLE", "The element is still moving; nothing was sent.")
+        if result.get("hit_target") is not True:
+            raise ExecutionError("HIT_TARGET_INTERCEPTED",
+                                 "Something is covering the element, such as a banner or dialog; nothing was sent.")
 
     def close(self):
         if self.client:
