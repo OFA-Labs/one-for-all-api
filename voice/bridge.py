@@ -121,7 +121,7 @@ class EngineBridge:
                     )
                     for event in snapshot["events"]
                 )
-            if state in {"failed", "unknown", "cancelled"}:
+            if state in {"dispatched", "failed", "unknown", "cancelled"}:
                 return False
             await asyncio.sleep(0.02)
         self.engine.control(task_id, Control(action="cancel"))
@@ -139,4 +139,4 @@ class EngineBridge:
         """A browser dispatch receipt, deliberately not a page-load verification."""
         from uuid import uuid4
         snapshot = await self.execute(Step(operation="website.open",url=validate_url(url)),str(uuid4()))
-        return snapshot["state"] == "completed"
+        return snapshot["state"] == "dispatched"

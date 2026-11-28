@@ -53,5 +53,6 @@ class WebsiteHand:
             good = bool(webbrowser.open(url, new=2))
         after = before.model_copy(deep=True)
         after.facts["dispatched"] = good
-        return Outcome(status="verified" if good else "unknown", observation=after,
-                       evidence=[Evidence(tier="A", kind="os_url_dispatch", reading_hash=after.hash)])
+        return Outcome(status="dispatched" if good else "unknown", observation=after,
+                       evidence=[Evidence(tier="D", kind="dispatch_receipt", reading_hash=after.hash,
+                                          detail={"via": "os_url_dispatch"})])

@@ -186,7 +186,7 @@ class Runtime:
         else:
             raise MissingCapability("This deterministic action is not connected")
         snapshot=await self.bridge.execute(step,command_id)
-        if snapshot["state"]!="completed":
+        if snapshot["state"]!=("dispatched" if step.operation=="website.open" else "completed"):
             error=snapshot.get("error") or {}
             self.emit("error",{"code":error.get("code","ACTION_NOT_VERIFIED"),"text":error.get("message","The action was not verified")})
             return Receipt(False)
