@@ -24,7 +24,7 @@ from langgraph.graph import END, START, StateGraph
 
 from ..egress import EGRESS, LeakBlocked
 from ..engine.base import EngineError, TextDelta, ToolCall
-from ..eyes.form import Field, FormPage, Option, read_form
+from ..eyes.form import Field, FormPage, Option, read_form, submission_readback
 from ..forms import (CAPTCHA, SKIP, SPEED, entries_in, local_answers, match_option, model_messages,
                      needs_user, parse_answers, question_prompt, unanswered)
 from ..harness.api import HarnessError, norm
@@ -108,7 +108,8 @@ def form_graph(deps: Deps) -> StateGraph:
         if page.closed:
             return done(s, "blocked", "The form says it is closed and no longer accepting responses.")
         if page.done:
-            return done(s, "done", "The form already shows that your response was recorded.")
+            return done(s, "partial", "The page says a response was recorded. I did not submit anything now; "
+                                      "please check it.")
         if s["pages"] >= MAX_PAGES:
             return done(s, "partial", f"I stopped after {MAX_PAGES} pages.")
         data = page.as_state()
@@ -379,17 +380,25 @@ def form_graph(deps: Deps) -> StateGraph:
     async def confirm(s: FormState) -> dict:
         deadline = time.monotonic() + NAV_WAIT
         url = s["page"].get("url") or s["page"]["title"]
+        seen = None
         while time.monotonic() < deadline:
             await asyncio.sleep(0.5)
             try:
                 page = await asyncio.to_thread(read_form, deps.harness, s["window"])
             except HarnessError:
                 continue
-            if page.done:
+            proof = submission_readback(s["page"].get("url"), page)
+            if proof == "verified":
                 deps.memory.set(f"form_submitted:{url}", time.time())
                 return {"route": "save_offer"}
+            seen = seen or proof
             if page.errors:
                 return done(s, "partial", f"Submit was refused. The form says: {page.errors[0]}.")
+        if seen:
+            # It may well have been sent, so it must not be sent again.
+            deps.memory.set(f"form_submitted:{url}", time.time())
+            return done(s, "partial", "I pressed Submit and the page says it was recorded, but I could not verify "
+                                      "that from the page address. Please check it. I will not submit it again.")
         return done(s, "partial", "I pressed Submit but could not see a confirmation. Please check the page.")
 
     def save_offer(s: FormState) -> dict:

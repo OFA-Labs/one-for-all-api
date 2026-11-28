@@ -98,3 +98,13 @@ def test_voice_bridge_reports_dispatch_without_calling_it_complete(monkeypatch):
         assert bridge.last_snapshot["state"] == "dispatched"
     finally:
         engine.close()
+
+
+def test_file_text_is_checked_by_verify():
+    reading = Observation(surface="file", identity={}, facts={"text": "exact"})
+    for value, status in (("exact", "verified"), ("exact ", "unknown"), ("exac", "unknown"), (None, "unknown")):
+        step = Step(operation="file.read", expect=Expectation(kind="file_text", value=value))
+        assert verify(step, reading, reading).status == status, value
+    other = Observation(surface="browser", identity={}, facts={"text": "exact"})
+    step = Step(operation="browser.observe", expect=Expectation(kind="file_text", value="exact"))
+    assert verify(step, other, other).status == "unknown"

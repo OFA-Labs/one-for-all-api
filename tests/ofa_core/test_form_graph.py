@@ -31,6 +31,7 @@ class FormSite:
 
     def __init__(self, desk, pages, url="https://forms.example.test/f"):
         self.desk, self.pages, self.at, self.url = desk, pages, 0, url
+        self.confirmation = url + "/formResponse"        # where Submit lands, as in Google Forms
         self.hwnd = desk.add_window(TITLE, "msedge.exe", [])
         desk.on_click["Next"] = lambda d: self.go(self.at + 1)
         desk.on_click["Submit"] = lambda d: self.go(len(self.pages) - 1)
@@ -42,7 +43,8 @@ class FormSite:
 
     def show(self):
         total = len(self.pages) - 1
-        head = [e(900, "Address and search bar", "edit", value=self.url), e(901, "Research Form", "document")]
+        address = self.confirmation if self.at == total and self.confirmation else self.url
+        head = [e(900, "Address and search bar", "edit", value=address), e(901, "Research Form", "document")]
         counter = [e(902, f"Page {self.at + 1} of {total}", "text")] if self.at < total else []
         self.desk.elements[self.hwnd] = head + counter + self.pages[self.at]
 
@@ -369,3 +371,27 @@ def test_personal_decisions_are_always_asked(tmp_path):
     r.desk.on_click["No"] = lambda d: setattr(no, "value", "checked")
     r.fill()
     assert "No" in r.desk.clicks and "Yes" not in r.desk.clicks and r.engine.requests == []
+
+
+def submit_run(tmp_path, final_page, confirmation):
+    pages = basic_pages()[:2] + [final_page]
+    r = Rig(tmp_path, pages, [answers(("u2", "known", "A"), ("u4", "known", "a@b.test")),
+                              answers(("u13", "known", "Nil"))], heard=[Heard("Nil"), Heard("yes"), Heard("no")])
+    r.site.confirmation = confirmation
+    return r, r.fill()
+
+
+def test_a_confirmation_address_proves_submission_without_the_phrase(tmp_path):
+    _, result = submit_run(tmp_path, [e(950, "All good.", "text")], "https://forms.example.test/f/formResponse")
+    assert result.status == "done"
+
+
+def test_the_phrase_alone_is_not_proof_and_is_never_resubmitted(tmp_path):
+    r, result = submit_run(tmp_path, DONE, None)                       # same address as the form
+    assert result.status == "partial" and "could not verify" in result.spoken
+    assert r.deps.memory.get("form_submitted:https://forms.example.test/f")
+
+
+def test_an_error_page_at_a_new_address_is_not_proof(tmp_path):
+    _, result = submit_run(tmp_path, [e(950, "Something went wrong.", "text")], "https://forms.example.test/error")
+    assert result.status == "partial" and "could not see a confirmation" in result.spoken

@@ -5,6 +5,7 @@ import os
 import tempfile
 
 from .contracts import Evidence, ExecutionError, Observation, Outcome
+from .verification import file_text_matches
 
 
 class FileHand:
@@ -60,6 +61,6 @@ class FileHand:
         expected = step.text if step.operation == "file.write" else after.facts["text"]
         good = after.facts["text"] == expected
         if step.expect and step.expect.kind == "file_text":
-            good = good and after.facts["text"] == step.expect.value
+            good = good and file_text_matches(step.expect, after)
         return Outcome(status="verified" if good else "unknown", observation=after,
                        evidence=[Evidence(tier="A", kind="file_readback", reading_hash=after.hash)])
