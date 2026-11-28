@@ -8,6 +8,24 @@ Last updated: 2026-11-27. Branch: `feat/info-corpus`. Requirements: [MASTER_PROM
 | 🟡 Not verified | Code or model behaviour exists; not proven by a real run |
 | ❌ Not done | Missing |
 
+## Evidence behind each ✅
+
+Each ✅ row ends with its label and the commands or tests that back it.
+
+| Label | Meaning |
+|---|---|
+| `live-local` | Ran on the Windows laptop, as recorded on 2026-11-27 at `5cecce2`. **Not re-run since**, so later changes are not covered. |
+| `offline-test` | Passes against fakes only. Re-run on 2026-11-28 with the browser and trust fixes of that date. |
+| `source-inspected` | Read in the code, never run. Used for no ✅ row. |
+
+| Ref | Reproduce command (from the repo root, `.venv-ofa/Scripts/python.exe`) |
+|---|---|
+| A#n | `python scripts/e2e_live.py --env-file .env`, case n (real model and desktop, simulated replies; record: [bench/generalization-2026-11-27.md](bench/generalization-2026-11-27.md)) |
+| B | `python scripts/e2e_form.py --env-file .env` (real browser and model, local 6-page form, simulated replies) |
+| W= | `$env:OFA_WINDOWS_TESTS=1; python -m pytest tests/ofa_core/test_windows_real.py -q` (disposable windows) |
+| tests/… | `python -m pytest <ref> -q` (fakes only; it supports the row but is not the live run) |
+| none recorded | Reported as run on the laptop; no command or test reference was written down. Treat as the weakest evidence. |
+
 ## Summary
 
 | Category | ✅ | 🟡 | ❌ |
@@ -32,12 +50,12 @@ Code: `voice/session.py, ofa/companion.py, voice/overlay.py`
 
 ### ✅ Done
 
-- Caps Lock starts and stops a session
-- Caps Lock does not change typing capitalisation
-- Spoken requests are heard and run
-- Panel at the top middle of the screen
-- Says “Completed. Anything else?” after a verified task
-- Reports failure or partial success instead
+- Caps Lock starts and stops a session — `live-local`: none recorded
+- Caps Lock does not change typing capitalisation — `live-local`: none recorded
+- Spoken requests are heard and run — `live-local`: none recorded
+- Panel at the top middle of the screen — `live-local`: none recorded
+- Says “Completed. Anything else?” after a verified task — `live-local`: A#1; tests/ofa_core/test_agent_graph.py::test_open_app_verified_then_completion_phrase
+- Reports failure or partial success instead — `live-local`: A#2; tests/ofa_core/test_agent_graph.py::test_unverified_effect_is_not_reported_completed
 
 ### 🟡 Implemented, not verified
 
@@ -68,11 +86,11 @@ Code: `ofa/harness/, ofa/effects/desktop.py, ofa/effects/system.py`
 
 ### ✅ Done
 
-- Open installed apps
-- Find installed apps
-- Open Windows Settings pages
-- Minimize, restore, focus and close windows
-- Confirm results from the real window state
+- Open installed apps — `live-local`: tests/ofa_core/test_agent_graph.py::test_open_app_verified_then_completion_phrase
+- Find installed apps — `live-local`: W=test_windows_real.py::test_discovery_lists_installed_and_running_apps
+- Open Windows Settings pages — `live-local`: A#1
+- Minimize, restore, focus and close windows — `live-local`: A#2; A#3; W=test_windows_real.py::test_focus_minimize_restore_close_verified
+- Confirm results from the real window state — `live-local`: W=test_windows_real.py::test_focus_minimize_restore_close_verified
 
 ### 🟡 Implemented, not verified
 
@@ -104,14 +122,14 @@ Code: `ofa/eyes/, ofa/graphs/eyes.py, ofa/graphs/hands.py`
 
 ### ✅ Done
 
-- Read controls and text in a window
-- See all visible windows with numbered marks
-- On-device text recognition (OCR)
-- Vision model picks an element (practice window)
-- Click and type in standard Windows apps
-- Answer a call with “pick it up”
-- Read every question on a web form page, including below the visible area
-- Type into web forms, tick choices, pick from dropdowns, press Next (local test form)
+- Read controls and text in a window — `live-local`: A#4; W=test_windows_real.py::test_type_click_readback_on_unadapted_app
+- See all visible windows with numbered marks — `live-local`: tests/ofa_core/test_eyes.py::test_marks_are_drawn_and_hidden_elements_skipped
+- On-device text recognition (OCR) — `live-local`: W=test_windows_real.py::test_ocr_reads_window_text
+- Vision model picks an element (practice window) — `live-local`: none recorded
+- Click and type in standard Windows apps — `live-local`: A#6; W=test_windows_real.py::test_type_click_readback_on_unadapted_app
+- Answer a call with “pick it up” — `live-local`: tests/ofa_core/test_eyes.py::test_pick_it_up_answers_the_call_without_a_second_yes
+- Read every question on a web form page, including below the visible area — `live-local`: B
+- Type into web forms, tick choices, pick from dropdowns, press Next (local test form) — `live-local`: B
 
 ### 🟡 Implemented, not verified
 
@@ -140,9 +158,9 @@ Code: `ofa/dictation.py, ofa/text/, ofa/graphs/hands.py`
 
 ### ✅ Done
 
-- Read typed text back and compare
-- Typing never sends by itself
-- Compose long form answers from your profile (local test form)
+- Read typed text back and compare — `live-local`: A#5 (failed on 2026-11-27); W=test_windows_real.py::test_type_click_readback_on_unadapted_app
+- Typing never sends by itself — `live-local`: A#6
+- Compose long form answers from your profile (local test form) — `live-local`: B
 
 ### 🟡 Implemented, not verified
 
@@ -170,8 +188,8 @@ Code: `ofa/graphs/brain.py, ofa/memory.py`
 
 ### ✅ Done
 
-- Refuses to report a near match as a match
-- Refers back to an earlier window (“bring it back”)
+- Refuses to report a near match as a match — `live-local`: A#11
+- Refers back to an earlier window (“bring it back”) — `live-local`: A#3
 
 ### 🟡 Implemented, not verified
 
@@ -232,15 +250,15 @@ Code: `ofa/graphs/form.py, ofa/forms.py, ofa/eyes/form.py, ofa/corpus/`
 
 ### ✅ Done
 
-- Fill a 6-page form by voice from your profile and submit it (local test form, about 78 s)
-- Info corpus “Use without consent”: Markdown profile and resume
-- Identity fields filled straight from the profile
-- Match other questions to profile facts with the model
-- Text, long text, radio, checkbox, dropdown and conditional questions
-- Ask for missing answers and personal decisions by voice
-- Never tick a declaration without a spoken yes
-- Speak a summary and wait for a spoken yes before submitting
-- Confirm the “response recorded” page
+- Fill a 6-page form by voice from your profile and submit it (local test form, about 78 s) — `live-local`: B
+- Info corpus “Use without consent”: Markdown profile and resume — `live-local`: B; tests/ofa_core/test_corpus.py
+- Identity fields filled straight from the profile — `live-local`: B; tests/ofa_core/test_form_graph.py::test_identity_fields_need_no_model_call
+- Match other questions to profile facts with the model — `live-local`: B
+- Text, long text, radio, checkbox, dropdown and conditional questions — `live-local`: B; tests/ofa_core/test_form_graph.py::test_conditional_question_that_appears_after_a_choice
+- Ask for missing answers and personal decisions by voice — `live-local`: B; tests/ofa_core/test_form_graph.py::test_personal_decisions_are_always_asked
+- Never tick a declaration without a spoken yes — `live-local`: B; tests/ofa_core/test_form_graph.py::test_declaration_is_always_asked_and_never_ticked_on_no
+- Speak a summary and wait for a spoken yes before submitting — `live-local`: B; tests/ofa_core/test_form_graph.py::test_not_submitted_without_a_spoken_yes
+- Confirm the “response recorded” page — `offline-test`: tests/ofa_core/test_form_graph.py::test_a_confirmation_address_proves_submission_without_the_phrase; tests/ofa_core/test_form_graph.py::test_the_phrase_alone_is_not_proof_and_is_never_resubmitted
 
 ### 🟡 Implemented, not verified
 
@@ -273,8 +291,8 @@ Code: `ofa/effects/files.py`
 
 ### ✅ Done
 
-- Search a named folder
-- Create a text file after a spoken yes
+- Search a named folder — `live-local`: A#9
+- Create a text file after a spoken yes — `live-local`: A#7; A#8
 
 ### 🟡 Implemented, not verified
 
@@ -332,10 +350,10 @@ Code: `ofa/graphs/hands.py`
 
 ### ✅ Done
 
-- Require a plan before a second risky step
-- Wait for spoken approval of the plan
-- Still ask at each risky step
-- Progress updates page by page while filling a form
+- Require a plan before a second risky step — `live-local`: A#12; tests/ofa_core/test_agent_graph.py::test_plan_required_for_multiple_consequential_steps
+- Wait for spoken approval of the plan — `live-local`: tests/ofa_core/test_agent_graph.py::test_plan_spoken_and_approved_then_each_action_still_asks
+- Still ask at each risky step — `live-local`: tests/ofa_core/test_agent_graph.py::test_plan_spoken_and_approved_then_each_action_still_asks
+- Progress updates page by page while filling a form — `live-local`: B
 
 ### 🟡 Implemented, not verified
 
