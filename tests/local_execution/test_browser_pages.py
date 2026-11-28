@@ -111,8 +111,8 @@ def test_a_covered_button_is_not_clicked(site):
 
 
 def test_a_moving_button_is_not_clicked(site):
-    moving = ('<style>button{position:relative;animation:m .3s linear infinite alternate}'
-              '@keyframes m{from{left:0}to{left:300px}}</style>')
+    moving = ('<style>button{position:relative;animation:m 20s linear}'
+              '@keyframes m{from{left:0}to{left:4000px}}</style>')
     hand, read = show(site, "moving", moving + BUTTON)
     with pytest.raises(ExecutionError) as error:
         click(hand, "Send", "clicked")
